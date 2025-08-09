@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="jumbotron">
+    <div class="row mt-4 mb-4">
+        <div class="col-md-8">
+            <h1 class="display-4">{{ header }}</h1>
+            <p class="lead">{{ statement1 }}</p>
+            <p>{{ statement2 }}</p>
+            <p>{{ statement3 }}</p>
+            <a class="btn btn-primary btn-lg" href="#" role="button">{{ cta_button }}</a>
+        </div>
+        <div class="col-md-4">
+            <img src="{% static image %}" class="img-fluid" alt="Responsive image">
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <h2 class="display-4">Latest Projects</h2>
+            <ul class="list-group">
+                <li class="list-group-item">Project 1</li>
+                <li class="list-group-item">Project 2</li>
+                <li class="list-group-item">Project 3</li>
+            </ul>
+        </div>
+    </div>
+{% endblock %}

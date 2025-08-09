@@ -1,0 +1,36 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{{ title }}{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load bootstrap5 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+    <link rel="stylesheet" href="{% static 'css/fonts.css' %}">
+    <link rel="stylesheet" href="{% static 'css/colours.css' %}">
+</head>
+<body class="d-flex flex-column min-vh-100 bg-light">
+    <header class="container mt-2 mb-2">
+        <div class="navbar">
+            <h3 class="float-md-start mb-0">Syafiq Kay</h3>
+            <nav class="nav nav-masthead justify-content-center float-md-end">
+                <a class="nav-link active" aria-current="page" href="#">Home</a>
+                <a class="nav-link" href="#">Projects</a>
+                <a class="nav-link" href="#">Blogs</a>
+            </nav>
+        </div>
+    </header>
+    <main class="mt-2 mt-2 p-5 flex-grow-1">
+        <div class="container">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+    <footer class="footer mt-auto py-3 ">
+        <div class="container">
+            <p>Cover template for <a href="https://getbootstrap.com/">Bootstrap</a>, by <a href="https://twitter.com/mdo">@mdo</a>.</p>
+        </div>
+    </footer>
+</body>
+</html>

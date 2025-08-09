@@ -1,0 +1,43 @@
+# Django/Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+
+# SQLite database
+*.sqlite3
+
+# VS Code settings
+.vscode/
+
+# Environment files
+.env
+
+# Django migrations
+**/migrations/*
+!**/migrations/__init__.py
+
+# Media/static files
+static/
+media/
+
+# OS files
+.DS_Store
+
+# Lock files
+uv.lock
+
+# Python virtual environments
+venv/
+ENV/
+
+# Coverage reports
+htmlcov/
+.coverage
+
+# Logs
+*.log
+
+# Node modules (if any)
+node_modules/
