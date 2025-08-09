@@ -1,0 +1,10 @@
+[project]
+name = "sk-website"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "django>=5.2.5",
+    "pytest>=8.4.1",
+]
