@@ -22,6 +22,8 @@ COPY . .
 RUN uv sync
 
 # Activate virtual environment and collect static files
+# Set a temporary secret key for collectstatic (not used in production)
+ENV DJANGO_SECRET_KEY=temp-build-key-not-used-in-production
 RUN uv run python manage.py collectstatic --noinput
 
 # Start Gunicorn using the virtual environment
