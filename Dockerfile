@@ -5,11 +5,10 @@ FROM python:3.11-slim
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
-# Install uv via pipx
+# Install uv directly
 RUN apt-get update && apt-get install -y curl gcc \
-    && pip install pipx \
-    && pipx ensurepath \
-    && pipx install uv \
+    && curl -LsSf https://astral.sh/uv/install.sh | sh \
+    && mv /root/.local/bin/uv /usr/local/bin/uv \
     && apt-get purge -y --auto-remove curl gcc \
     && rm -rf /var/lib/apt/lists/*
 
@@ -20,11 +19,10 @@ WORKDIR /app
 COPY . .
 
 # Create and sync virtual environment using uv
-RUN uv venv .venv && \
-    .venv/bin/uv pip sync uv.lock
+RUN uv sync
 
 # Activate virtual environment and collect static files
-RUN .venv/bin/python manage.py collectstatic --noinput
+RUN uv run python manage.py collectstatic --noinput
 
 # Start Gunicorn using the virtual environment
-CMD [".venv/bin/gunicorn", "sk.wsgi:application", "--bind", "0.0.0.0:$PORT"]
+CMD ["uv", "run", "gunicorn", "sk.wsgi:application", "--bind", "0.0.0.0:$PORT"]
