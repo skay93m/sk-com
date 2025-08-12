@@ -1,3 +1,9 @@
+## 0.3.5 (2025-08-12)
+
+### Fix
+
+- **deployment**: improve render deployment configuration
+
 ## 0.3.4 (2025-08-12)
 
 ### Fix
