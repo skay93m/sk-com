@@ -1,3 +1,9 @@
+## 0.3.4 (2025-08-12)
+
+### Fix
+
+- fix csrf setting and db config
+
 ## 0.3.3 (2025-08-12)
 
 ### Fix

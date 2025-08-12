@@ -45,9 +45,21 @@ Follow-up actions:
 
      `git flow hotfix finish 'fix-render-deployment'`
 
-## issue list
+## Hotfix: Bad Request (CSRF)
 
+@skay93m ➜ /workspaces/sk-com (main) $ uv run git flow hotfix start bad-request
+- Fixed CSRF verification issues
+- Configured production and development environments
+- Added PostgreSQL support for both environments
+- When done, run: `git flow hotfix finish 'bad-request'`
+
+## Issue List
+
+### Static Files Issues
 ```
 #12 2.838 ?: (staticfiles.W004) The directory '/app/home/static' in the STATICFILES_DIRS setting does not exist.
 #12 2.838 ?: (staticfiles.W004) The directory '/app/sk/static' in the STATICFILES_DIRS setting does not exist.
 ```
+
+### Resolved Issues
+1. ✅ CSRF configuration - Fixed in bad-request hotfix
