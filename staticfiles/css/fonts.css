@@ -1,0 +1,80 @@
+/* Google Fonts Import */
+@import url('https://fonts.googleapis.com/css2?family=Google+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+/* Font Family Definitions */
+:root {
+  --bs-font-sans-serif: "Google Sans", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --bs-font-monospace: "Google Sans", "SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+/* Global Font Application */
+body {
+  font-family: var(--bs-font-sans-serif);
+  font-weight: 400;
+  line-height: 1.6;
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
+  font-family: var(--bs-font-sans-serif);
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+/* Override Bootstrap font variables */
+.font-monospace {
+  font-family: var(--bs-font-monospace) !important;
+}
+
+/* Buttons */
+.btn {
+  font-family: var(--bs-font-sans-serif);
+  font-weight: 500;
+}
+
+/* Navigation */
+.navbar-brand {
+  font-family: var(--bs-font-sans-serif);
+  font-weight: 600;
+}
+
+.nav-link {
+  font-family: var(--bs-font-sans-serif);
+  font-weight: 400;
+}
+
+/* Forms */
+.form-control,
+.form-select,
+.form-check-label,
+.form-label {
+  font-family: var(--bs-font-sans-serif);
+}
+
+/* Cards */
+.card-title {
+  font-family: var(--bs-font-sans-serif);
+  font-weight: 600;
+}
+
+.card-text {
+  font-family: var(--bs-font-sans-serif);
+  font-weight: 400;
+}
+
+/* Alerts */
+.alert {
+  font-family: var(--bs-font-sans-serif);
+}
+
+/* Code elements */
+code, kbd, pre, samp {
+  font-family: var(--bs-font-monospace);
+}
+
+/* Display headings */
+.display-1, .display-2, .display-3, .display-4, .display-5, .display-6 {
+  font-family: var(--bs-font-sans-serif);
+  font-weight: 300;
+}
