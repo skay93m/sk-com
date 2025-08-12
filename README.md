@@ -23,7 +23,8 @@ Follow-up actions:
 ```
 
 DOD:
-    - Dockerfile config
-    - secrets variables
+    - Dockerfile config - partially done - need testing
+    - secrets variables - 
+    - setup https
     - database
     - static files

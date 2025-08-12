@@ -13,6 +13,10 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 import os
 from pathlib import Path
 
+# Load environment variables from .env file
+from dotenv import load_dotenv
+load_dotenv()
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -21,12 +25,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-w^@_ic!72-ia)79&#j3t#j8$s!rc%^$s#@-&*wwm8--ps90h0*'
+SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get("DEBUG", "False") == "True"
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "").split(",")
 
 
 # Application definition
@@ -44,6 +48,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -78,12 +83,58 @@ WSGI_APPLICATION = 'sk.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+# Database configuration with PostgreSQL as default and SQLite as fallback
+def get_database_config():
+    """
+    Returns database configuration with PostgreSQL as default and SQLite as fallback.
+    Priority order:
+    1. DATABASE_URL (production environments like Render, Heroku)
+    2. Manual PostgreSQL configuration
+    3. SQLite fallback if PostgreSQL fails or is unavailable
+    """
+    
+    # First try DATABASE_URL (for production environments)
+    if os.environ.get("DATABASE_URL"):
+        try:
+            import dj_database_url
+            return {'default': dj_database_url.parse(os.environ.get("DATABASE_URL"))}
+        except ImportError:
+            pass
+    
+    # Try PostgreSQL configuration (default for both dev and production)
+    try:
+        import psycopg2
+        return {
+            'default': {
+                'ENGINE': 'django.db.backends.postgresql',
+                'NAME': os.environ.get('DB_NAME', 'sk_website'),
+                'USER': os.environ.get('DB_USER', 'postgres'),
+                'PASSWORD': os.environ.get('DB_PASSWORD', ''),
+                'HOST': os.environ.get('DB_HOST', 'localhost'),
+                'PORT': os.environ.get('DB_PORT', '5432'),
+                'OPTIONS': {
+                    'connect_timeout': 10,
+                },
+            }
+        }
+    except (ImportError, Exception):
+        # Fallback to SQLite if PostgreSQL is not available
+        return {
+            'default': {
+                'ENGINE': 'django.db.backends.sqlite3',
+                'NAME': BASE_DIR / 'db.sqlite3',
+            }
+        }
+
+DATABASES = get_database_config()
+
+# Add connection timeout and retry logic for PostgreSQL
+if DATABASES['default']['ENGINE'] == 'django.db.backends.postgresql':
+    DATABASES['default'].setdefault('OPTIONS', {})
+    DATABASES['default']['OPTIONS'].update({
+        'connect_timeout': 10,
+        # Remove the problematic default_transaction_isolation setting
+    })
 
 
 # Password validation
@@ -129,7 +180,35 @@ STATICFILES_DIRS = [
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
+# Whitenoise configuration for static files
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# WhiteNoise settings for better performance
+WHITENOISE_USE_FINDERS = os.environ.get("WHITENOISE_USE_FINDERS", "True") == "True"
+WHITENOISE_AUTOREFRESH = os.environ.get("WHITENOISE_AUTOREFRESH", "True") == "True"
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# HTTPS/SSL Configuration
+# Force HTTPS in production
+SECURE_SSL_REDIRECT = os.environ.get("SECURE_SSL_REDIRECT", "False") == "True"
+
+# HSTS (HTTP Strict Transport Security) settings
+SECURE_HSTS_SECONDS = int(os.environ.get("SECURE_HSTS_SECONDS", "0"))
+SECURE_HSTS_INCLUDE_SUBDOMAINS = os.environ.get("SECURE_HSTS_INCLUDE_SUBDOMAINS", "False") == "True"
+SECURE_HSTS_PRELOAD = os.environ.get("SECURE_HSTS_PRELOAD", "False") == "True"
+
+# Secure cookies
+SESSION_COOKIE_SECURE = os.environ.get("SESSION_COOKIE_SECURE", "False") == "True"
+CSRF_COOKIE_SECURE = os.environ.get("CSRF_COOKIE_SECURE", "False") == "True"
+
+# Secure proxy headers (important for deployment platforms like Render, Heroku, etc.)
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# Content security settings
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_BROWSER_XSS_FILTER = True
+X_FRAME_OPTIONS = 'DENY'
