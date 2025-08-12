@@ -13,9 +13,13 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 import os
 from pathlib import Path
 
-# Load environment variables from .env file
-from dotenv import load_dotenv
-load_dotenv()
+# Load environment variables from .env file (development only)
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    # dotenv not available in production, which is fine
+    pass
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -29,6 +33,27 @@ SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG", "False") == "True"
+
+# For initial debugging in production, temporarily enable more verbose error reporting
+# Remove this after deployment is working
+if not DEBUG:
+    ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "").split(",")
+    # Temporarily enable logging for deployment debugging
+    LOGGING = {
+        'version': 1,
+        'disable_existing_loggers': False,
+        'handlers': {
+            'console': {
+                'class': 'logging.StreamHandler',
+            },
+        },
+        'loggers': {
+            'django': {
+                'handlers': ['console'],
+                'level': 'INFO',
+            },
+        },
+    }
 
 ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "").split(",")
 
@@ -100,12 +125,10 @@ def get_database_config():
     """
     
     # First try DATABASE_URL (for production environments)
-    if os.environ.get("DATABASE_URL"):
-        try:
-            import dj_database_url
-            return {'default': dj_database_url.parse(os.environ.get("DATABASE_URL"))}
-        except ImportError:
-            pass
+    database_url = os.environ.get("DATABASE_URL")
+    if database_url:
+        import dj_database_url
+        return {'default': dj_database_url.parse(database_url)}
     
     # PostgreSQL configuration (for both dev and production)
     return {
