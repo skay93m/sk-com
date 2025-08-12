@@ -44,3 +44,10 @@ Follow-up actions:
 - When done, run:
 
      `git flow hotfix finish 'fix-render-deployment'`
+
+## issue list
+
+```
+#12 2.838 ?: (staticfiles.W004) The directory '/app/home/static' in the STATICFILES_DIRS setting does not exist.
+#12 2.838 ?: (staticfiles.W004) The directory '/app/sk/static' in the STATICFILES_DIRS setting does not exist.
+```
