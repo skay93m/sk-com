@@ -27,4 +27,5 @@ ENV DJANGO_SECRET_KEY=temp-build-key-not-used-in-production
 RUN uv run python manage.py collectstatic --noinput
 
 # Start Gunicorn using the virtual environment
-CMD ["uv", "run", "gunicorn", "sk.wsgi:application", "--bind", "0.0.0.0:$PORT"]
+# Use shell form to allow environment variable expansion
+CMD uv run gunicorn sk.wsgi:application --bind 0.0.0.0:${PORT:-8000}
