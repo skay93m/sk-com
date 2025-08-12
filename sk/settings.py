@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'bootstrap5',
     'home',
+    'sk',
 ]
 
 MIDDLEWARE = [
@@ -56,6 +57,11 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+# Add security middleware for production
+if not DEBUG:
+    # Add additional security middleware in production
+    pass  # SecurityMiddleware is already included
 
 ROOT_URLCONF = 'sk.urls'
 
@@ -83,14 +89,14 @@ WSGI_APPLICATION = 'sk.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-# Database configuration with PostgreSQL as default and SQLite as fallback
+# Database configuration with PostgreSQL for both development and production
 def get_database_config():
     """
-    Returns database configuration with PostgreSQL as default and SQLite as fallback.
+    Returns PostgreSQL database configuration for both development and production.
     Priority order:
     1. DATABASE_URL (production environments like Render, Heroku)
-    2. Manual PostgreSQL configuration
-    3. SQLite fallback if PostgreSQL fails or is unavailable
+    2. Manual PostgreSQL configuration with environment variables
+    3. Default PostgreSQL settings for development
     """
     
     # First try DATABASE_URL (for production environments)
@@ -101,30 +107,20 @@ def get_database_config():
         except ImportError:
             pass
     
-    # Try PostgreSQL configuration (default for both dev and production)
-    try:
-        import psycopg2
-        return {
-            'default': {
-                'ENGINE': 'django.db.backends.postgresql',
-                'NAME': os.environ.get('DB_NAME', 'sk_website'),
-                'USER': os.environ.get('DB_USER', 'postgres'),
-                'PASSWORD': os.environ.get('DB_PASSWORD', ''),
-                'HOST': os.environ.get('DB_HOST', 'localhost'),
-                'PORT': os.environ.get('DB_PORT', '5432'),
-                'OPTIONS': {
-                    'connect_timeout': 10,
-                },
-            }
+    # PostgreSQL configuration (for both dev and production)
+    return {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.environ.get('DB_NAME', 'sk_website'),
+            'USER': os.environ.get('DB_USER', 'postgres'),
+            'PASSWORD': os.environ.get('DB_PASSWORD', ''),
+            'HOST': os.environ.get('DB_HOST', 'localhost'),
+            'PORT': os.environ.get('DB_PORT', '5432'),
+            'OPTIONS': {
+                'connect_timeout': 10,
+            },
         }
-    except (ImportError, Exception):
-        # Fallback to SQLite if PostgreSQL is not available
-        return {
-            'default': {
-                'ENGINE': 'django.db.backends.sqlite3',
-                'NAME': BASE_DIR / 'db.sqlite3',
-            }
-        }
+    }
 
 DATABASES = get_database_config()
 
@@ -205,6 +201,20 @@ SECURE_HSTS_PRELOAD = os.environ.get("SECURE_HSTS_PRELOAD", "False") == "True"
 SESSION_COOKIE_SECURE = os.environ.get("SESSION_COOKIE_SECURE", "False") == "True"
 CSRF_COOKIE_SECURE = os.environ.get("CSRF_COOKIE_SECURE", "False") == "True"
 
+# Additional security settings for production
+if not DEBUG:
+    # Force secure settings in production if not explicitly set
+    SECURE_SSL_REDIRECT = SECURE_SSL_REDIRECT or True
+    SECURE_HSTS_SECONDS = SECURE_HSTS_SECONDS or 31536000  # 1 year
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = SECURE_HSTS_INCLUDE_SUBDOMAINS or True
+    SECURE_HSTS_PRELOAD = SECURE_HSTS_PRELOAD or True
+    SESSION_COOKIE_SECURE = SESSION_COOKIE_SECURE or True
+    CSRF_COOKIE_SECURE = CSRF_COOKIE_SECURE or True
+    
+    # Additional production security
+    SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
+    SECURE_CROSS_ORIGIN_OPENER_POLICY = 'same-origin'
+
 # Secure proxy headers (important for deployment platforms like Render, Heroku, etc.)
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
@@ -212,3 +222,55 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_BROWSER_XSS_FILTER = True
 X_FRAME_OPTIONS = 'DENY'
+
+# CSRF Settings
+CSRF_TRUSTED_ORIGINS = []
+
+# Production domains - Update these with your actual domains
+if not DEBUG:
+    CSRF_TRUSTED_ORIGINS.extend([
+        'https://syafiqkay.com',
+        'https://www.syafiqkay.com',
+        # Add your actual production domains here
+    ])
+else:
+    # Development domains
+    CSRF_TRUSTED_ORIGINS.extend([
+        'http://localhost:8000',
+        'http://127.0.0.1:8000',
+        'http://0.0.0.0:8000',
+        'https://localhost:8000',
+        'https://127.0.0.1:8000',
+    ])
+
+# Add environment-specific domains from ALLOWED_HOSTS
+for host in ALLOWED_HOSTS:
+    if host and '*' not in host and host not in ['localhost', '127.0.0.1', '0.0.0.0']:
+        # Add both HTTP and HTTPS for each host
+        if DEBUG:
+            CSRF_TRUSTED_ORIGINS.extend([
+                f'http://{host}',
+                f'https://{host}',
+            ])
+        else:
+            # Production - only HTTPS
+            CSRF_TRUSTED_ORIGINS.append(f'https://{host}')
+
+# Handle wildcard domains (for development environments like Codespaces, Gitpod)
+if DEBUG:
+    for host in ALLOWED_HOSTS:
+        if '*' in host:
+            if '*.gitpod.io' in host:
+                CSRF_TRUSTED_ORIGINS.extend([
+                    'https://*.gitpod.io',
+                    'http://*.gitpod.io',
+                ])
+            if '*.github.dev' in host:
+                CSRF_TRUSTED_ORIGINS.extend([
+                    'https://*.github.dev',
+                    'http://*.github.dev',
+                ])
+            if '*.codespaces.githubusercontent.com' in host:
+                CSRF_TRUSTED_ORIGINS.extend([
+                    'https://*.codespaces.githubusercontent.com',
+                ])
