@@ -6,14 +6,20 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
 # Install uv directly
-RUN apt-get update && apt-get install -y curl gcc \
+# Define build dependencies for easier future maintenance
+ARG BUILD_DEPS="curl gcc"
+
+RUN apt-get update && apt-get install -y --no-install-recommends $BUILD_DEPS \
     && curl -LsSf https://astral.sh/uv/install.sh | sh \
     && mv /root/.local/bin/uv /usr/local/bin/uv \
-    && apt-get purge -y --auto-remove curl gcc \
+    && apt-get purge -y --auto-remove $BUILD_DEPS \
     && rm -rf /var/lib/apt/lists/*
 
 # Set working directory
 WORKDIR /app
+
+# Copy dependency file first to leverage Docker cache
+COPY requirements.txt ./
 
 # Copy project files
 COPY . .
@@ -21,11 +27,10 @@ COPY . .
 # Create and sync virtual environment using uv
 RUN uv sync
 
-# Activate virtual environment and collect static files
-# Set a temporary secret key for collectstatic (not used in production)
-ENV DJANGO_SECRET_KEY=temp-build-key-not-used-in-production
-RUN uv run python manage.py collectstatic --noinput
-
 # Start Gunicorn using the virtual environment
 # Use shell form to allow environment variable expansion
-CMD uv run gunicorn sk.wsgi:application --bind 0.0.0.0:${PORT:-8000}
+# Update 'sk.wsgi:application' to match your actual project structure, e.g. 'myproject.wsgi:application'
+CMD uv run gunicorn myproject.wsgi:application --bind 0.0.0.0
+# Start Gunicorn using the virtual environment
+# Use shell form to allow environment variable expansion
+CMD uv run gunicorn sk.wsgi:application --bind 0.0.0.0
