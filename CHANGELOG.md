@@ -1,3 +1,10 @@
+## 0.3.6 (2025-08-12)
+
+### Fix
+
+- new release fix
+- fix Dockerfile
+
 ## 0.3.5 (2025-08-12)
 
 ### Fix
