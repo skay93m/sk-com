@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Hero Details</h2>
+  <h3>{{ hero.header }}</h3>
+  <p>{{ hero.tagline }}</p>
+  <a class="btn btn-primary" href="{% url 'hero_form' %}">Edit</a>
+{% endblock %}
