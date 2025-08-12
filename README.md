@@ -43,4 +43,4 @@ Follow-up actions:
 - Bump the version number now!
 - When done, run:
 
-     git flow hotfix finish 'fix-render-deployment'
+     `git flow hotfix finish 'fix-render-deployment'`
