@@ -5,9 +5,8 @@ from home.models import Hero
 def home(request):
     context = {
         'title': 'Home',
-        'header': Hero.objects.first().header if Hero.objects.exists() else 'Syafiq Kay',
-        'tagline': Hero.objects.first().tagline if Hero.objects.exists() else 'Pharmacist → Aspiring Barrister | Tech Enthusiast | Lifelong Learner',
-        'cta_button': Hero.objects.first().cta if Hero.objects.exists() else '(coming soon)',
+        'header': Hero.objects.first().header,
+        'tagline': Hero.objects.first().tagline,
     }
     return render(request, 'index.html', context)
 

@@ -299,3 +299,8 @@ if DEBUG:
                 CSRF_TRUSTED_ORIGINS.extend([
                     'https://*.codespaces.githubusercontent.com',
                 ])
+
+# Login/Logout URLs
+LOGIN_URL = '/admin/login/'
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
