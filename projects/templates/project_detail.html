@@ -1,0 +1,30 @@
+{% extends 'project_list.html' %}
+
+{% block projects_content %}
+    <h1>{{ project.title }}</h1>
+    
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Project Details</h5>
+            <p class="card-text"><strong>Category:</strong> {{ project.get_category_display }}</p>
+            <p class="card-text"><strong>Description:</strong></p>
+            <p class="card-text">{{ project.description|linebreaks }}</p>
+            <p class="card-text">
+                <small class="text-muted">Created: {{ project.created_at|date:"F d, Y" }}</small><br>
+                <small class="text-muted">Last updated: {{ project.updated_at|date:"F d, Y" }}</small>
+            </p>
+        </div>
+    </div>
+{% endblock %}
+
+{% block projects_actions %}
+    <div style="width: 100%; display: flex; justify-content: center; padding: 16px 0; z-index: 100;">
+        <div>
+            {% if user.is_authenticated %}
+                <a href="{% url 'projects:project_edit' project.pk %}" class="btn btn-primary">Edit Project</a>
+                <a href="{% url 'projects:project_delete' project.pk %}" class="btn btn-danger">Delete Project</a>
+            {% endif %}
+            <a href="{% url 'projects:project_home' %}" class="btn btn-secondary">Back to Projects</a>
+        </div>
+    </div>
+{% endblock %}
