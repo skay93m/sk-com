@@ -1,0 +1,99 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static admin_list %}
+
+{% block extrastyle %}{{ block.super }}<link rel="stylesheet" type="text/css" href="{% static "admin/css/dashboard.css" %}">{% endblock %}
+
+{% block coltype %}colMS{% endblock %}
+
+{% block bodyclass %}{{ block.super }} dashboard{% endblock %}
+
+{% block nav-breadcrumbs %}{% endblock %}
+
+{% block content %}
+<div id="content-main">
+    <div class="row">
+        <div class="col-12 mb-4">
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle me-2"></i>
+                <strong>Welcome to the Administration Dashboard</strong><br>
+                From here you can manage all aspects of your site including projects, writing content, and user accounts.
+            </div>
+        </div>
+    </div>
+
+    {% if app_list %}
+        <div class="row">
+            {% for app in app_list %}
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header bg-primary text-white">
+                            <h3 class="card-title mb-0">
+                                <i class="bi bi-{% if app.app_label == 'home' %}house{% elif app.app_label == 'projects' %}folder{% elif app.app_label == 'writing' %}pencil{% elif app.app_label == 'auth' %}people{% else %}gear{% endif %} me-2"></i>
+                                <a href="{{ app.app_url }}" class="text-white text-decoration-none">{{ app.name }}</a>
+                            </h3>
+                        </div>
+                        <div class="card-body">
+                            {% for model in app.models %}
+                                <div class="mb-2">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <strong class="text-primary">{{ model.name }}</strong>
+                                        <div>
+                                            {% if model.admin_url %}
+                                                <a href="{{ model.admin_url }}" class="btn btn-sm btn-outline-primary me-1" title="Change">
+                                                    <i class="bi bi-pencil"></i>
+                                                </a>
+                                            {% endif %}
+                                            {% if model.add_url %}
+                                                <a href="{{ model.add_url }}" class="btn btn-sm btn-outline-success" title="Add">
+                                                    <i class="bi bi-plus"></i>
+                                                </a>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-warning">
+            <i class="bi bi-exclamation-triangle me-2"></i>
+            You don't have permission to view or edit anything.
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block sidebar %}
+<div id="content-related">
+    <div class="module" id="recent-actions-module">
+        <h2>Recent actions</h2>
+        <h3>My actions</h3>
+        {% load log %}
+        {% get_admin_log 10 as admin_log for_user user %}
+        {% if not admin_log %}
+            <p>None available</p>
+        {% else %}
+            <ul class="actionlist">
+                {% for entry in admin_log %}
+                    <li class="{% if entry.is_addition %}addlink{% endif %}{% if entry.is_change %}changelink{% endif %}{% if entry.is_deletion %}deletelink{% endif %}">
+                        {% if entry.is_deletion or not entry.get_admin_url %}
+                            {{ entry.object_repr }}
+                        {% else %}
+                            <a href="{{ entry.get_admin_url }}">{{ entry.object_repr }}</a>
+                        {% endif %}
+                        <br>
+                        {% if entry.content_type %}
+                            <span class="mini quiet">{{ entry.content_type.name|capfirst }}</span>
+                        {% else %}
+                            <span class="mini quiet">Unknown content</span>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

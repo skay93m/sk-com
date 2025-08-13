@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    {% block projects_content %}
+    <h1>Projects</h1>
+    <p>Welcome to the projects page!</p>
+    <div class="row" style="display: flex; flex-wrap: wrap; gap: 16px;">
+        {% if projects %}
+            {% for project in projects %}
+            <div class="card" style="flex: 1 1 calc(25% - 16px); max-width: calc(25% - 16px); margin-bottom: 16px;">
+                <a href="{% url 'projects:project_detail' project.pk %}">{{ project.title }}</a>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12">
+                <p>No projects available.</p>
+            </div>
+        {% endif %}
+    </div>
+    {% endblock %}
+    {% block projects_actions %}
+    <div style="width: 100%; display: flex; justify-content: center; padding: 16px 0; z-index: 100;">
+        {% if user.is_authenticated %}
+            <div>
+                <button class="btn btn-primary" onclick="location.href='{% url 'projects:project_create' %}';">Create New Project</button>
+            </div>
+        {% else %}
+            <div class="alert alert-info mt-3" role="alert">
+                <strong>Notice:</strong> Please <a href="{% url 'admin:login' %}?next={{ request.path }}" class="alert-link">log in</a> to create and manage projects.
+            </div>
+        {% endif %}
+    </div>
+    {% endblock %}
+</div>
+{% endblock %}

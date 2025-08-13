@@ -1,0 +1,55 @@
+{% extends 'project_list.html' %}
+
+{% block projects_content %}
+    <h1>Edit Project</h1>
+    
+    {% if user.is_authenticated %}
+        <form method="post" id="project-edit-form">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="{{ form.title.id_for_label }}" class="form-label">{{ form.title.label }}</label>
+                {{ form.title }}
+                {% if form.title.errors %}
+                    <div class="text-danger">
+                        {{ form.title.errors }}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="mb-3">
+                <label for="{{ form.category.id_for_label }}" class="form-label">{{ form.category.label }}</label>
+                {{ form.category }}
+                {% if form.category.errors %}
+                    <div class="text-danger">
+                        {{ form.category.errors }}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <div class="mb-3">
+                <label for="{{ form.description.id_for_label }}" class="form-label">{{ form.description.label }}</label>
+                {{ form.description }}
+                {% if form.description.errors %}
+                    <div class="text-danger">
+                        {{ form.description.errors }}
+                    </div>
+                {% endif %}
+            </div>
+        </form>
+    {% else %}
+        <div class="alert alert-warning" role="alert">
+            You must be logged in to edit a project. Please <a href="{% url 'admin:login' %}?next={{ request.path }}" class="alert-link">log in</a>.
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block projects_actions %}
+    {% if user.is_authenticated %}
+        <div style="width: 100%; display: flex; justify-content: center; padding: 16px 0; z-index: 100;">
+            <div>
+                <button type="submit" form="project-edit-form" class="btn btn-success">Update Project</button>
+                <a href="{% url 'projects:project_detail' project.pk %}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}

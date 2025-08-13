@@ -147,3 +147,33 @@
   --bs-btn-hover-border-color: var(--cambridge-blue);
   --bs-btn-focus-shadow-rgb: 242, 204, 143;
 }
+
+/* Authentication Status Styles */
+.navbar-text {
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  margin-bottom: 0;
+}
+
+.navbar-text.text-success {
+  color: var(--bs-success) !important;
+}
+
+.navbar-text.text-warning {
+  color: var(--bs-warning) !important;
+}
+
+.nav-link.btn {
+  margin-left: 0.5rem;
+  border-radius: 0.375rem;
+  display: flex;
+  align-items: center;
+  padding: 0.375rem 0.75rem;
+}
+
+/* Ensure all navbar items are aligned */
+.navbar-nav .nav-item {
+  display: flex;
+  align-items: center;
+}

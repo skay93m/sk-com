@@ -1,0 +1,18 @@
+{% load i18n %}
+<fieldset class="module aligned {% if fieldset.classes %}{{ fieldset.classes }}{% endif %}">
+    {% if fieldset.name %}
+        <h2 class="text-primary border-bottom pb-2 mb-3">{{ fieldset.name }}</h2>
+    {% endif %}
+    {% if fieldset.description %}
+        <div class="description alert alert-info">{{ fieldset.description|safe }}</div>
+    {% endif %}
+    {% for line in fieldset %}
+        <div class="form-row{% if line.fields|length_is:'1' and line.errors %} errors{% endif %}{% if not line.has_visible_field %} hidden{% endif %}{% for field in line %}{% if field.field.name %} field-{{ field.field.name }}{% endif %}{% endfor %}">
+            {% if line.fields|length_is:'1' %}{{ line.contents }}{% else %}
+                <ul{% if line.classes %} class="{{ line.classes }}"{% endif %}>
+                    {{ line.contents }}
+                </ul>
+            {% endif %}
+        </div>
+    {% endfor %}
+</fieldset>

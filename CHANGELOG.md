@@ -1,3 +1,18 @@
+## 2.0.0 (2025-08-13)
+
+### Feat
+
+- **projects**: add complete projects management app with CRUD operations
+- **writing**: add writing management app with content creation capabilities  
+- **admin**: implement secure admin login with enhanced customization
+- **security**: add comprehensive middleware and authentication features
+- **ui**: enhanced admin interface with custom templates and styling
+
+### Breaking Changes
+
+- Added new apps requiring database migrations
+- Enhanced security settings may require environment configuration updates
+
 ## 0.4.0 (2025-08-13)
 
 ### Feat
