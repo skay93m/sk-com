@@ -1,0 +1,25 @@
+{% extends 'hero.html' %}
+
+{% block card_header %}
+  <h2>Edit Hero</h2>
+{% endblock %}
+
+{% block card_body %}
+  <form method="post" id="heroForm">
+    {% csrf_token %}
+    <div class="mb-3">
+      <label for="{{ form.header.id_for_label }}" class="form-label">Header</label>
+      {{ form.header }}
+    </div>
+    <div class="mb-3">
+      <label for="{{ form.tagline.id_for_label }}" class="form-label">Tagline</label>
+      {{ form.tagline }}
+    </div>
+  </form>
+{% endblock %}
+
+{% block card_footer %}
+  <button type="submit" form="heroForm" class="btn btn-primary">Save</button>
+  <a class="btn btn-secondary" href="{% url 'hero' %}">Cancel</a>
+{% endblock %}
+

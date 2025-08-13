@@ -1,30 +1,25 @@
-from django.shortcuts import render
-from datetime import datetime
+from django.shortcuts import render, redirect
+from home.forms import HeroForm
+from home.models import Hero
 
 def home(request):
     context = {
         'title': 'Home',
-        'header': 'Welcome!',
-        'statement1': 'Pharmacist → Aspiring Barrister | Tech Enthusiast | Lifelong Learner', # who am I
-        'statement2': (
-            "Welcome to my website (coming soon)"
-        ), # what I do
-        'cta_button': 'Explore (coming soon)', # call to action
-        'portfolio1': '',
-        'portfolio2': '',
-        'portfolio3': '',
-        'portfolio4': '',
-        'portfolio5': '',
-        'portfolio6': '',
-        'portfolio7': '',
-        'portfolio8': '',
-        'project1': '',
-        'project1_description': '',
-        'project2': '',
-        'project2_description': '',
-        'project3': '',
-        'project3_description': '',
-        'project4': '',
-        'project4_description': '',
+        'header': Hero.objects.first().header,
+        'tagline': Hero.objects.first().tagline,
     }
     return render(request, 'index.html', context)
+
+def hero(request):
+    return render(request, 'hero.html', {'hero': Hero.objects.first()})
+
+def hero_form(request):
+    if request.method == 'POST':
+        form = HeroForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('home')
+    else:
+        form = HeroForm()
+    return render(request, 'hero_form.html', {'form': form})
+

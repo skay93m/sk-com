@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="d-flex justify-content-center">
+  <div class="container" style="max-width: 400px;">
+    {% if user.is_authenticated %}
+      <div class="card">
+        <div class="card-header">
+          {% block card_header %}
+          <h2>Latest entry</h2>
+          {% endblock %}
+        </div>
+        <div class="card-body text-center">
+          {% block card_body %}
+          <p><strong>Header:</strong> {{ hero.header }}</p>
+          <p><strong>Tagline:</strong> {{ hero.tagline }}</p>
+          {% endblock %}
+        </div>
+        <div class="card-footer d-flex justify-content-between">
+          {% block card_footer %}
+          <a class="btn btn-primary" href="{% url 'hero_form' %}">Edit</a>
+          <a class="btn btn-secondary" href="{% url 'admin:logout' %}">Logout</a>
+          {% endblock %}
+        </div>
+      </div>
+    {% else %}
+      <div class="d-flex align-items-center justify-content-center" style="min-height: 150px; height: 100%;">
+        <div class="alert alert-danger text-center w-100">
+          <p>
+        Please log in to
+        <a href="{% url 'admin:login' %}?next={% url 'hero' %}">admin console</a>
+        to view hero details.
+          </p>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
