@@ -11,7 +11,11 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 import os
+import sys
 from pathlib import Path
+
+# Detect if we're running tests
+TESTING = 'test' in sys.argv or 'pytest' in sys.modules
 
 # Load environment variables from .env file (development only)
 try:
@@ -56,6 +60,13 @@ if not DEBUG:
     }
 
 ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "").split(",")
+
+# Add testserver for Django testing
+if 'testserver' not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append('testserver')
+
+# Filter out empty strings from environment variable parsing
+ALLOWED_HOSTS = [host for host in ALLOWED_HOSTS if host.strip()]
 
 
 # Application definition
@@ -231,7 +242,7 @@ SESSION_COOKIE_SECURE = os.environ.get("SESSION_COOKIE_SECURE", "False") == "Tru
 CSRF_COOKIE_SECURE = os.environ.get("CSRF_COOKIE_SECURE", "False") == "True"
 
 # Additional security settings for production
-if not DEBUG:
+if not DEBUG and not TESTING:
     # Force secure settings in production if not explicitly set
     SECURE_SSL_REDIRECT = SECURE_SSL_REDIRECT or True
     SECURE_HSTS_SECONDS = SECURE_HSTS_SECONDS or 31536000  # 1 year
