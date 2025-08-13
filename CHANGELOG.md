@@ -1,3 +1,16 @@
+## 0.4.0 (2025-08-13)
+
+### Feat
+
+- **home**: updated homepage with hero section
+- implement Hero model, forms, and views; update templates for hero details and creation
+
+## v1.0.1 (2025-08-12)
+
+### Fix
+
+- new release fix
+
 ## 0.3.6 (2025-08-12)
 
 ### Fix
