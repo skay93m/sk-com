@@ -1,0 +1,35 @@
+{% extends 'project_list.html' %}
+
+{% block projects_content %}
+    <h1>Delete Project</h1>
+    
+    {% if user.is_authenticated %}
+        <div class="alert alert-danger" role="alert">
+            <h4 class="alert-heading">Are you sure?</h4>
+            <p>You are about to delete the project "<strong>{{ project.title }}</strong>". This action cannot be undone.</p>
+            <hr>
+            <p class="mb-0">
+                <strong>Description:</strong> {{ project.description|truncatewords:20 }}
+            </p>
+        </div>
+        
+        <form method="post" id="project-delete-form">
+            {% csrf_token %}
+        </form>
+    {% else %}
+        <div class="alert alert-warning" role="alert">
+            You must be logged in to delete a project. Please <a href="{% url 'admin:login' %}?next={{ request.path }}" class="alert-link">log in</a>.
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block projects_actions %}
+    {% if user.is_authenticated %}
+        <div style="width: 100%; display: flex; justify-content: center; padding: 16px 0; z-index: 100;">
+            <div>
+                <button type="submit" form="project-delete-form" class="btn btn-danger">Yes, Delete Project</button>
+                <a href="{% url 'projects:project_detail' project.pk %}" class="btn btn-secondary">Cancel</a>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
