@@ -69,8 +69,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'bootstrap5',
     'home',
-    'sk',
+    'sk.apps.SkConfig',
     'projects',
+    'writing',
 ]
 
 MIDDLEWARE = [
@@ -80,6 +81,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'sk.middleware.SecureAdminMiddleware',  # Custom middleware for secure admin access
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -97,6 +99,7 @@ TEMPLATES = [
         'DIRS': [
             os.path.join(BASE_DIR, 'sk', 'templates'),
             os.path.join(BASE_DIR, 'home', 'templates'),
+            os.path.join(BASE_DIR, 'writing', 'templates'),
         ],
         'APP_DIRS': True,
         'OPTIONS': {

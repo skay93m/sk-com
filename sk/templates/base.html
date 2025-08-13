@@ -21,16 +21,39 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-auto">
+                    <ul class="navbar-nav me-auto">
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'projects:project_home' %}">Projects</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#writing">Writing</a>
+                            <a class="nav-link" href="{% url 'writing:writing_list' %}">Writing</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'admin:index' %}">Admin</a>
-                        </li>
+                    </ul>
+                    <ul class="navbar-nav ms-auto">
+                        {% if user.is_authenticated %}
+                            <li class="nav-item d-flex align-items-center">
+                                <span class="navbar-text text-success me-3">
+                                    <i class="bi bi-check-circle-fill"></i> Authenticated as {{ user.username }}
+                                </span>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'admin:index' %}">Admin</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'secure_admin_logout' %}">Logout</a>
+                            </li>
+                        {% else %}
+                            <li class="nav-item d-flex align-items-center">
+                                <span class="navbar-text text-warning me-3">
+                                    <i class="bi bi-exclamation-triangle-fill"></i> Unauthorized
+                                </span>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link btn btn-outline-primary btn-sm" href="{% url 'secure_admin_login' %}?next={{ request.get_full_path }}">
+                                    <i class="bi bi-box-arrow-in-right"></i> Login
+                                </a>
+                            </li>
+                        {% endif %}
                     </ul>
                 </div>
             </div>
