@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="container text-center text-primary">
+        <h1 class="display-4">Syafiq Kay, MPharm, MRPharmS, GDL</h1>
+        <p>Pharmacist, Aspiring Barrister, Tech Enthusiast, Lifelong Learner</p>
+        <!-- credentials section -->
+        <div class="credentials">
+            <ul class="list-inline">
+                {% for credential in credentials %}
+                    <li class="list-inline-item">
+                        <span class="badge rounded-pill bg-secondary" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ credential.details }}">
+                            {{ credential.icon }} {{ credential.name }}
+                        </span>
+                    </li>
+                {% endfor %}
+            </ul>
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+                    tooltipTriggerList.forEach(function (tooltipTriggerEl) {
+                        new bootstrap.Tooltip(tooltipTriggerEl);
+                    });
+                });
+            </script>
+        </div>
+        <!-- experience section -->
+        <!-- education section -->
+    </div>
+</div>
+{% endblock %}

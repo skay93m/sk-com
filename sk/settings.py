@@ -83,6 +83,7 @@ INSTALLED_APPS = [
     'sk.apps.SkConfig',
     'projects',
     'writing',
+    'cv',
 ]
 
 MIDDLEWARE = [
@@ -111,6 +112,7 @@ TEMPLATES = [
             os.path.join(BASE_DIR, 'sk', 'templates'),
             os.path.join(BASE_DIR, 'home', 'templates'),
             os.path.join(BASE_DIR, 'writing', 'templates'),
+            os.path.join(BASE_DIR, 'cv', 'templates'),
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -210,6 +212,9 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'sk', 'static'),
     os.path.join(BASE_DIR, 'home', 'static'),
+    os.path.join(BASE_DIR, 'projects', 'static'),
+    os.path.join(BASE_DIR, 'writing', 'static'),
+    os.path.join(BASE_DIR, 'cv', 'static'),
 ]
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
