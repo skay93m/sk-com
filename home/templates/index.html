@@ -2,10 +2,217 @@
 {% load static %}
 
 {% block content %}
-<div class="container mt-4 mb-4">
+<!-- Hero Section -->
+<div class="container-fluid text-white py-5 mb-5" style="background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);">
     <div class="container">
-        <h1 class="display-4 text-center">{{ header }}</h1>
-        <p class="lead text-center">{{ tagline }}</p>
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h1 class="display-4 fw-bold mb-3">{{ header }}</h1>
+                <p class="lead mb-4">{{ tagline }}</p>
+                <div class="d-flex gap-3 flex-wrap">
+                    <a href="{% url 'cv:cv_main' %}" class="btn btn-light btn-lg">
+                        <i class="bi bi-file-earmark-person"></i> View CV
+                    </a>
+                    <a href="{% url 'projects:project_home' %}" class="btn btn-outline-light btn-lg">
+                        <i class="bi bi-folder"></i> Projects
+                    </a>
+                    <a href="{% url 'writing:writing_list' %}" class="btn btn-outline-light btn-lg">
+                        <i class="bi bi-pen"></i> Writing
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-4 text-center">
+                <i class="bi bi-person-circle display-1"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Stats Section -->
+<div class="container mb-5">
+    <div class="row text-center">
+        <div class="col-12 mb-4">
+            <h2 class="display-6 text-muted">Portfolio Overview</h2>
+        </div>
+    </div>
+    <div class="row g-4">
+        <!-- Credentials Card -->
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-body text-center">
+                    <div class="display-4 text-success mb-3">
+                        <i class="bi bi-award"></i>
+                    </div>
+                    <h3 class="card-title h1 text-primary">{{ stats.credentials }}</h3>
+                    <p class="card-text text-muted">Professional Credentials</p>
+                    <a href="{% url 'cv:cv_main' %}" class="btn btn-outline-success btn-sm">View All</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Projects Card -->
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-body text-center">
+                    <div class="display-4 text-info mb-3">
+                        <i class="bi bi-folder-fill"></i>
+                    </div>
+                    <h3 class="card-title h1 text-primary">{{ stats.projects }}</h3>
+                    <p class="card-text text-muted">
+                        Total Projects
+                        {% if stats.current_projects > 0 %}
+                            <br><small class="text-success">{{ stats.current_projects }} active</small>
+                        {% endif %}
+                    </p>
+                    <a href="{% url 'projects:project_home' %}" class="btn btn-outline-info btn-sm">Explore</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Writings Card -->
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-body text-center">
+                    <div class="display-4 text-warning mb-3">
+                        <i class="bi bi-pen-fill"></i>
+                    </div>
+                    <h3 class="card-title h1 text-primary">{{ stats.writings }}</h3>
+                    <p class="card-text text-muted">
+                        Published Articles
+                        {% if stats.featured_writings > 0 %}
+                            <br><small class="text-warning">{{ stats.featured_writings }} featured</small>
+                        {% endif %}
+                    </p>
+                    <a href="{% url 'writing:writing_list' %}" class="btn btn-outline-warning btn-sm">Read More</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Card -->
+        <div class="col-md-6 col-lg-3">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-body text-center">
+                    <div class="display-4 text-secondary mb-3">
+                        <i class="bi bi-envelope-fill"></i>
+                    </div>
+                    <h3 class="card-title h4 text-primary">Get in Touch</h3>
+                    <p class="card-text text-muted">Ready to collaborate?</p>
+                    <a href="mailto:syafiq@syafiqkay.com" class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-envelope"></i> Contact Me
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Detailed Stats Section (Optional) -->
+{% if project_breakdown or writing_breakdown %}
+<div class="container mb-5">
+    <div class="row">
+        <div class="col-12 mb-4">
+            <h3 class="text-center text-muted">Detailed Breakdown</h3>
+        </div>
+    </div>
+    <div class="row">
+        <!-- Project Breakdown -->
+        {% if project_breakdown %}
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="bi bi-bar-chart"></i> Projects by Category</h5>
+                </div>
+                <div class="card-body">
+                    {% for category, count in project_breakdown.items %}
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="text-capitalize">
+                            {% if category == 'now' %}
+                                <i class="bi bi-lightning-fill text-success"></i> Current
+                            {% elif category == 'backburner' %}
+                                <i class="bi bi-pause-circle text-warning"></i> Backburner
+                            {% else %}
+                                <i class="bi bi-clock text-secondary"></i> Someday
+                            {% endif %}
+                        </span>
+                        <span class="badge bg-primary">{{ count }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Writing Breakdown -->
+        {% if writing_breakdown %}
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0"><i class="bi bi-pie-chart"></i> Writing by Type</h5>
+                </div>
+                <div class="card-body">
+                    {% for type, count in writing_breakdown.items %}
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="text-capitalize">
+                            {% if type == 'article' %}
+                                <i class="bi bi-newspaper text-primary"></i>
+                            {% elif type == 'blog' %}
+                                <i class="bi bi-journal-text text-info"></i>
+                            {% elif type == 'story' %}
+                                <i class="bi bi-book text-success"></i>
+                            {% elif type == 'poem' %}
+                                <i class="bi bi-heart text-danger"></i>
+                            {% elif type == 'essay' %}
+                                <i class="bi bi-file-text text-secondary"></i>
+                            {% else %}
+                                <i class="bi bi-file-richtext text-muted"></i>
+                            {% endif %}
+                            {{ type|title }}
+                        </span>
+                        <span class="badge bg-warning text-dark">{{ count }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+
+<!-- Quick Links Section -->
+<div class="container mb-5">
+    <div class="row">
+        <div class="col-12 mb-4">
+            <h3 class="text-center text-muted">Quick Access</h3>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-body text-center">
+                    <div class="row">
+                        <div class="col-4">
+                            <a href="https://www.linkedin.com/in/syafiqkay/" target="_blank" class="text-decoration-none">
+                                <i class="bi bi-linkedin display-5 text-primary"></i>
+                                <div class="small text-muted mt-2">LinkedIn</div>
+                            </a>
+                        </div>
+                        <div class="col-4">
+                            <a href="https://github.com/skay93m" target="_blank" class="text-decoration-none">
+                                <i class="bi bi-github display-5 text-dark"></i>
+                                <div class="small text-muted mt-2">GitHub</div>
+                            </a>
+                        </div>
+                        <div class="col-4">
+                            <a href="mailto:syafiq@syafiqkay.com" class="text-decoration-none">
+                                <i class="bi bi-envelope display-5 text-success"></i>
+                                <div class="small text-muted mt-2">Email</div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}

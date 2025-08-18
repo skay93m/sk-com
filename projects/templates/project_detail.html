@@ -10,8 +10,8 @@
             <p class="card-text"><strong>Description:</strong></p>
             <p class="card-text">{{ project.description|linebreaks }}</p>
             <p class="card-text">
-                <small class="text-muted">Created: {{ project.created_at|date:"F d, Y" }}</small><br>
-                <small class="text-muted">Last updated: {{ project.updated_at|date:"F d, Y" }}</small>
+                <small class="text-muted">Created: {{ project.created_at|date:"j M Y" }}</small><br>
+                <small class="text-muted">Last updated: {{ project.updated_at|date:"j M Y" }}</small>
             </p>
         </div>
     </div>

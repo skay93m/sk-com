@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1 class="display-5">
+                    <i class="bi bi-star-fill text-warning me-2"></i>Hero Sections
+                </h1>
+                <a href="{% url 'hero_form' %}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Add New Hero
+                </a>
+            </div>
+            
+            {% if heroes %}
+                <div class="row">
+                    {% for hero in heroes %}
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="card h-100 shadow-sm border-0">
+                            <div class="card-header d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0 text-truncate">{{ hero.header|truncatechars:30 }}</h5>
+                                <small class="text-muted">
+                                    <i class="bi bi-clock"></i> {{ hero.updated_at|date:"M d, Y" }}
+                                </small>
+                            </div>
+                            <div class="card-body">
+                                <h6 class="card-title text-primary">Header:</h6>
+                                <p class="card-text mb-3">{{ hero.header }}</p>
+                                
+                                <h6 class="card-title text-primary">Tagline:</h6>
+                                <p class="card-text text-muted">{{ hero.tagline|truncatechars:100 }}</p>
+                                
+                                {% if hero.cta %}
+                                <h6 class="card-title text-primary">Call to Action:</h6>
+                                <p class="card-text">{{ hero.cta }}</p>
+                                {% endif %}
+                            </div>
+                            <div class="card-footer bg-transparent">
+                                <div class="d-flex gap-2">
+                                    <a href="{% url 'hero_form' %}" class="btn btn-outline-primary btn-sm flex-fill">
+                                        <i class="bi bi-pencil"></i> Edit
+                                    </a>
+                                    <button class="btn btn-outline-danger btn-sm" onclick="confirmDelete('{{ hero.id }}', '{{ hero.header|truncatechars:20 }}')">
+                                        <i class="bi bi-trash"></i> Delete
+                                    </button>
+                                    <a href="{% url 'home' %}" class="btn btn-outline-success btn-sm" title="Preview">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <!-- Hero Statistics -->
+                <div class="row mt-5">
+                    <div class="col-md-12">
+                        <div class="card bg-light">
+                            <div class="card-header">
+                                <h5 class="mb-0"><i class="bi bi-bar-chart"></i> Hero Statistics</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row text-center">
+                                    <div class="col-md-4">
+                                        <div class="h3 text-primary">{{ heroes.count }}</div>
+                                        <div class="text-muted">Total Heroes</div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="h3 text-success">{{ heroes.first.updated_at|date:"M d" }}</div>
+                                        <div class="text-muted">Last Updated</div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="h3 text-info">1</div>
+                                        <div class="text-muted">Active Hero</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <!-- Empty State -->
+                <div class="text-center py-5">
+                    <div class="display-1 text-muted mb-4">
+                        <i class="bi bi-star"></i>
+                    </div>
+                    <h3 class="text-muted mb-3">No Hero Sections Found</h3>
+                    <p class="text-muted mb-4">Create your first hero section to get started with your homepage.</p>
+                    <a href="{% url 'hero_form' %}" class="btn btn-primary btn-lg">
+                        <i class="bi bi-plus-circle"></i> Create First Hero
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">
+                    <i class="bi bi-exclamation-triangle text-warning"></i> Confirm Deletion
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete the hero section "<span id="heroTitle"></span>"?</p>
+                <p class="text-danger small"><strong>Warning:</strong> This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form method="post" id="deleteForm" style="display: inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash"></i> Delete Hero
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function confirmDelete(heroId, heroTitle) {
+    document.getElementById('heroTitle').textContent = heroTitle;
+    document.getElementById('deleteForm').action = '{% url "hero_delete" 0 %}'.replace('0', heroId);
+    var deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+    deleteModal.show();
+}
+</script>
+{% endblock %}
