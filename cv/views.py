@@ -32,10 +32,32 @@ def credential_create(request):
     if request.method == 'POST':
         form = CredentialForm(request.POST, request.FILES)  # Added request.FILES for file upload
         if form.is_valid():
-            credential = form.save(commit=False)
-            credential.save()
-            messages.success(request, f'Credential "{credential.title}" created successfully!')
-            return redirect('cv:credential_detail', pk=credential.pk)
+            try:
+                credential = form.save(commit=False)
+                credential.save()
+                messages.success(request, f'Credential "{credential.title}" created successfully!')
+                return redirect('cv:credential_detail', pk=credential.pk)
+            except Exception as e:
+                # Log the error for debugging
+                import logging
+                logger = logging.getLogger(__name__)
+                logger.error(f'Error saving credential: {str(e)}')
+                
+                messages.error(request, f'An error occurred while saving the credential: {str(e)}')
+        else:
+            # Add form errors to messages
+            if form.errors:
+                error_messages = []
+                for field, errors in form.errors.items():
+                    if field == '__all__':
+                        error_messages.extend(errors)
+                    else:
+                        field_name = form.fields[field].label or field.replace('_', ' ').title()
+                        for error in errors:
+                            error_messages.append(f'{field_name}: {error}')
+                
+                if error_messages:
+                    messages.error(request, 'Please correct the following errors: ' + '; '.join(error_messages))
     else:
         form = CredentialForm()
     
@@ -58,10 +80,32 @@ def credential_edit(request, pk):
     if request.method == 'POST':
         form = CredentialForm(request.POST, request.FILES, instance=credential)  # Added request.FILES for file upload
         if form.is_valid():
-            credential = form.save(commit=False)
-            credential.save()
-            messages.success(request, f'Credential "{credential.title}" updated successfully!')
-            return redirect('cv:credential_detail', pk=credential.pk)
+            try:
+                credential = form.save(commit=False)
+                credential.save()
+                messages.success(request, f'Credential "{credential.title}" updated successfully!')
+                return redirect('cv:credential_detail', pk=credential.pk)
+            except Exception as e:
+                # Log the error for debugging
+                import logging
+                logger = logging.getLogger(__name__)
+                logger.error(f'Error updating credential: {str(e)}')
+                
+                messages.error(request, f'An error occurred while updating the credential: {str(e)}')
+        else:
+            # Add form errors to messages
+            if form.errors:
+                error_messages = []
+                for field, errors in form.errors.items():
+                    if field == '__all__':
+                        error_messages.extend(errors)
+                    else:
+                        field_name = form.fields[field].label or field.replace('_', ' ').title()
+                        for error in errors:
+                            error_messages.append(f'{field_name}: {error}')
+                
+                if error_messages:
+                    messages.error(request, 'Please correct the following errors: ' + '; '.join(error_messages))
     else:
         form = CredentialForm(instance=credential)
         

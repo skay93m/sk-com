@@ -76,6 +76,9 @@ class CredentialForm(forms.ModelForm):
         # Populate existing icon choices
         self.fields['icon_choice'].choices = get_existing_icons()
         
+        # Make the hidden icon field not required since we handle it in clean()
+        self.fields['icon'].required = False
+        
         # If editing an existing credential, set the current icon
         if self.instance and self.instance.icon:
             self.fields['icon_choice'].initial = self.instance.icon
@@ -91,6 +94,25 @@ class CredentialForm(forms.ModelForm):
         if icon_choice and icon_upload:
             raise forms.ValidationError('Please choose either an existing icon OR upload a new one, not both.')
         
+        # Validate uploaded file
+        if icon_upload:
+            # Check file extension
+            allowed_extensions = ['.png', '.jpg', '.jpeg', '.svg', '.gif']
+            file_extension = os.path.splitext(icon_upload.name)[1].lower()
+            if file_extension not in allowed_extensions:
+                raise forms.ValidationError(f'Invalid file type. Please upload a PNG, JPG, JPEG, SVG, or GIF file.')
+            
+            # Check file size (5MB limit)
+            if icon_upload.size > 5 * 1024 * 1024:
+                raise forms.ValidationError('File size must be less than 5MB.')
+        
+        # Set the icon field value for validation
+        if icon_choice:
+            cleaned_data['icon'] = icon_choice
+        elif icon_upload:
+            # We'll set this in save() method after processing the upload
+            cleaned_data['icon'] = 'will_be_set_in_save'
+        
         return cleaned_data
     
     def save(self, commit=True):
@@ -101,27 +123,33 @@ class CredentialForm(forms.ModelForm):
         icon_choice = self.cleaned_data.get('icon_choice')
         
         if icon_upload:
-            # Save uploaded file to cv/static/icon/
-            icon_dir = os.path.join(settings.BASE_DIR, 'cv', 'static', 'icon')
-            os.makedirs(icon_dir, exist_ok=True)
-            
-            # Generate unique filename to avoid conflicts
-            file_extension = os.path.splitext(icon_upload.name)[1]
-            base_name = os.path.splitext(icon_upload.name)[0]
-            unique_filename = f"{base_name}_{uuid.uuid4().hex[:8]}{file_extension}"
-            
-            file_path = os.path.join(icon_dir, unique_filename)
-            
-            # Save the file
-            with open(file_path, 'wb+') as destination:
-                for chunk in icon_upload.chunks():
-                    destination.write(chunk)
-            
-            instance.icon = unique_filename
+            try:
+                # Save uploaded file to cv/static/icon/
+                icon_dir = os.path.join(settings.BASE_DIR, 'cv', 'static', 'icon')
+                os.makedirs(icon_dir, exist_ok=True)
+                
+                # Generate unique filename to avoid conflicts
+                file_extension = os.path.splitext(icon_upload.name)[1]
+                base_name = os.path.splitext(icon_upload.name)[0]
+                unique_filename = f"{base_name}_{uuid.uuid4().hex[:8]}{file_extension}"
+                
+                file_path = os.path.join(icon_dir, unique_filename)
+                
+                # Save the file
+                with open(file_path, 'wb+') as destination:
+                    for chunk in icon_upload.chunks():
+                        destination.write(chunk)
+                
+                instance.icon = unique_filename
+            except Exception as e:
+                raise forms.ValidationError(f'Error saving icon file: {str(e)}')
         elif icon_choice:
             instance.icon = icon_choice
         
         if commit:
-            instance.save()
+            try:
+                instance.save()
+            except Exception as e:
+                raise forms.ValidationError(f'Error saving credential: {str(e)}')
         
         return instance
