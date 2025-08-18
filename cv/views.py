@@ -3,6 +3,7 @@ from .models import Credentials
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .forms import CredentialForm
+from .utils import get_available_icons
 
 def cv_main(request):
     context = {
@@ -13,14 +14,23 @@ def cv_main(request):
 
 def credential_list(request):
     '''Display list of all credentials'''
-    credentials = Credentials.objects.all
-    return render(request, 'credential_detail.html', context={credentials,})
+    credentials = Credentials.objects.all()
+    return render(request, 'credential_list.html', context={'credentials': credentials})
+
+@login_required
+def credential_detail(request, pk):
+    '''Display a single credential'''
+    credential = get_object_or_404(Credentials, pk=pk)
+    context = {
+        'credential': credential,
+    }
+    return render(request, 'credential_detail.html', context)
 
 @login_required
 def credential_create(request):
     '''Create a new credential'''
     if request.method == 'POST':
-        form = CredentialForm(request.POST)
+        form = CredentialForm(request.POST, request.FILES)  # Added request.FILES for file upload
         if form.is_valid():
             credential = form.save(commit=False)
             credential.save()
@@ -32,6 +42,7 @@ def credential_create(request):
     context = {
         'form': form,
         'title': 'Create New Credential',
+        'available_icons': get_available_icons(),
     }
     return render(request, 'credential_form.html', context)
 
@@ -39,13 +50,13 @@ def credential_create(request):
 def credential_edit(request, pk):
     credential = get_object_or_404(Credentials, pk=pk)
     
-    # only allow staff to edit
-    if credential.author != request.user and not request.user.is_staff:
-        messages.error(request, 'You do not have permission to edit this writing.')
+    # only allow staff to edit credentials
+    if not request.user.is_staff:
+        messages.error(request, 'You do not have permission to edit credentials.')
         return redirect('cv:cv_main')
     
     if request.method == 'POST':
-        form = CredentialForm(request.POST, instance=credential)
+        form = CredentialForm(request.POST, request.FILES, instance=credential)  # Added request.FILES for file upload
         if form.is_valid():
             credential = form.save(commit=False)
             credential.save()
@@ -58,6 +69,7 @@ def credential_edit(request, pk):
         'form': form,
         'credential': credential,
         'title': f'Edit: {credential.title}',
+        'available_icons': get_available_icons(),
     }
     return render(request, 'credential_form.html', context)
 
@@ -66,15 +78,15 @@ def credential_delete(request, pk):
     '''Delete a credential'''
     credential = get_object_or_404(Credentials, pk=pk)
     
-    # only allow author or staff to delete
-    if credential.author != request.user and not request.user.is_staff:
+    # only allow staff to delete credentials
+    if not request.user.is_staff:
         messages.error(request, 'You do not have permission to delete credentials.')
         return redirect('cv:credential_detail', pk=pk)
     
     if request.method == 'POST':
         title = credential.title
         credential.delete()
-        messages.success(request, f'Writing "{title}" deleted successfully!')
+        messages.success(request, f'Credential "{title}" deleted successfully!')
         return redirect('cv:cv_main')
     
     context = {
