@@ -82,6 +82,7 @@
                                     <tr>
                                         <th scope="col">#</th>
                                         <th scope="col">Question</th>
+                                        <th scope="col">Topics</th>
                                         <th scope="col">Difficulty</th>
                                         <th scope="col">SRS Stage</th>
                                         <th scope="col">Choices</th>
@@ -103,6 +104,18 @@
                                                     </small>
                                                 {% endif %}
                                             </div>
+                                        </td>
+                                        <td class="align-middle">
+                                            {% if mcq.topics.exists %}
+                                                {% for topic in mcq.topics.all %}
+                                                    <span class="badge me-1 mb-1" style="background-color: {{ topic.color }}; color: white;">
+                                                        {{ topic.name }}
+                                                    </span>
+                                                    {% if not forloop.last %}<br>{% endif %}
+                                                {% endfor %}
+                                            {% else %}
+                                                <small class="text-muted fst-italic">No topics</small>
+                                            {% endif %}
                                         </td>
                                         <td class="align-middle">
                                             <span class="badge 

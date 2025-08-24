@@ -62,11 +62,17 @@
                     </p>
                     <div class="mt-auto">
                         {% if due_count > 0 %}
-                            <a href="{% url 'mcq:study' %}" class="btn btn-primary btn-lg w-100">
+                            <a href="{% url 'mcq:study' %}" class="btn btn-primary btn-lg w-100 mb-2">
                                 <i class="fas fa-play me-2"></i>Start Studying ({{ due_count }} due)
                             </a>
+                            <a href="{% url 'mcq:topic_selection' %}" class="btn btn-outline-primary btn-sm w-100">
+                                <i class="fas fa-filter me-2"></i>Study by Topic
+                            </a>
                         {% else %}
-                            <a href="{% url 'mcq:study' %}" class="btn btn-outline-primary btn-lg w-100">
+                            <a href="{% url 'mcq:topic_selection' %}" class="btn btn-primary btn-lg w-100 mb-2">
+                                <i class="fas fa-filter me-2"></i>Study by Topic
+                            </a>
+                            <a href="{% url 'mcq:study' %}" class="btn btn-outline-primary btn-sm w-100">
                                 <i class="fas fa-play me-2"></i>Practice Mode
                             </a>
                         {% endif %}
@@ -117,14 +123,36 @@
             <div class="card h-100">
                 <div class="card-body d-flex flex-column">
                     <h5 class="card-title">
-                        <i class="fas fa-chart-bar text-warning me-2"></i>
+                        <i class="fas fa-tags text-warning me-2"></i>
+                        Topics & Organization
+                    </h5>
+                    <p class="card-text flex-grow-1">
+                        Organize questions by topics and study specific subjects. Create and manage topic tags.
+                    </p>
+                    <div class="mt-auto">
+                        <a href="{% url 'mcq:manage_topics' %}" class="btn btn-warning btn-lg w-100 mb-2">
+                            <i class="fas fa-cog me-2"></i>Manage Topics
+                        </a>
+                        <a href="{% url 'mcq:topic_selection' %}" class="btn btn-outline-warning btn-sm w-100">
+                            <i class="fas fa-filter me-2"></i>Study by Topic
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">
+                        <i class="fas fa-chart-bar text-info me-2"></i>
                         Study Statistics
                     </h5>
                     <p class="card-text flex-grow-1">
                         View your learning progress, review patterns, and performance analytics.
                     </p>
                     <div class="mt-auto">
-                        <a href="{% url 'mcq:stats' %}" class="btn btn-warning btn-lg w-100">
+                        <a href="{% url 'mcq:stats' %}" class="btn btn-info btn-lg w-100">
                             <i class="fas fa-chart-line me-2"></i>View Stats
                         </a>
                     </div>

@@ -2,6 +2,7 @@ import random
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from django.conf import settings
 from django.db.models import Count, Avg, Sum
 from datetime import datetime, timedelta
@@ -47,17 +48,27 @@ def mcq_landing(request):
     
     return render(request, 'mcq_landing.html', context)
 
-def get_due_mcq():
-    """Get the next MCQ that is actually due for review"""
+def get_due_mcq(topics=None):
+    """Get the next MCQ that is actually due for review, optionally filtered by topics"""
     qs = ReviewSchedule.objects.filter(next_review__lte=timezone.now()).order_by("next_review")
+    
+    # Filter by topics if specified
+    if topics:
+        qs = qs.filter(mcq__topics__in=topics).distinct()
+    
     if qs.exists():
         return qs.first().mcq
     return None  # Return None if no questions are due
 
-def get_practice_mcq():
-    """Get any MCQ for practice mode (ignoring schedule)"""
-    # For practice mode, get a random question
-    return MCQ.objects.order_by("?").first()
+def get_practice_mcq(topics=None):
+    """Get any MCQ for practice mode (ignoring schedule), optionally filtered by topics"""
+    qs = MCQ.objects.all()
+    
+    # Filter by topics if specified
+    if topics:
+        qs = qs.filter(topics__in=topics).distinct()
+    
+    return qs.order_by("?").first()
 
 def study(request):
     """Study session with proper spaced repetition - only due questions"""
@@ -71,13 +82,28 @@ def study(request):
     if not MCQ.objects.exists():
         return render(request, "empty.html")
     
-    # Get only questions that are actually due
-    mcq = get_due_mcq()
+    # Get selected topics from session or request
+    selected_topic_ids = request.session.get('study_topics', [])
+    if request.method == 'POST' and 'topics' in request.POST:
+        selected_topic_ids = [int(id) for id in request.POST.getlist('topics')]
+        request.session['study_topics'] = selected_topic_ids
+    
+    selected_topics = None
+    if selected_topic_ids:
+        from .models import Topic
+        selected_topics = Topic.objects.filter(id__in=selected_topic_ids)
+    
+    # Get only questions that are actually due (filtered by topics if selected)
+    mcq = get_due_mcq(topics=selected_topics)
     if not mcq:
         # No questions due - show the "no questions due" page
-        next_review = ReviewSchedule.objects.filter(
+        next_review_qs = ReviewSchedule.objects.filter(
             next_review__gt=timezone.now()
-        ).order_by('next_review').first()
+        )
+        if selected_topics:
+            next_review_qs = next_review_qs.filter(mcq__topics__in=selected_topics).distinct()
+        
+        next_review = next_review_qs.order_by('next_review').first()
         
         next_review_time = None
         next_review_hours = 0
@@ -90,6 +116,7 @@ def study(request):
             'next_review_time': next_review_time,
             'next_review_hours': next_review_hours,
             'total_mcqs': MCQ.objects.count(),
+            'selected_topics': selected_topics,
         }
         return render(request, "no_questions_due.html", context)
     
@@ -135,7 +162,18 @@ def practice(request):
     if not MCQ.objects.exists():
         return render(request, "empty.html")
     
-    mcq = get_practice_mcq()
+    # Get selected topics from session or request
+    selected_topic_ids = request.session.get('practice_topics', [])
+    if request.method == 'POST' and 'topics' in request.POST:
+        selected_topic_ids = [int(id) for id in request.POST.getlist('topics')]
+        request.session['practice_topics'] = selected_topic_ids
+    
+    selected_topics = None
+    if selected_topic_ids:
+        from .models import Topic
+        selected_topics = Topic.objects.filter(id__in=selected_topic_ids)
+    
+    mcq = get_practice_mcq(topics=selected_topics)
     if not mcq:
         return render(request, "empty.html")
     
@@ -250,3 +288,73 @@ def stats(request):
     }
     
     return render(request, 'mcq_stats.html', context)
+
+@login_required
+def topic_selection(request):
+    """Topic selection for focused study sessions"""
+    from .models import Topic
+    from .forms import TopicFilterForm
+    
+    if request.method == 'POST':
+        form = TopicFilterForm(request.POST)
+        if form.is_valid():
+            selected_topics = form.cleaned_data['topics']
+            topic_ids = [topic.id for topic in selected_topics]
+            
+            # Store in session based on study type
+            study_type = request.POST.get('study_type', 'study')
+            if study_type == 'practice':
+                request.session['practice_topics'] = topic_ids
+                return redirect('mcq:practice')
+            else:
+                request.session['study_topics'] = topic_ids
+                return redirect('mcq:study')
+    else:
+        form = TopicFilterForm()
+    
+    # Get topic statistics
+    topics_stats = []
+    for topic in Topic.objects.all():
+        due_count = ReviewSchedule.objects.filter(
+            mcq__topics=topic,
+            next_review__lte=timezone.now()
+        ).count()
+        total_count = topic.get_mcq_count()
+        
+        topics_stats.append({
+            'topic': topic,
+            'total_count': total_count,
+            'due_count': due_count,
+        })
+    
+    context = {
+        'form': form,
+        'topics_stats': topics_stats,
+        'total_due': ReviewSchedule.objects.filter(next_review__lte=timezone.now()).count(),
+    }
+    
+    return render(request, 'topic_selection.html', context)
+
+@login_required
+def manage_topics(request):
+    """Manage topics - create, edit, delete"""
+    from .models import Topic
+    from .forms import TopicForm
+    
+    if request.method == 'POST':
+        form = TopicForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Topic created successfully!')
+            return redirect('mcq:manage_topics')
+    else:
+        form = TopicForm()
+    
+    topics = Topic.objects.all().order_by('name')
+    
+    context = {
+        'form': form,
+        'topics': topics,
+    }
+    
+    return render(request, 'manage_topics.html', context)

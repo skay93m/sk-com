@@ -2,6 +2,22 @@ from django.db import models
 from django.utils import timezone
 from datetime import timedelta
 
+class Topic(models.Model):
+    """Topics/tags for organizing MCQs"""
+    name = models.CharField(max_length=100, unique=True)
+    description = models.TextField(blank=True)
+    color = models.CharField(max_length=7, default='#007bff', help_text='Hex color code for the topic badge')
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        ordering = ['name']
+    
+    def __str__(self):
+        return self.name
+    
+    def get_mcq_count(self):
+        return self.mcqs.count()
+
 class MCQ(models.Model):
     DIFFICULTY_CHOICES = [
         (1, "Recall"),
@@ -11,6 +27,9 @@ class MCQ(models.Model):
     question_text = models.TextField()
     difficulty = models.IntegerField(choices=DIFFICULTY_CHOICES)
     explanation_general = models.TextField(blank=True)
+    topics = models.ManyToManyField(Topic, blank=True, related_name='mcqs')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     
     def __str__(self):
         return self.question_text[:80]
