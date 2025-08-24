@@ -236,7 +236,6 @@ STATICFILES_DIRS = [
     # App-specific static files
     os.path.join(BASE_DIR, 'home', 'static'),
     os.path.join(BASE_DIR, 'cv', 'static'),
-    os.path.join(BASE_DIR, 'projects', 'static'),
     os.path.join(BASE_DIR, 'writing', 'static'),
     os.path.join(BASE_DIR, 'mcq', 'static'),
 ]
