@@ -46,15 +46,36 @@ if not DEBUG:
     LOGGING = {
         'version': 1,
         'disable_existing_loggers': False,
+        'formatters': {
+            'verbose': {
+                'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
+                'style': '{',
+            },
+            'simple': {
+                'format': '{levelname} {message}',
+                'style': '{',
+            },
+        },
         'handlers': {
             'console': {
                 'class': 'logging.StreamHandler',
+                'formatter': 'simple',
+            },
+            'security_file': {
+                'class': 'logging.FileHandler',
+                'filename': 'security.log',
+                'formatter': 'verbose',
             },
         },
         'loggers': {
             'django': {
                 'handlers': ['console'],
                 'level': 'INFO',
+            },
+            'security': {
+                'handlers': ['console', 'security_file'],
+                'level': 'WARNING',
+                'propagate': False,
             },
         },
     }
@@ -85,11 +106,14 @@ INSTALLED_APPS = [
     'writing',
     'cv',
     'mcq',
+    'analytics',  # Simple analytics app
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
+    'sk.security_middleware.SecurityMiddleware',  # Custom security middleware for suspicious requests
+    'analytics.middleware.AnalyticsMiddleware',  # Analytics tracking middleware
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -347,3 +371,9 @@ if DEBUG:
 LOGIN_URL = '/admin/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
+
+# Security Settings
+BLOCK_SUSPICIOUS_REQUESTS = True  # Block requests matching suspicious patterns
+
+# Analytics Settings
+ENABLE_ANALYTICS = True  # Enable analytics tracking

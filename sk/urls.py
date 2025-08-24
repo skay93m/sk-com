@@ -18,12 +18,14 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from .views import SecureAdminLoginView, SecureAdminLogoutView
+from .views import SecureAdminLoginView, SecureAdminLogoutView, RobotsTxtView
 
 urlpatterns = [
+    path('robots.txt', RobotsTxtView.as_view(), name='robots_txt'),
     path('secure-admin-login/', SecureAdminLoginView.as_view(), name='secure_admin_login'),
     path('secure-admin-logout/', SecureAdminLogoutView.as_view(), name='secure_admin_logout'),
     path('admin/', admin.site.urls),
+    path('analytics/', include('analytics.urls')),
     path('', include('home.urls')),
     path('projects/', include('projects.urls')),
     path('writing/', include('writing.urls')),
