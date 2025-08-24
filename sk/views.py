@@ -4,6 +4,9 @@ from django.contrib.auth import login
 from django.contrib import messages
 from django.urls import reverse_lazy
 from django.views.generic import View
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class SecureAdminLoginView(LoginView):
@@ -13,13 +16,18 @@ class SecureAdminLoginView(LoginView):
     template_name = 'admin/login.html'
     
     def form_valid(self, form):
-        # Set the secure admin access flag in session
-        self.request.session['secure_admin_access'] = True
-        response = super().form_valid(form)
-        
-        # Redirect to admin or the 'next' parameter
-        next_url = self.request.GET.get('next', '/admin/')
-        return redirect(next_url)
+        try:
+            # Set the secure admin access flag in session
+            self.request.session['secure_admin_access'] = True
+            response = super().form_valid(form)
+            
+            # Redirect to admin or the 'next' parameter
+            next_url = self.request.GET.get('next', '/admin/')
+            return redirect(next_url)
+        except Exception as e:
+            logger.error(f"Error in SecureAdminLoginView.form_valid: {e}")
+            messages.error(self.request, 'Login failed. Please try again.')
+            return super().form_invalid(form)
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
