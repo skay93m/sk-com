@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Create MCQ - Syafiq Kay{% endblock %}
+{% block title %}Edit MCQ - Syafiq Kay{% endblock %}
 
 {% block content %}
 <div class="container-fluid">
@@ -8,11 +8,11 @@
         <!-- Main Content -->
         <div class="col-lg-8">
             <div class="card shadow-sm border-0">
-                <div class="card-header bg-gradient text-center py-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <div class="card-header bg-gradient text-white text-center py-4" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
                     <h2 class="mb-0">
-                        <i class="bi bi-plus-circle-fill me-3"></i>Create New MCQ
+                        <i class="bi bi-pencil-square me-3"></i>Edit MCQ
                     </h2>
-                    <p class="mb-0 mt-2 opacity-75">Design engaging multiple choice questions</p>
+                    <p class="mb-0 mt-2 opacity-75">Update your multiple choice question</p>
                 </div>
                 
                 <div class="card-body p-4">
@@ -148,8 +148,8 @@
                             <a href="{% url 'mcq:mcq_list' %}" class="btn btn-outline-secondary btn-lg me-md-2">
                                 <i class="bi bi-arrow-left me-2"></i>Cancel
                             </a>
-                            <button type="submit" class="btn btn-primary btn-lg">
-                                <i class="bi bi-save me-2"></i>Save MCQ
+                            <button type="submit" class="btn btn-warning btn-lg">
+                                <i class="bi bi-save me-2"></i>Update MCQ
                             </button>
                         </div>
                     </form>
@@ -160,11 +160,45 @@
         <!-- Sidebar -->
         <div class="col-lg-4">
             <div class="sticky-top" style="top: 1rem;">
-                <!-- Difficulty Guide -->
+                <!-- MCQ Info -->
                 <div class="card shadow-sm border-0 mb-4">
                     <div class="card-header bg-info text-white">
                         <h5 class="mb-0">
-                            <i class="bi bi-info-circle me-2"></i>Difficulty Guide
+                            <i class="bi bi-info-circle me-2"></i>MCQ Information
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-2">
+                            <strong>ID:</strong> {{ mcq.id }}
+                        </div>
+                        <div class="mb-2">
+                            <strong>Current Difficulty:</strong> 
+                            <span class="badge 
+                                {% if mcq.difficulty == 1 %}bg-success
+                                {% elif mcq.difficulty == 2 %}bg-warning text-dark
+                                {% else %}bg-danger{% endif %}">
+                                Level {{ mcq.difficulty }}
+                            </span>
+                        </div>
+                        <div class="mb-2">
+                            <strong>Choices:</strong> {{ mcq.choices.count }}
+                        </div>
+                        <div class="mb-0">
+                            <strong>Has Explanation:</strong> 
+                            {% if mcq.explanation_general %}
+                                <i class="bi bi-check-circle text-success"></i>
+                            {% else %}
+                                <i class="bi bi-x-circle text-danger"></i>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Difficulty Guide -->
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-header bg-warning text-dark">
+                        <h5 class="mb-0">
+                            <i class="bi bi-speedometer2 me-2"></i>Difficulty Guide
                         </h5>
                     </div>
                     <div class="card-body">
@@ -194,32 +228,22 @@
                     </div>
                 </div>
 
-                <!-- Tips Card -->
+                <!-- Quick Actions -->
                 <div class="card shadow-sm border-0">
-                    <div class="card-header bg-warning text-dark">
+                    <div class="card-header bg-secondary text-white">
                         <h5 class="mb-0">
-                            <i class="bi bi-lightbulb me-2"></i>Writing Tips
+                            <i class="bi bi-lightning me-2"></i>Quick Actions
                         </h5>
                     </div>
                     <div class="card-body">
-                        <ul class="list-unstyled mb-0">
-                            <li class="mb-2">
-                                <i class="bi bi-check text-success me-2"></i>
-                                <small>Keep questions clear and concise</small>
-                            </li>
-                            <li class="mb-2">
-                                <i class="bi bi-check text-success me-2"></i>
-                                <small>Make distractors plausible but clearly wrong</small>
-                            </li>
-                            <li class="mb-2">
-                                <i class="bi bi-check text-success me-2"></i>
-                                <small>Avoid "all of the above" or "none of the above"</small>
-                            </li>
-                            <li class="mb-0">
-                                <i class="bi bi-check text-success me-2"></i>
-                                <small>Test understanding, not memory</small>
-                            </li>
-                        </ul>
+                        <div class="d-grid gap-2">
+                            <a href="{% url 'mcq:mcq_list' %}" class="btn btn-outline-primary">
+                                <i class="bi bi-list me-2"></i>Back to List
+                            </a>
+                            <a href="{% url 'mcq:delete_mcq' mcq.id %}" class="btn btn-outline-danger">
+                                <i class="bi bi-trash me-2"></i>Delete MCQ
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -229,7 +253,7 @@
 
 <style>
 .choice-number {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important;
 }
 
 .choice-item:nth-child(1) .choice-number {
@@ -266,18 +290,20 @@
 }
 
 .form-control:focus {
-    border-color: #667eea;
-    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    border-color: #f093fb;
+    box-shadow: 0 0 0 0.2rem rgba(240, 147, 251, 0.25);
 }
 
-.btn-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+.btn-warning {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
     border: none;
+    color: white;
 }
 
-.btn-primary:hover {
-    background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+.btn-warning:hover {
+    background: linear-gradient(135deg, #e080e8 0%, #e04455 100%);
     transform: translateY(-1px);
+    color: white;
 }
 </style>
 

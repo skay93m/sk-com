@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}No Quiz Available - MCQ{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow border-0">
+                <div class="card-body text-center py-5">
+                    <!-- Main illustration/icon -->
+                    <div class="mb-4">
+                        <i class="bi bi-question-circle text-primary" style="font-size: 5rem; opacity: 0.6;"></i>
+                    </div>
+                    
+                    <h3 class="text-primary mb-3">No MCQs Available</h3>
+                    <p class="text-muted mb-4">
+                        It looks like there are no multiple choice questions in the system yet. 
+                        Get started by creating your first MCQ!
+                    </p>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-center">
+                        <a href="{% url 'mcq:create_mcq' %}" class="btn btn-primary btn-lg">
+                            <i class="bi bi-plus-circle me-2"></i>Create First MCQ
+                        </a>
+                        <a href="{% url 'mcq:mcq_list' %}" class="btn btn-outline-secondary btn-lg">
+                            <i class="bi bi-list me-2"></i>View Dashboard
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.card {
+    animation: fadeIn 0.6s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+    transform: translateY(-2px);
+}
+</style>
+{% endblock %}
+            <div class="mb-4">
+                <i class="bi bi-question-circle display-1 text-muted" style="font-size: 6rem;"></i>
+            </div>
+            
+            <!-- Main heading -->
+            <h1 class="display-4 text-muted mb-3">No Quiz Available</h1>
+            
+            <!-- Descriptive text -->
+            <p class="lead text-muted mb-4">
+                There are currently no quiz questions available for review or practice.
+            </p>
+            
+            <!-- Helpful information card -->
+            <div class="card border-0 bg-light mb-4">
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-6 mb-3 mb-md-0">
+                            <i class="bi bi-clock-history h4 text-primary"></i>
+                            <p class="mb-0 small text-muted">
+                                Questions appear when they're due for review
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <i class="bi bi-plus-circle h4 text-success"></i>
+                            <p class="mb-0 small text-muted">
+                                Create new questions to get started
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Action buttons -->
+            <div class="d-flex flex-column flex-sm-row gap-3 justify-content-center">
+                {% if user.is_authenticated %}
+                <a href="{% url 'mcq:create_mcq' %}" class="btn btn-primary btn-lg">
+                    <i class="bi bi-plus-circle me-2"></i>Create New Question
+                </a>
+                {% endif %}
+                <a href="{% url 'home' %}" class="btn btn-outline-secondary btn-lg">
+                    <i class="bi bi-house me-2"></i>Back to Home
+                </a>
+            </div>
+            
+            <!-- Additional help text -->
+            <div class="mt-5">
+                <small class="text-muted">
+                    <i class="bi bi-info-circle me-1"></i>
+                    Questions are scheduled for review using a spaced repetition algorithm to optimize learning.
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

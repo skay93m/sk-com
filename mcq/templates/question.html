@@ -1,17 +1,295 @@
 {% extends 'base.html' %}
 
+{% block title %}MCQ Quiz - Syafiq Kay{% endblock %}
+
 {% block content %}
-<h3>{{ mcq.question_text }}</h3>
-<form method="post">
-    {% csrf_token %}
-    {% for item in choices_labeled %}
-        <div>
-            <label>
-                <input type="radio" name="choice_id" value="{{ item.choice.id }} required">
-                <strong>{{ item.label }}.</strong> {{ item.choice.text }}
-            </label>
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 col-xl-6">
+            <div class="card shadow border-0">
+                <!-- Quiz Header -->
+                <div class="card-header bg-gradient text-white py-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0">
+                            <i class="bi bi-question-circle-fill me-2"></i>MCQ Quiz
+                        </h4>
+                        <div class="d-flex align-items-center">
+                            <span class="badge bg-white text-primary px-3 py-2">
+                                <i class="bi bi-speedometer2 me-1"></i>
+                                Level {{ mcq.difficulty }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-body p-4">
+                    {% if not show_feedback %}
+                        <!-- Question Section -->
+                        <div class="mb-4">
+                            <div class="bg-light rounded p-4 mb-4">
+                                <h5 class="text-primary mb-3">
+                                    <i class="bi bi-chat-square-text me-2"></i>Question
+                                </h5>
+                                <p class="lead mb-0">{{ mcq.question_text }}</p>
+                            </div>
+                        </div>
+
+                        <!-- Answer Choices -->
+                        <form method="post" id="quiz-form">
+                            {% csrf_token %}
+                            <div class="mb-4">
+                                <h6 class="text-secondary mb-3">
+                                    <i class="bi bi-list-check me-2"></i>Choose the best answer:
+                                </h6>
+                                
+                                {% for item in choices_labeled %}
+                                    <div class="choice-option mb-3">
+                                        <div class="card h-100 choice-card">
+                                            <label class="card-body d-flex align-items-center cursor-pointer mb-0">
+                                                <div class="choice-radio me-3">
+                                                    <input type="radio" name="choice_id" value="{{ item.choice.id }}" 
+                                                           class="form-check-input" required>
+                                                </div>
+                                                <div class="choice-label me-3">
+                                                    <span class="badge bg-primary choice-badge">{{ item.label }}</span>
+                                                </div>
+                                                <div class="choice-text flex-grow-1">
+                                                    {{ item.choice.text }}
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="bi bi-check-circle me-2"></i>Submit Answer
+                                </button>
+                            </div>
+                        </form>
+
+                    {% else %}
+                        <!-- Feedback Section -->
+                        <div class="mb-4">
+                            <!-- Result Status -->
+                            <div class="alert {% if feedback.is_correct %}alert-success{% else %}alert-danger{% endif %} d-flex align-items-center">
+                                {% if feedback.is_correct %}
+                                    <i class="bi bi-check-circle-fill me-3 fs-4"></i>
+                                    <div>
+                                        <h6 class="mb-1">Correct Answer! 🎉</h6>
+                                        <p class="mb-0">Great job! You got it right.</p>
+                                    </div>
+                                {% else %}
+                                    <i class="bi bi-x-circle-fill me-3 fs-4"></i>
+                                    <div>
+                                        <h6 class="mb-1">Incorrect Answer</h6>
+                                        <p class="mb-0">Don't worry, let's learn from this.</p>
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Question Review -->
+                            <div class="bg-light rounded p-3 mb-3">
+                                <h6 class="text-primary mb-2">
+                                    <i class="bi bi-chat-square-text me-2"></i>Question
+                                </h6>
+                                <p class="mb-0">{{ mcq.question_text }}</p>
+                            </div>
+
+                            <!-- Answer Analysis -->
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="card border-success h-100">
+                                        <div class="card-header bg-success text-white">
+                                            <h6 class="mb-0">
+                                                <i class="bi bi-check-circle me-2"></i>Correct Answer
+                                            </h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <p class="mb-2">
+                                                <span class="badge bg-success me-2">{{ feedback.correct_choice.text|slice:":1" }}</span>
+                                                {{ feedback.correct_choice.text }}
+                                            </p>
+                                            {% if feedback.general_explanation %}
+                                                <small class="text-muted">
+                                                    <strong>Explanation:</strong> {{ feedback.general_explanation }}
+                                                </small>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {% if not feedback.is_correct %}
+                                <div class="col-md-6">
+                                    <div class="card border-danger h-100">
+                                        <div class="card-header bg-danger text-white">
+                                            <h6 class="mb-0">
+                                                <i class="bi bi-x-circle me-2"></i>Your Answer
+                                            </h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <p class="mb-2">
+                                                <span class="badge bg-danger me-2">{{ feedback.selected_choice.text|slice:":1" }}</span>
+                                                {{ feedback.selected_choice.text }}
+                                            </p>
+                                            {% if feedback.selected_explanation %}
+                                                <small class="text-muted">
+                                                    <strong>Why incorrect:</strong> {{ feedback.selected_explanation }}
+                                                </small>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- Detailed Explanations -->
+                            <div class="mt-4">
+                                <details class="details-custom">
+                                    <summary class="btn btn-outline-info w-100">
+                                        <i class="bi bi-info-circle me-2"></i>Show All Answer Explanations
+                                    </summary>
+                                    <div class="mt-3">
+                                        {% for item in choices_labeled %}
+                                            <div class="card mb-2 {% if item.choice.is_correct %}border-success{% endif %}">
+                                                <div class="card-body py-2">
+                                                    <div class="d-flex align-items-start">
+                                                        <span class="badge {% if item.choice.is_correct %}bg-success{% else %}bg-secondary{% endif %} me-3">
+                                                            {{ item.label }}
+                                                        </span>
+                                                        <div class="flex-grow-1">
+                                                            <p class="mb-1">{{ item.choice.text }}</p>
+                                                            {% if item.choice.is_correct %}
+                                                                <small class="text-success fw-bold">
+                                                                    <i class="bi bi-check-circle me-1"></i>Correct Answer
+                                                                </small>
+                                                            {% elif item.choice.explanation %}
+                                                                <small class="text-muted">{{ item.choice.explanation }}</small>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </details>
+                            </div>
+                        </div>
+
+                        <!-- Next Question Button -->
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-between">
+                            <a href="{% url 'mcq:quiz' %}" class="btn btn-outline-secondary">
+                                <i class="bi bi-house me-2"></i>Quiz Home
+                            </a>
+                            <form method="get" class="d-grid col-md-6">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="bi bi-arrow-right me-2"></i>Next Question
+                                </button>
+                            </form>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
         </div>
-    {% endfor %}
-    <button type="submit">Submit</button>
-</form>
+    </div>
+</div>
+
+<style>
+.choice-card {
+    transition: all 0.3s ease;
+    border: 2px solid #e9ecef;
+    cursor: pointer;
+}
+
+.choice-card:hover {
+    border-color: #667eea;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.2);
+}
+
+.choice-card:has(input:checked) {
+    border-color: #667eea;
+    background-color: #f8f9ff;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.choice-badge {
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+.choice-radio input[type="radio"] {
+    width: 20px;
+    height: 20px;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.details-custom summary {
+    outline: none;
+    border: none;
+    cursor: pointer;
+}
+
+.details-custom[open] summary {
+    margin-bottom: 1rem;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+    transform: translateY(-1px);
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.alert-success {
+    animation: pulse 0.6s ease-in-out;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add smooth scrolling to form submission
+    const form = document.getElementById('quiz-form');
+    if (form) {
+        form.addEventListener('submit', function() {
+            setTimeout(() => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }, 100);
+        });
+    }
+
+    // Add click handler for choice cards
+    const choiceCards = document.querySelectorAll('.choice-card');
+    choiceCards.forEach(card => {
+        card.addEventListener('click', function() {
+            const radio = this.querySelector('input[type="radio"]');
+            if (radio) {
+                radio.checked = true;
+                // Remove selected class from all cards
+                choiceCards.forEach(c => c.classList.remove('selected'));
+                // Add selected class to clicked card
+                this.classList.add('selected');
+            }
+        });
+    });
+});
+</script>
+        </form>
 {% endblock %}

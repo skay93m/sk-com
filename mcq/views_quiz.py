@@ -1,13 +1,15 @@
 import random
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
+from django.contrib.auth.decorators import login_required
+from django.conf import settings
 from .models import MCQ, ReviewSchedule, Choice
 
 LABELS = ["A", "B", "C", "D"]
 
 def get_due_mcq():
     # simplest: earliest due item; ensure each MCQ has a schedule
-    qs = ReviewSchedule.objects.filter(next_review__lte=timezonenow()).order_by("next_review")
+    qs = ReviewSchedule.objects.filter(next_review__lte=timezone.now()).order_by("next_review")
     if qs.exists():
         return qs.first().mcq
     # if none due, offer nearest upcoming as practice
@@ -15,6 +17,12 @@ def get_due_mcq():
     return upcoming.mcq if upcoming else MCQ.objects.order_by("?").first()
 
 def quiz(request):
+    # If user is not authenticated, show the description page
+    if not request.user.is_authenticated:
+        return render(request, "mcq_description.html", {
+            'login_url': settings.LOGIN_URL
+        })
+    
     mcq = get_due_mcq()
     if not mcq:
         return render(request, "empty.html")
@@ -25,7 +33,7 @@ def quiz(request):
         random.shuffle(choices)
         request.session[session_key] = [c.id for c in choices]
         labeled = [{"label": LABELS[i], "choice": c} for i, c in enumerate(choices)]
-        return render(request, "quiz/questions.html", {"mcq": mcq, "choices_labeled": labeled, "show_feedback": False})
+        return render(request, "question.html", {"mcq": mcq, "choices_labeled": labeled, "show_feedback": False})
     
     # POST: evaluate
     posted_choice_id = int(request.POST.get("choice_id"))

@@ -1,30 +1,154 @@
-{% extends 'project_list.html' %}
+{% extends 'base.html' %}
+{% load static %}
 
-{% block projects_content %}
-    <h1>{{ project.title }}</h1>
-    
-    <div class="card">
-        <div class="card-body">
-            <h5 class="card-title">Project Details</h5>
-            <p class="card-text"><strong>Category:</strong> {{ project.get_category_display }}</p>
-            <p class="card-text"><strong>Description:</strong></p>
-            <p class="card-text">{{ project.description|linebreaks }}</p>
-            <p class="card-text">
-                <small class="text-muted">Created: {{ project.created_at|date:"j M Y" }}</small><br>
-                <small class="text-muted">Last updated: {{ project.updated_at|date:"j M Y" }}</small>
-            </p>
+{% block title %}{{ project.title }} - Projects{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="{% url 'home' %}" class="text-decoration-none">
+                    <i class="bi bi-house-fill"></i> Home
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{% url 'projects:project_home' %}" class="text-decoration-none">
+                    <i class="bi bi-folder"></i> Projects
+                </a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">{{ project.title|truncatechars:30 }}</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Main project card -->
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-white border-bottom">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div class="flex-grow-1">
+                            <h1 class="h2 mb-2">{{ project.title }}</h1>
+                            <div class="d-flex align-items-center gap-3">
+                                <span class="badge 
+                                    {% if project.category == 'now' %} bg-success
+                                    {% elif project.category == 'backburner' %} bg-warning text-dark
+                                    {% else %} bg-secondary
+                                    {% endif %} fs-6">
+                                    {% if project.category == 'now' %}
+                                        <i class="bi bi-lightning-fill me-1"></i>
+                                    {% elif project.category == 'backburner' %}
+                                        <i class="bi bi-pause-circle me-1"></i>
+                                    {% else %}
+                                        <i class="bi bi-clock me-1"></i>
+                                    {% endif %}
+                                    {{ project.get_category_display }}
+                                </span>
+                                <small class="text-muted">
+                                    <i class="bi bi-calendar me-1"></i>
+                                    Updated {{ project.updated_at|date:"M d, Y" }}
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <h5 class="text-secondary mb-3">
+                        <i class="bi bi-file-text me-2"></i>Project Description
+                    </h5>
+                    <div class="project-description">
+                        {{ project.description|linebreaks }}
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
-{% endblock %}
 
-{% block projects_actions %}
-    <div style="width: 100%; display: flex; justify-content: center; padding: 16px 0; z-index: 100;">
-        <div>
+        <div class="col-lg-4">
+            <!-- Project metadata -->
+            <div class="card shadow-sm border-0 mb-4">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0">
+                        <i class="bi bi-info-circle me-2"></i>Project Information
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <div class="d-flex justify-content-between">
+                                <span class="text-muted">Status:</span>
+                                <span class="badge 
+                                    {% if project.category == 'now' %} bg-success
+                                    {% elif project.category == 'backburner' %} bg-warning text-dark
+                                    {% else %} bg-secondary
+                                    {% endif %}">
+                                    {{ project.get_category_display }}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="d-flex justify-content-between">
+                                <span class="text-muted">Created:</span>
+                                <span>{{ project.created_at|date:"M d, Y" }}</span>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="d-flex justify-content-between">
+                                <span class="text-muted">Last Updated:</span>
+                                <span>{{ project.updated_at|date:"M d, Y" }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action buttons -->
             {% if user.is_authenticated %}
-                <a href="{% url 'projects:project_edit' project.pk %}" class="btn btn-primary">Edit Project</a>
-                <a href="{% url 'projects:project_delete' project.pk %}" class="btn btn-danger">Delete Project</a>
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0">
+                        <i class="bi bi-gear me-2"></i>Manage Project
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'projects:project_edit' project.pk %}" class="btn btn-primary">
+                            <i class="bi bi-pencil me-2"></i>Edit Project
+                        </a>
+                        <a href="{% url 'projects:project_delete' project.pk %}" class="btn btn-outline-danger">
+                            <i class="bi bi-trash me-2"></i>Delete Project
+                        </a>
+                        <hr class="my-2">
+                        <a href="{% url 'projects:project_home' %}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left me-2"></i>Back to Projects
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="card shadow-sm border-0">
+                <div class="card-body text-center">
+                    <i class="bi bi-lock text-muted display-6"></i>
+                    <h6 class="mt-2 mb-3">Project Management</h6>
+                    <p class="text-muted small mb-3">Login to edit and manage projects</p>
+                    <a href="{% url 'secure_admin_login' %}?next={{ request.path }}" class="btn btn-outline-primary btn-sm">
+                        <i class="bi bi-box-arrow-in-right me-1"></i>Login
+                    </a>
+                </div>
+            </div>
             {% endif %}
-            <a href="{% url 'projects:project_home' %}" class="btn btn-secondary">Back to Projects</a>
         </div>
     </div>
+</div>
+
+<style>
+.project-description {
+    line-height: 1.6;
+    font-size: 1.05rem;
+}
+
+.project-description p {
+    margin-bottom: 1rem;
+}
+</style>
 {% endblock %}
