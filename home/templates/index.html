@@ -2,6 +2,15 @@
 {% load static %}
 
 {% block content %}
+<style>
+@media (min-width: 1200px) {
+    .col-xl-2-4 {
+        flex: 0 0 auto;
+        width: 20%;
+    }
+}
+</style>
+
 <!-- Hero Section -->
 <div class="container-fluid text-white py-5 mb-5" style="background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);">
     <div class="container">
@@ -18,6 +27,9 @@
                     </a>
                     <a href="{% url 'writing:writing_list' %}" class="btn btn-outline-light btn-lg">
                         <i class="bi bi-pen"></i> Writing
+                    </a>
+                                        <a href="{% url 'mcq:landing' %}" class="btn btn-outline-light btn-lg">
+                        MCQ Dashboard
                     </a>
                 </div>
             </div>
@@ -37,7 +49,7 @@
     </div>
     <div class="row g-4">
         <!-- Credentials Card -->
-        <div class="col-md-6 col-lg-3">
+        <div class="col-6 col-md-4 col-lg-3 col-xl-2-4">
             <div class="card h-100 shadow-sm border-0">
                 <div class="card-body text-center">
                     <div class="display-4 text-success mb-3">
@@ -51,7 +63,7 @@
         </div>
 
         <!-- Projects Card -->
-        <div class="col-md-6 col-lg-3">
+        <div class="col-6 col-md-4 col-lg-3 col-xl-2-4">
             <div class="card h-100 shadow-sm border-0">
                 <div class="card-body text-center">
                     <div class="display-4 text-info mb-3">
@@ -70,7 +82,7 @@
         </div>
 
         <!-- Writings Card -->
-        <div class="col-md-6 col-lg-3">
+        <div class="col-6 col-md-4 col-lg-3 col-xl-2-4">
             <div class="card h-100 shadow-sm border-0">
                 <div class="card-body text-center">
                     <div class="display-4 text-warning mb-3">
@@ -88,8 +100,22 @@
             </div>
         </div>
 
+        <!-- MCQ Card -->
+        <div class="col-6 col-md-4 col-lg-3 col-xl-2-4">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-body text-center">
+                    <div class="display-4 text-danger mb-3">
+                        <i class="bi bi-question-circle-fill"></i>
+                    </div>
+                    <h3 class="card-title h1 text-primary">{{ stats.mcqs }}</h3>
+                    <p class="card-text text-muted">Quiz Questions</p>
+                    <a href="{% url 'mcq:landing' %}" class="btn btn-outline-danger btn-sm">MCQ Dashboard</a>
+                </div>
+            </div>
+        </div>
+
         <!-- Contact Card -->
-        <div class="col-md-6 col-lg-3">
+        <div class="col-12 col-md-8 col-lg-3 col-xl-2-4 mx-auto mx-lg-0">
             <div class="card h-100 shadow-sm border-0">
                 <div class="card-body text-center">
                     <div class="display-4 text-secondary mb-3">

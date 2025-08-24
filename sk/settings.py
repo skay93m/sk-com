@@ -84,6 +84,7 @@ INSTALLED_APPS = [
     'projects',
     'writing',
     'cv',
+    'mcq',
 ]
 
 MIDDLEWARE = [
@@ -113,6 +114,7 @@ TEMPLATES = [
             os.path.join(BASE_DIR, 'home', 'templates'),
             os.path.join(BASE_DIR, 'writing', 'templates'),
             os.path.join(BASE_DIR, 'cv', 'templates'),
+            os.path.join(BASE_DIR, 'mcq', 'templates'),
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -234,6 +236,7 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'projects', 'static'),
     os.path.join(BASE_DIR, 'writing', 'static'),
     os.path.join(BASE_DIR, 'cv', 'static'),
+    os.path.join(BASE_DIR, 'mcq', 'static'),
 ]
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')

@@ -1,0 +1,189 @@
+{% extends 'cv_main.html' %}
+
+{% block title %}LLM Question Generation{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="bi bi-robot"></i> LLM Question Generation</h2>
+                <div>
+                    <a href="{% url 'mcq:create_llm_prompt' %}" class="btn btn-primary">
+                        <i class="bi bi-plus-circle"></i> New Generation Session
+                    </a>
+                    <a href="{% url 'mcq:llm_generation_manual' %}" class="btn btn-outline-info">
+                        <i class="bi bi-book"></i> Manual
+                    </a>
+                    <a href="{% url 'mcq:landing' %}" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left"></i> Back to MCQ
+                    </a>
+                </div>
+            </div>
+
+            <!-- Statistics Cards -->
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <div class="card bg-primary text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h5 class="card-title mb-0">Pending Review</h5>
+                                    <h2 class="mb-0">{{ pending_review_count }}</h2>
+                                </div>
+                                <i class="bi bi-clock-history fs-1"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card bg-success text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h5 class="card-title mb-0">Total Sessions</h5>
+                                    <h2 class="mb-0">{{ recent_sessions|length }}</h2>
+                                </div>
+                                <i class="bi bi-collection fs-1"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card bg-info text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h5 class="card-title mb-0">Quick Actions</h5>
+                                    <small>Generate & Review</small>
+                                </div>
+                                <i class="bi bi-lightning-charge fs-1"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Workflow Steps -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-diagram-3"></i> Generation Workflow</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3 text-center">
+                            <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                <i class="bi bi-chat-text fs-4"></i>
+                            </div>
+                            <h6 class="mt-2">1. Create Prompt</h6>
+                            <p class="small text-muted">Design your LLM prompt with specific requirements</p>
+                        </div>
+                        <div class="col-md-3 text-center">
+                            <div class="bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                <i class="bi bi-clipboard-data fs-4"></i>
+                            </div>
+                            <h6 class="mt-2">2. Paste Response</h6>
+                            <p class="small text-muted">Paste LLM response for automatic parsing</p>
+                        </div>
+                        <div class="col-md-3 text-center">
+                            <div class="bg-warning text-white rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                <i class="bi bi-eye fs-4"></i>
+                            </div>
+                            <h6 class="mt-2">3. Review Questions</h6>
+                            <p class="small text-muted">Review, edit, and approve each question</p>
+                        </div>
+                        <div class="col-md-3 text-center">
+                            <div class="bg-info text-white rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                <i class="bi bi-check-circle fs-4"></i>
+                            </div>
+                            <h6 class="mt-2">4. Add to Database</h6>
+                            <p class="small text-muted">Approved questions become available for study</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Sessions -->
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-clock-history"></i> Recent Generation Sessions</h5>
+                </div>
+                <div class="card-body">
+                    {% if recent_sessions %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Status</th>
+                                        <th>Topic</th>
+                                        <th>Difficulty</th>
+                                        <th>Questions</th>
+                                        <th>Created</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for session in recent_sessions %}
+                                    <tr>
+                                        <td>{{ session.id }}</td>
+                                        <td>
+                                            {% if session.status == 'pending' %}
+                                                <span class="badge bg-warning">{{ session.get_status_display }}</span>
+                                            {% elif session.status == 'reviewing' %}
+                                                <span class="badge bg-primary">{{ session.get_status_display }}</span>
+                                            {% elif session.status == 'completed' %}
+                                                <span class="badge bg-success">{{ session.get_status_display }}</span>
+                                            {% else %}
+                                                <span class="badge bg-secondary">{{ session.get_status_display }}</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if session.topic %}
+                                                <span class="badge" style="background-color: {{ session.topic.color }};">
+                                                    {{ session.topic.name }}
+                                                </span>
+                                            {% else %}
+                                                <span class="text-muted">No topic</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <span class="badge bg-secondary">Level {{ session.difficulty }}</span>
+                                        </td>
+                                        <td>{{ session.questions.count }}</td>
+                                        <td>{{ session.created_at|date:"M d, Y H:i" }}</td>
+                                        <td>
+                                            {% if session.status == 'pending' %}
+                                                <a href="{% url 'mcq:llm_paste_response' session.id %}" class="btn btn-sm btn-primary">
+                                                    Continue
+                                                </a>
+                                            {% elif session.status == 'reviewing' %}
+                                                <a href="{% url 'mcq:review_generated_questions' session.id %}" class="btn btn-sm btn-warning">
+                                                    Review
+                                                </a>
+                                            {% else %}
+                                                <button class="btn btn-sm btn-outline-secondary" disabled>
+                                                    {{ session.get_status_display }}
+                                                </button>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="bi bi-inbox fs-1 text-muted"></i>
+                            <p class="text-muted mt-2">No generation sessions yet. Create your first one!</p>
+                            <a href="{% url 'mcq:create_llm_prompt' %}" class="btn btn-primary">
+                                <i class="bi bi-plus-circle"></i> Start Generating Questions
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

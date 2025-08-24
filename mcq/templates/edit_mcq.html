@@ -1,0 +1,330 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit MCQ - Syafiq Kay{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Main Content -->
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-gradient text-white text-center py-4" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                    <h2 class="mb-0">
+                        <i class="bi bi-pencil-square me-3"></i>Edit MCQ
+                    </h2>
+                    <p class="mb-0 mt-2 opacity-75">Update your multiple choice question</p>
+                </div>
+                
+                <div class="card-body p-4">
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                <i class="bi bi-check-circle-fill me-2"></i>{{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <form method="post" id="mcq-form">
+                        {% csrf_token %}
+                        
+                        <!-- Question Section -->
+                        <div class="mb-4">
+                            <div class="bg-light rounded p-3 mb-3">
+                                <h5 class="text-primary mb-3">
+                                    <i class="bi bi-question-circle me-2"></i>Question Details
+                                </h5>
+                                
+                                <div class="mb-3">
+                                    <label for="{{ form.question_text.id_for_label }}" class="form-label fw-bold">
+                                        <i class="bi bi-chat-square-text me-1"></i>Question Text
+                                    </label>
+                                    {{ form.question_text }}
+                                    {% if form.question_text.errors %}
+                                        <div class="text-danger small mt-1">{{ form.question_text.errors }}</div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="{{ form.difficulty.id_for_label }}" class="form-label fw-bold">
+                                            <i class="bi bi-speedometer2 me-1"></i>Difficulty Level
+                                        </label>
+                                        {{ form.difficulty }}
+                                        {% if form.difficulty.errors %}
+                                            <div class="text-danger small mt-1">{{ form.difficulty.errors }}</div>
+                                        {% endif %}
+                                        <div class="form-text">
+                                            <small class="text-muted">{{ form.difficulty.help_text }}</small>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-6 mb-3">
+                                        <label for="{{ form.explanation_general.id_for_label }}" class="form-label fw-bold">
+                                            <i class="bi bi-lightbulb me-1"></i>General Explanation
+                                        </label>
+                                        {{ form.explanation_general }}
+                                        {% if form.explanation_general.errors %}
+                                            <div class="text-danger small mt-1">{{ form.explanation_general.errors }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Choices Section -->
+                        <div class="mb-4">
+                            <div class="d-flex align-items-center justify-content-between mb-3">
+                                <h5 class="text-success mb-0">
+                                    <i class="bi bi-list-check me-2"></i>Answer Choices
+                                </h5>
+                                <small class="badge bg-info">Mark exactly one choice as correct</small>
+                            </div>
+                            
+                            {{ formset.management_form }}
+                            <div id="choices-container">
+                                {% for form in formset %}
+                                    <div class="choice-item mb-3 {% cycle 'border-start border-primary' 'border-start border-success' 'border-start border-warning' 'border-start border-danger' %}" 
+                                         style="border-width: 4px !important;">
+                                        <div class="card shadow-sm">
+                                            <div class="card-body">
+                                                <div class="row align-items-center">
+                                                    <div class="col-auto">
+                                                        <div class="choice-number bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" 
+                                                             style="width: 40px; height: 40px; font-weight: bold;">
+                                                            {{ forloop.counter }}
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <div class="col">
+                                                        <div class="mb-2">
+                                                            <label class="form-label fw-bold small">Choice Text</label>
+                                                            {{ form.text }}
+                                                        </div>
+                                                        
+                                                        <div class="row">
+                                                            <div class="col-md-3">
+                                                                <div class="form-check">
+                                                                    {{ form.is_correct }}
+                                                                    <label class="form-check-label text-success fw-bold" for="{{ form.is_correct.id_for_label }}">
+                                                                        <i class="bi bi-check-circle me-1"></i>Correct Answer
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                            
+                                                            <div class="col-md-9">
+                                                                <label class="form-label small">Explanation (optional)</label>
+                                                                {{ form.explanation }}
+                                                            </div>
+                                                        </div>
+                                                        
+                                                        {% if form.DELETE %}
+                                                            <div class="mt-2">
+                                                                <div class="form-check">
+                                                                    {{ form.DELETE }}
+                                                                    <label class="form-check-label text-danger" for="{{ form.DELETE.id_for_label }}">
+                                                                        <i class="bi bi-trash me-1"></i>Delete this choice
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                                
+                                                {% if form.errors %}
+                                                    <div class="alert alert-danger mt-2">
+                                                        {{ form.errors }}
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <!-- Form Actions -->
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{% url 'mcq:mcq_list' %}" class="btn btn-outline-secondary btn-lg me-md-2">
+                                <i class="bi bi-arrow-left me-2"></i>Cancel
+                            </a>
+                            <button type="submit" class="btn btn-warning btn-lg">
+                                <i class="bi bi-save me-2"></i>Update MCQ
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <div class="sticky-top" style="top: 1rem;">
+                <!-- MCQ Info -->
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0">
+                            <i class="bi bi-info-circle me-2"></i>MCQ Information
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-2">
+                            <strong>ID:</strong> {{ mcq.id }}
+                        </div>
+                        <div class="mb-2">
+                            <strong>Current Difficulty:</strong> 
+                            <span class="badge 
+                                {% if mcq.difficulty == 1 %}bg-success
+                                {% elif mcq.difficulty == 2 %}bg-warning text-dark
+                                {% else %}bg-danger{% endif %}">
+                                Level {{ mcq.difficulty }}
+                            </span>
+                        </div>
+                        <div class="mb-2">
+                            <strong>Choices:</strong> {{ mcq.choices.count }}
+                        </div>
+                        <div class="mb-0">
+                            <strong>Has Explanation:</strong> 
+                            {% if mcq.explanation_general %}
+                                <i class="bi bi-check-circle text-success"></i>
+                            {% else %}
+                                <i class="bi bi-x-circle text-danger"></i>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Difficulty Guide -->
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-header bg-warning text-dark">
+                        <h5 class="mb-0">
+                            <i class="bi bi-speedometer2 me-2"></i>Difficulty Guide
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <div class="d-flex align-items-center mb-2">
+                                <span class="badge bg-success me-2">1</span>
+                                <strong>Recall Level</strong>
+                            </div>
+                            <p class="small text-muted mb-0">Direct facts, simple stems, clear distractors</p>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <div class="d-flex align-items-center mb-2">
+                                <span class="badge bg-warning me-2">2</span>
+                                <strong>Application Level</strong>
+                            </div>
+                            <p class="small text-muted mb-0">Situational stems, plausible distractors</p>
+                        </div>
+                        
+                        <div class="mb-0">
+                            <div class="d-flex align-items-center mb-2">
+                                <span class="badge bg-danger me-2">3</span>
+                                <strong>Reasoning Level</strong>
+                            </div>
+                            <p class="small text-muted mb-0">Novel context, multi-step reasoning</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="card shadow-sm border-0">
+                    <div class="card-header bg-secondary text-white">
+                        <h5 class="mb-0">
+                            <i class="bi bi-lightning me-2"></i>Quick Actions
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-grid gap-2">
+                            <a href="{% url 'mcq:mcq_list' %}" class="btn btn-outline-primary">
+                                <i class="bi bi-list me-2"></i>Back to List
+                            </a>
+                            <a href="{% url 'mcq:delete_mcq' mcq.id %}" class="btn btn-outline-danger">
+                                <i class="bi bi-trash me-2"></i>Delete MCQ
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.choice-number {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important;
+}
+
+.choice-item:nth-child(1) .choice-number {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+}
+
+.choice-item:nth-child(2) .choice-number {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important;
+}
+
+.choice-item:nth-child(3) .choice-number {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%) !important;
+}
+
+.choice-item:nth-child(4) .choice-number {
+    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%) !important;
+}
+
+.choice-item:nth-child(5) .choice-number {
+    background: linear-gradient(135deg, #fa709a 0%, #fee140 100%) !important;
+}
+
+.choice-item:nth-child(6) .choice-number {
+    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%) !important;
+}
+
+.card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.choice-item .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1) !important;
+}
+
+.form-control:focus {
+    border-color: #f093fb;
+    box-shadow: 0 0 0 0.2rem rgba(240, 147, 251, 0.25);
+}
+
+.btn-warning {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    border: none;
+    color: white;
+}
+
+.btn-warning:hover {
+    background: linear-gradient(135deg, #e080e8 0%, #e04455 100%);
+    transform: translateY(-1px);
+    color: white;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add classes to form fields
+    const formControls = document.querySelectorAll('input[type="text"], textarea, select');
+    formControls.forEach(function(control) {
+        control.classList.add('form-control');
+    });
+    
+    // Add classes to checkboxes
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    checkboxes.forEach(function(checkbox) {
+        checkbox.classList.add('form-check-input');
+    });
+    
+    // Smooth scroll on form submission
+    document.getElementById('mcq-form').addEventListener('submit', function() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+});
+</script>
+{% endblock %}

@@ -20,6 +20,43 @@
 - **home**: updated homepage with hero section
 - implement Hero model, forms, and views; update templates for hero details and creation
 
+## v4.0.0 (2025-08-24)
+
+### Feat
+
+- add custom math filters for multiplication and division
+- implement topic management and selection features in MCQ application
+- refactor CSS file structure and remove unused compressed files
+- add MCQ app with models, forms, views, and templates for quiz functionality
+
+## v3.0.0 (2025-08-18)
+
+### Feat
+
+- add comprehensive security assessment report for Django web application
+- enhance credential management with icon selection and upload functionality
+- implement credential management with create, edit, and delete functionalities
+- add CV app with main view and templates
+
+### Fix
+
+- remove text from login button in navigation
+
+## v2.0.0 (2025-08-13)
+
+### Feat
+
+- **projects**: added projects app
+- add projects app with initial setup and routing
+- **docs**: add Git Flow and versioning guides; update tag format in pyproject.toml
+
+## v0.4.0 (2025-08-13)
+
+### Feat
+
+- **home**: updated homepage with hero section
+- implement Hero model, forms, and views; update templates for hero details and creation
+
 ## v1.0.1 (2025-08-12)
 
 ### Fix

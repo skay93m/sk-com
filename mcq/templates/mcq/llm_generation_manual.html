@@ -1,0 +1,573 @@
+{% extends 'cv_main.html' %}
+
+{% block title %}LLM Generation Manual{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h2><i class="bi bi-book"></i> LLM Question Generation Manual</h2>
+                        <div>
+                            <a href="{% url 'mcq:create_llm_prompt' %}" class="btn btn-primary">
+                                <i class="bi bi-plus-circle"></i> Start Generating
+                            </a>
+                            <a href="{% url 'mcq:llm_generation_home' %}" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left"></i> Back to Home
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Table of Contents -->
+                    <div class="card bg-light mb-4">
+                        <div class="card-body">
+                            <h5><i class="bi bi-list"></i> Table of Contents</h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <ul>
+                                        <li><a href="#overview">Overview</a></li>
+                                        <li><a href="#workflow">Complete Workflow</a></li>
+                                        <li><a href="#step1">Step 1: Creating Prompts</a></li>
+                                        <li><a href="#step2">Step 2: Getting LLM Response</a></li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-6">
+                                    <ul>
+                                        <li><a href="#step3">Step 3: Reviewing Questions</a></li>
+                                        <li><a href="#formats">Supported Response Formats</a></li>
+                                        <li><a href="#examples">Prompt Examples</a></li>
+                                        <li><a href="#troubleshooting">Troubleshooting</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Overview Section -->
+                    <section id="overview" class="mb-5">
+                        <h3><i class="bi bi-info-circle"></i> Overview</h3>
+                        <p class="lead">
+                            The LLM Question Generation system allows you to leverage AI language models to create 
+                            multiple-choice questions quickly and efficiently, while maintaining quality through 
+                            a structured review process.
+                        </p>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h5>Benefits</h5>
+                                <ul>
+                                    <li><strong>Speed:</strong> Generate multiple questions in seconds</li>
+                                    <li><strong>Consistency:</strong> Standardized format and structure</li>
+                                    <li><strong>Quality Control:</strong> Manual review before database entry</li>
+                                    <li><strong>Flexibility:</strong> Works with any LLM (ChatGPT, Claude, Gemini, etc.)</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <h5>Key Features</h5>
+                                <ul>
+                                    <li>Automatic parsing of various response formats</li>
+                                    <li>Topic tagging and difficulty assignment</li>
+                                    <li>Individual question review and editing</li>
+                                    <li>Seamless integration with existing MCQ system</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Workflow Section -->
+                    <section id="workflow" class="mb-5">
+                        <h3><i class="bi bi-diagram-3"></i> Complete Workflow</h3>
+                        
+                        <div class="row">
+                            <div class="col-md-3 text-center mb-3">
+                                <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                                    <i class="bi bi-chat-text fs-2"></i>
+                                </div>
+                                <h5>1. Create Prompt</h5>
+                                <p class="small">Design a detailed prompt specifying the topic, number of questions, difficulty level, and format requirements.</p>
+                            </div>
+                            
+                            <div class="col-md-3 text-center mb-3">
+                                <div class="bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                                    <i class="bi bi-robot fs-2"></i>
+                                </div>
+                                <h5>2. Get LLM Response</h5>
+                                <p class="small">Copy your prompt to your preferred LLM, get the response, and paste it back into the system.</p>
+                            </div>
+                            
+                            <div class="col-md-3 text-center mb-3">
+                                <div class="bg-warning text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                                    <i class="bi bi-eye fs-2"></i>
+                                </div>
+                                <h5>3. Review & Edit</h5>
+                                <p class="small">Review each parsed question, edit if necessary, assign topics, and approve or reject each one.</p>
+                            </div>
+                            
+                            <div class="col-md-3 text-center mb-3">
+                                <div class="bg-info text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                                    <i class="bi bi-check-circle fs-2"></i>
+                                </div>
+                                <h5>4. Add to Database</h5>
+                                <p class="small">Approved questions are automatically converted to MCQs and added to your study database.</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Step 1 Section -->
+                    <section id="step1" class="mb-5">
+                        <h3><i class="bi bi-1-circle"></i> Step 1: Creating Effective Prompts</h3>
+                        
+                        <div class="alert alert-primary">
+                            <h5><i class="bi bi-lightbulb"></i> Key Components of a Good Prompt</h5>
+                            <ol>
+                                <li><strong>Topic specification:</strong> Clearly define the subject matter</li>
+                                <li><strong>Quantity:</strong> How many questions you want</li>
+                                <li><strong>Difficulty level:</strong> Beginner, intermediate, advanced</li>
+                                <li><strong>Format requirements:</strong> Multiple choice with 4 options</li>
+                                <li><strong>Answer explanations:</strong> Request explanations for learning</li>
+                                <li><strong>Context:</strong> Target audience or learning objectives</li>
+                            </ol>
+                        </div>
+
+                        <h5>Prompt Templates</h5>
+                        
+                        <div class="accordion mb-3" id="promptTemplates">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#template1">
+                                        Basic Template
+                                    </button>
+                                </h2>
+                                <div id="template1" class="accordion-collapse collapse show" data-bs-parent="#promptTemplates">
+                                    <div class="accordion-body">
+                                        <pre class="bg-light p-3 rounded"><code>Generate [NUMBER] multiple choice questions about [TOPIC].
+
+Requirements:
+- Each question should have 4 answer choices (A, B, C, D)
+- Only one correct answer per question
+- Include explanations for both correct and incorrect answers
+- Difficulty level: [BEGINNER/INTERMEDIATE/ADVANCED]
+- Target audience: [DESCRIPTION]
+
+Format each question as:
+Question: [Question text]
+A) [Option A]
+B) [Option B] 
+C) [Option C]
+D) [Option D]
+Correct Answer: [Letter]
+Explanation: [Why this answer is correct and others are wrong]</code></pre>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#template2">
+                                        JSON Template (Advanced)
+                                    </button>
+                                </h2>
+                                <div id="template2" class="accordion-collapse collapse" data-bs-parent="#promptTemplates">
+                                    <div class="accordion-body">
+                                        <pre class="bg-light p-3 rounded"><code>Create [NUMBER] multiple choice questions about [TOPIC].
+Please respond with a JSON array in this exact format:
+
+[
+  {
+    "question": "Your question text here",
+    "choices": [
+      {"text": "Option A text", "is_correct": false, "explanation": "Why this is wrong"},
+      {"text": "Option B text", "is_correct": true, "explanation": "Why this is correct"},
+      {"text": "Option C text", "is_correct": false, "explanation": "Why this is wrong"},
+      {"text": "Option D text", "is_correct": false, "explanation": "Why this is wrong"}
+    ],
+    "difficulty": 2,
+    "explanation": "General explanation of the concept tested"
+  }
+]
+
+Requirements:
+- Difficulty: 1 (Recall), 2 (Application), 3 (Reasoning)
+- Target audience: [DESCRIPTION]
+- Focus on: [SPECIFIC CONCEPTS]</code></pre>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Step 2 Section -->
+                    <section id="step2" class="mb-5">
+                        <h3><i class="bi bi-2-circle"></i> Step 2: Working with LLMs</h3>
+                        
+                        <h5>Recommended LLMs</h5>
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <h6><i class="bi bi-chat-square-text"></i> ChatGPT</h6>
+                                        <p class="small">Great for structured responses and following format instructions</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <h6><i class="bi bi-cpu"></i> Claude</h6>
+                                        <p class="small">Excellent for detailed explanations and educational content</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <div class="card-body text-center">
+                                        <h6><i class="bi bi-google"></i> Gemini</h6>
+                                        <p class="small">Good for technical topics and factual accuracy</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h5>Best Practices</h5>
+                        <ul>
+                            <li><strong>Be specific:</strong> The more detailed your prompt, the better the output</li>
+                            <li><strong>Use examples:</strong> Show the LLM the exact format you want</li>
+                            <li><strong>Iterate:</strong> If the first response isn't perfect, refine your prompt</li>
+                            <li><strong>Copy everything:</strong> Include the entire LLM response, not just parts</li>
+                        </ul>
+                    </section>
+
+                    <!-- Step 3 Section -->
+                    <section id="step3" class="mb-5">
+                        <h3><i class="bi bi-3-circle"></i> Step 3: Reviewing Generated Questions</h3>
+                        
+                        <h5>Review Criteria</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6><i class="bi bi-check-circle text-success"></i> What to Look For</h6>
+                                <ul>
+                                    <li>Clear, unambiguous question text</li>
+                                    <li>Only one correct answer</li>
+                                    <li>Plausible distractors (wrong answers)</li>
+                                    <li>Appropriate difficulty level</li>
+                                    <li>Factual accuracy</li>
+                                    <li>Good explanations</li>
+                                </ul>
+                            </div>
+                            <div class="col-md-6">
+                                <h6><i class="bi bi-x-circle text-danger"></i> Red Flags</h6>
+                                <ul>
+                                    <li>Multiple correct answers</li>
+                                    <li>No clearly correct answer</li>
+                                    <li>Confusing or poorly worded questions</li>
+                                    <li>Factual errors</li>
+                                    <li>Too easy or too difficult for intended level</li>
+                                    <li>Obvious or silly distractors</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <h5>Review Status Options</h5>
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Status</th>
+                                        <th>When to Use</th>
+                                        <th>What Happens</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><span class="badge bg-success">Approved</span></td>
+                                        <td>Question is ready to use as-is</td>
+                                        <td>Automatically added to MCQ database</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="badge bg-warning">Needs Edit</span></td>
+                                        <td>Question has potential but needs fixes</td>
+                                        <td>Marked for manual editing later</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="badge bg-danger">Rejected</span></td>
+                                        <td>Question has serious issues</td>
+                                        <td>Not added to database</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="badge bg-secondary">Pending</span></td>
+                                        <td>Not yet reviewed</td>
+                                        <td>Waiting for review</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+
+                    <!-- Formats Section -->
+                    <section id="formats" class="mb-5">
+                        <h3><i class="bi bi-file-earmark-code"></i> Supported Response Formats</h3>
+                        
+                        <p>The system can automatically parse various response formats from LLMs:</p>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h5>JSON Format</h5>
+                                <pre class="bg-light p-3 rounded small"><code>[
+  {
+    "question": "What is Python?",
+    "choices": [
+      {"text": "A snake", "is_correct": false},
+      {"text": "A programming language", "is_correct": true},
+      {"text": "A type of coffee", "is_correct": false},
+      {"text": "A calculator", "is_correct": false}
+    ],
+    "difficulty": 1,
+    "explanation": "Python is a popular programming language"
+  }
+]</code></pre>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <h5>Text Format</h5>
+                                <pre class="bg-light p-3 rounded small"><code>Question 1: What is Python?
+A) A snake
+B) A programming language
+C) A type of coffee  
+D) A calculator
+Correct Answer: B
+
+Question 2: Which symbol starts a comment?
+A) //
+B) #
+C) /*
+D) --
+Correct Answer: B</code></pre>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-info">
+                            <h6><i class="bi bi-info-circle"></i> Parser Intelligence</h6>
+                            <p class="mb-0">
+                                The system automatically detects the format and extracts questions, choices, and answers. 
+                                It handles variations in formatting, numbering schemes, and common patterns used by different LLMs.
+                            </p>
+                        </div>
+                    </section>
+
+                    <!-- Examples Section -->
+                    <section id="examples" class="mb-5">
+                        <h3><i class="bi bi-collection"></i> Prompt Examples by Subject</h3>
+
+                        <div class="accordion" id="exampleAccordion">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#programming">
+                                        Programming/Computer Science
+                                    </button>
+                                </h2>
+                                <div id="programming" class="accordion-collapse collapse" data-bs-parent="#exampleAccordion">
+                                    <div class="accordion-body">
+                                        <pre class="bg-light p-3 rounded"><code>Generate 5 multiple choice questions about Python data structures (lists, dictionaries, sets, tuples).
+
+Requirements:
+- Each question should test practical knowledge
+- Include code examples where appropriate
+- 4 answer choices per question
+- Difficulty: Intermediate (6 months experience)
+- Include explanations that help reinforce learning
+
+Focus areas:
+- List comprehensions and methods
+- Dictionary operations and methods
+- Set operations and use cases
+- Tuple immutability and unpacking
+- Performance characteristics</code></pre>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#science">
+                                        Science/Biology
+                                    </button>
+                                </h2>
+                                <div id="science" class="accordion-collapse collapse" data-bs-parent="#exampleAccordion">
+                                    <div class="accordion-body">
+                                        <pre class="bg-light p-3 rounded"><code>Create 8 multiple choice questions about cellular respiration for high school biology students.
+
+Requirements:
+- Cover all three stages: glycolysis, Krebs cycle, electron transport
+- Include questions about ATP production, location of processes, and reactants/products
+- 4 answer choices each with explanations
+- Mix of recall and application questions
+- Avoid overly technical terminology
+
+Learning objectives:
+- Understand the overall purpose of cellular respiration
+- Identify inputs and outputs of each stage
+- Recognize the importance of oxygen in the process
+- Connect to real-world applications (exercise, metabolism)</code></pre>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item">
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#history">
+                                        History/Social Studies
+                                    </button>
+                                </h2>
+                                <div id="history" class="accordion-collapse collapse" data-bs-parent="#exampleAccordion">
+                                    <div class="accordion-body">
+                                        <pre class="bg-light p-3 rounded"><code>Generate 6 multiple choice questions about World War II major events and turning points.
+
+Requirements:
+- Focus on key battles, decisions, and consequences
+- Include questions about different theaters (European, Pacific)
+- 4 answer choices with historical context in explanations
+- Appropriate for college-level history course
+- Emphasize cause-and-effect relationships
+
+Topics to cover:
+- Pearl Harbor and US entry
+- D-Day invasion planning and execution
+- Battle of Stalingrad significance
+- Atomic bomb decision
+- Holocaust and genocide
+- Post-war consequences</code></pre>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Troubleshooting Section -->
+                    <section id="troubleshooting" class="mb-5">
+                        <h3><i class="bi bi-tools"></i> Troubleshooting Common Issues</h3>
+
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Problem</th>
+                                        <th>Cause</th>
+                                        <th>Solution</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>No questions parsed</td>
+                                        <td>Response format not recognized</td>
+                                        <td>Check that questions are clearly numbered and formatted. Try a more structured prompt.</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Wrong number of choices</td>
+                                        <td>LLM didn't follow instructions</td>
+                                        <td>Be more explicit about requiring exactly 4 choices. Include an example in your prompt.</td>
+                                    </tr>
+                                    <tr>
+                                        <td>No correct answers marked</td>
+                                        <td>Answer indicators not recognized</td>
+                                        <td>Ask for "Correct Answer: A" format or use JSON format for precision.</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Questions too easy/hard</td>
+                                        <td>Difficulty level not clear in prompt</td>
+                                        <td>Be more specific about target audience and provide context about their knowledge level.</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Poor quality distractors</td>
+                                        <td>LLM needs guidance on good wrong answers</td>
+                                        <td>Ask for "plausible but incorrect" choices and specify they should test understanding.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="alert alert-warning">
+                            <h6><i class="bi bi-exclamation-triangle"></i> Important Notes</h6>
+                            <ul class="mb-0">
+                                <li><strong>Always review:</strong> LLMs can make factual errors or create ambiguous questions</li>
+                                <li><strong>Check duplicates:</strong> Make sure you're not creating questions too similar to existing ones</li>
+                                <li><strong>Test difficulty:</strong> Consider if questions match your intended learning objectives</li>
+                                <li><strong>Save your prompts:</strong> Good prompts can be reused and refined for future sessions</li>
+                            </ul>
+                        </div>
+                    </section>
+
+                    <!-- Quick Reference -->
+                    <section id="quickref" class="mb-5">
+                        <h3><i class="bi bi-bookmark"></i> Quick Reference</h3>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h6 class="mb-0">Keyboard Shortcuts</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <ul class="list-unstyled">
+                                            <li><kbd>Ctrl+C</kbd> / <kbd>Cmd+C</kbd> - Copy prompt text</li>
+                                            <li><kbd>Ctrl+V</kbd> / <kbd>Cmd+V</kbd> - Paste LLM response</li>
+                                            <li><kbd>Tab</kbd> - Navigate between form fields</li>
+                                            <li><kbd>Enter</kbd> - Submit forms</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h6 class="mb-0">Quality Checklist</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <ul class="list-unstyled">
+                                            <li>☐ One clearly correct answer</li>
+                                            <li>☐ Three plausible distractors</li>
+                                            <li>☐ Clear, unambiguous question</li>
+                                            <li>☐ Appropriate difficulty level</li>
+                                            <li>☐ Factually accurate</li>
+                                            <li>☐ Good explanations provided</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Footer Actions -->
+                    <div class="text-center mt-5 pt-4 border-top">
+                        <h5>Ready to Get Started?</h5>
+                        <p class="text-muted">Use this workflow to quickly generate high-quality questions for your study sessions.</p>
+                        <a href="{% url 'mcq:create_llm_prompt' %}" class="btn btn-primary btn-lg">
+                            <i class="bi bi-rocket"></i> Start Generating Questions
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Smooth scrolling for anchor links */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Code blocks styling */
+pre code {
+    font-size: 0.85rem;
+    line-height: 1.4;
+}
+
+/* Section spacing */
+section {
+    scroll-margin-top: 2rem;
+}
+</style>
+{% endblock %}
