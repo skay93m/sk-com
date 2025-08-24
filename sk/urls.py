@@ -16,6 +16,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
 from .views import SecureAdminLoginView, SecureAdminLogoutView
 
 urlpatterns = [
@@ -28,3 +30,13 @@ urlpatterns = [
     path('cv/', include('cv.urls')),
     path('mcq/', include('mcq.urls')),
 ]
+
+# Serve static files in development and production
+# This ensures static files are properly served regardless of DEBUG setting
+if settings.DEBUG or settings.WHITENOISE_USE_FINDERS:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
+# Also include STATICFILES_DIRS for development
+if settings.DEBUG:
+    from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+    urlpatterns += staticfiles_urlpatterns()
