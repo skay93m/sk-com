@@ -1,33 +1,200 @@
-{% extends "admin/base_site.html" %}
-{% load i18n static admin_list %}
+{% extends "admin/base.html" %}
+{% load i18n static %}
 
-{% block extrastyle %}{{ block.super }}<link rel="stylesheet" type="text/css" href="{% static "admin/css/dashboard.css" %}">{% endblock %}
-
-{% block coltype %}colMS{% endblock %}
-
-{% block bodyclass %}{{ block.super }} dashboard{% endblock %}
-
-{% block nav-breadcrumbs %}{% endblock %}
+{% block title %}Admin Dashboard{% endblock %}
 
 {% block content %}
-<div id="content-main">
-    <div class="row">
-        <div class="col-12 mb-4">
-            <div class="alert alert-info">
-                <i class="bi bi-info-circle me-2"></i>
-                <strong>Welcome to the Administration Dashboard</strong><br>
-                From here you can manage all aspects of your site including projects, writing content, and user accounts.
+<div class="row">
+    <div class="col-12 mb-4">
+        <div class="alert alert-primary">
+            <h4 class="alert-heading">
+                <i class="bi bi-speedometer2 me-2"></i>Admin Dashboard
+            </h4>
+            <p class="mb-0">Welcome to the SK Admin Panel. Manage all aspects of your portfolio site from here.</p>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Stats -->
+<div class="row mb-4">
+    <div class="col-md-3 mb-3">
+        <div class="card border-primary">
+            <div class="card-body text-center">
+                <i class="bi bi-award text-primary" style="font-size: 2rem;"></i>
+                <h5 class="card-title mt-2">Credentials</h5>
+                <p class="card-text text-muted">Manage certifications</p>
+                <a href="{% url 'admin:cv_credentials_changelist' %}" class="btn btn-outline-primary btn-sm">Manage</a>
             </div>
         </div>
     </div>
+    <div class="col-md-3 mb-3">
+        <div class="card border-success">
+            <div class="card-body text-center">
+                <i class="bi bi-folder text-success" style="font-size: 2rem;"></i>
+                <h5 class="card-title mt-2">Projects</h5>
+                <p class="card-text text-muted">Portfolio projects</p>
+                <a href="{% url 'admin:projects_project_changelist' %}" class="btn btn-outline-success btn-sm">Manage</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card border-warning">
+            <div class="card-body text-center">
+                <i class="bi bi-pen text-warning" style="font-size: 2rem;"></i>
+                <h5 class="card-title mt-2">Writing</h5>
+                <p class="card-text text-muted">Blog posts & articles</p>
+                <a href="{% url 'admin:writing_writing_changelist' %}" class="btn btn-outline-warning btn-sm">Manage</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="card border-info">
+            <div class="card-body text-center">
+                <i class="bi bi-star text-info" style="font-size: 2rem;"></i>
+                <h5 class="card-title mt-2">Heroes</h5>
+                <p class="card-text text-muted">Hero sections</p>
+                <a href="{% url 'admin:home_hero_changelist' %}" class="btn btn-outline-info btn-sm">Manage</a>
+            </div>
+        </div>
+    </div>
+</div>
 
-    {% if app_list %}
-        <div class="row">
-            {% for app in app_list %}
-                <div class="col-md-6 col-lg-4 mb-4">
-                    <div class="card h-100">
-                        <div class="card-header bg-primary text-white">
-                            <h3 class="card-title mb-0">
+<!-- MCQ System -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-secondary text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-question-circle me-2"></i>MCQ Learning System
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-tags text-secondary me-3" style="font-size: 1.5rem;"></i>
+                            <div>
+                                <h6 class="mb-0">Topics</h6>
+                                <small class="text-muted">Organize questions by topic</small>
+                            </div>
+                            <a href="{% url 'admin:mcq_topic_changelist' %}" class="btn btn-outline-secondary btn-sm ms-auto">Manage</a>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-question-circle text-secondary me-3" style="font-size: 1.5rem;"></i>
+                            <div>
+                                <h6 class="mb-0">Questions</h6>
+                                <small class="text-muted">MCQ questions and choices</small>
+                            </div>
+                            <a href="{% url 'admin:mcq_mcq_changelist' %}" class="btn btn-outline-secondary btn-sm ms-auto">Manage</a>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-clock-history text-secondary me-3" style="font-size: 1.5rem;"></i>
+                            <div>
+                                <h6 class="mb-0">Schedules</h6>
+                                <small class="text-muted">Review scheduling</small>
+                            </div>
+                            <a href="{% url 'admin:mcq_reviewschedule_changelist' %}" class="btn btn-outline-secondary btn-sm ms-auto">Manage</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- System Management -->
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-people me-2"></i>User Management
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span>Users</span>
+                    <a href="{% url 'admin:auth_user_changelist' %}" class="btn btn-outline-dark btn-sm">Manage</a>
+                </div>
+                <div class="d-flex justify-content-between align-items-center">
+                    <span>Groups</span>
+                    <a href="{% url 'admin:auth_group_changelist' %}" class="btn btn-outline-dark btn-sm">Manage</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-gear me-2"></i>System
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span>Sessions</span>
+                    <a href="{% url 'admin:sessions_session_changelist' %}" class="btn btn-outline-dark btn-sm">Manage</a>
+                </div>
+                <div class="d-flex justify-content-between align-items-center">
+                    <span>Site Configuration</span>
+                    <a href="{% url 'admin:sites_site_changelist' %}" class="btn btn-outline-dark btn-sm">Manage</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Actions -->
+{% if admin_log %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-clock-history me-2"></i>Recent Actions
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>User</th>
+                                <th>Action</th>
+                                <th>Object</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for entry in admin_log %}
+                            <tr>
+                                <td>{{ entry.action_time|date:"M d, H:i" }}</td>
+                                <td>{{ entry.user.username }}</td>
+                                <td>
+                                    {% if entry.is_addition %}
+                                        <span class="badge bg-success">Added</span>
+                                    {% elif entry.is_change %}
+                                        <span class="badge bg-primary">Changed</span>
+                                    {% elif entry.is_deletion %}
+                                        <span class="badge bg-danger">Deleted</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ entry.object_repr|truncatechars:50 }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
                                 <i class="bi bi-{% if app.app_label == 'home' %}house{% elif app.app_label == 'projects' %}folder{% elif app.app_label == 'writing' %}pencil{% elif app.app_label == 'auth' %}people{% else %}gear{% endif %} me-2"></i>
                                 <a href="{{ app.app_url }}" class="text-white text-decoration-none">{{ app.name }}</a>
                             </h3>
