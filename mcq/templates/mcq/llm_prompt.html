@@ -32,13 +32,24 @@
                     </div>
 
                     <!-- Tips Card -->
-                    <div class="alert alert-info mb-4">
-                        <h6><i class="bi bi-lightbulb"></i> Tips for Effective Prompts:</h6>
+                    <div class="alert alert-success mb-4">
+                        <h6><i class="bi bi-magic"></i> Pre-filled Template:</h6>
+                        <p class="mb-2">A customizable prompt template has been pre-filled below. Simply:</p>
                         <ul class="mb-0">
-                            <li><strong>Be specific:</strong> Mention the topic, number of questions, and difficulty level</li>
-                            <li><strong>Request format:</strong> Ask for clear question text and 4 multiple choice options</li>
-                            <li><strong>Include explanations:</strong> Request explanations for both correct and incorrect answers</li>
-                            <li><strong>Set context:</strong> Provide background or specify the audience level</li>
+                            <li><strong>Replace [TOPIC]</strong> with your specific subject (e.g., "Python dictionaries", "World War II")</li>
+                            <li><strong>Replace [DIFFICULTY]</strong> with your target level (e.g., "beginner", "intermediate", "advanced")</li>
+                            <li><strong>Adjust the number of questions</strong> if you want more or fewer than 5</li>
+                            <li><strong>Customize any other requirements</strong> to match your specific needs</li>
+                        </ul>
+                    </div>
+
+                    <div class="alert alert-info mb-4">
+                        <h6><i class="bi bi-lightbulb"></i> Additional Tips:</h6>
+                        <ul class="mb-0">
+                            <li><strong>Be specific:</strong> More detail leads to better questions</li>
+                            <li><strong>Include examples:</strong> Show the format you want if needed</li>
+                            <li><strong>Set context:</strong> Specify the target audience or learning level</li>
+                            <li><strong>Request explanations:</strong> Ask for detailed reasoning for answers</li>
                         </ul>
                     </div>
 
@@ -67,6 +78,15 @@
                             {% if form.prompt_text.help_text %}
                                 <div class="form-text">{{ form.prompt_text.help_text }}</div>
                             {% endif %}
+                            <div class="form-text">
+                                <strong>Quick customize:</strong> 
+                                <button type="button" class="btn btn-sm btn-outline-secondary ms-1" onclick="highlightPlaceholder('[TOPIC]')">
+                                    Find [TOPIC]
+                                </button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary ms-1" onclick="highlightPlaceholder('[DIFFICULTY]')">
+                                    Find [DIFFICULTY]
+                                </button>
+                            </div>
                         </div>
 
                         <!-- Example Prompts -->
@@ -163,6 +183,18 @@ function copyExample(text) {
             btn.classList.add('btn-outline-primary');
         }, 2000);
     });
+}
+
+function highlightPlaceholder(placeholder) {
+    const textarea = document.getElementById('{{ form.prompt_text.id_for_label }}');
+    const text = textarea.value;
+    const index = text.indexOf(placeholder);
+    
+    if (index !== -1) {
+        textarea.focus();
+        textarea.setSelectionRange(index, index + placeholder.length);
+        textarea.scrollTop = Math.max(0, (textarea.scrollHeight * index) / text.length - textarea.clientHeight / 2);
+    }
 }
 </script>
 {% endblock %}

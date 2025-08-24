@@ -65,20 +65,50 @@ def validate_single_correct(formset):
 # LLM Question Generation Forms
 class LLMPromptForm(forms.ModelForm):
     """Form for entering LLM prompts to generate questions"""
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Set default prompt template if no initial data provided
+        if not self.instance.pk and not self.data and not kwargs.get('initial', {}).get('prompt_text'):
+            self.fields['prompt_text'].initial = self.get_default_prompt_template()
+    
+    def get_default_prompt_template(self):
+        """Return a default prompt template that users can customize"""
+        return """Generate 5 multiple choice questions about [TOPIC].
+
+Requirements:
+- Each question should have exactly 4 answer choices (A, B, C, D)
+- Only one answer should be correct
+- Include clear explanations for why each answer is correct or incorrect
+- Questions should be at [DIFFICULTY] level
+- Focus on practical understanding and application
+
+Format for each question:
+1. Question text?
+   A) First option
+   B) Second option  
+   C) Third option
+   D) Fourth option
+   
+   Correct Answer: [Letter]
+   Explanation: [Why this answer is correct and others are wrong]
+
+Please ensure questions test real understanding rather than just memorization."""
+
     class Meta:
         model = QuestionGeneration
         fields = ['prompt_text', 'topic', 'difficulty']
         widgets = {
             'prompt_text': forms.Textarea(attrs={
                 'class': 'form-control',
-                'rows': 8,
-                'placeholder': 'Enter your prompt for the LLM to generate questions...\n\nExample:\nGenerate 5 multiple choice questions about Python dictionaries.\nEach question should have 4 choices with only one correct answer.\nInclude explanations for both correct and incorrect answers.\nDifficulty level: Intermediate'
+                'rows': 12,
+                'placeholder': 'Customize the prompt template below for your specific needs...'
             }),
             'topic': forms.Select(attrs={'class': 'form-select'}),
             'difficulty': forms.Select(attrs={'class': 'form-select'}),
         }
         labels = {
-            'prompt_text': 'LLM Prompt',
+            'prompt_text': 'LLM Prompt (Editable Template)',
             'topic': 'Topic (Optional)',
             'difficulty': 'Default Difficulty Level',
         }
