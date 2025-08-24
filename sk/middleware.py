@@ -32,7 +32,11 @@ class SecureAdminMiddleware:
                 
                 # Check for secure access flag in session
                 if not request.session.get('secure_admin_access', False):
-                    messages.error(request, 'Access denied. Please use the authorized login method.')
+                    # Try to add message, but handle gracefully if messages middleware isn't available
+                    try:
+                        messages.error(request, 'Access denied. Please use the authorized login method.')
+                    except Exception as msg_error:
+                        logger.warning(f"Could not add message: {msg_error}")
                     return redirect('home')  # Redirect to home page
             
             response = self.get_response(request)

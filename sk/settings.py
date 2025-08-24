@@ -94,8 +94,8 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'sk.middleware.SecureAdminMiddleware',  # Custom middleware for secure admin access
     'django.contrib.messages.middleware.MessageMiddleware',
+    'sk.middleware.SecureAdminMiddleware',  # Custom middleware for secure admin access
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
