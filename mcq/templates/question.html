@@ -71,123 +71,62 @@
 
                     {% else %}
                         <!-- Feedback Section -->
-                        <div class="mb-4">
-                            <!-- Result Status -->
-                            <div class="alert {% if feedback.is_correct %}alert-success{% else %}alert-danger{% endif %} d-flex align-items-center">
-                                {% if feedback.is_correct %}
+                    {% if show_feedback %}
+                        <!-- Feedback Section -->
+                        <div class="mt-4">
+                            {% if feedback.is_correct %}
+                                <div class="alert alert-success d-flex align-items-center">
                                     <i class="bi bi-check-circle-fill me-3 fs-4"></i>
                                     <div>
-                                        <h6 class="mb-1">Correct Answer! 🎉</h6>
-                                        <p class="mb-0">Great job! You got it right.</p>
+                                        <strong>Correct!</strong> Well done.
+                                        {% if is_practice %}
+                                        <br><small class="text-muted">Practice mode - schedule not affected</small>
+                                        {% else %}
+                                        <br><small class="text-muted">
+                                            {% if mcq.schedule.first %}
+                                                Advanced to: <span class="badge bg-{{ mcq.schedule.first.get_srs_stage_display_with_color.color }}">{{ mcq.schedule.first.get_srs_stage_display }}</span>
+                                            {% endif %}
+                                        </small>
+                                        {% endif %}
                                     </div>
-                                {% else %}
+                                </div>
+                            {% else %}
+                                <div class="alert alert-danger d-flex align-items-center">
                                     <i class="bi bi-x-circle-fill me-3 fs-4"></i>
                                     <div>
-                                        <h6 class="mb-1">Incorrect Answer</h6>
-                                        <p class="mb-0">Don't worry, let's learn from this.</p>
-                                    </div>
-                                {% endif %}
-                            </div>
-
-                            <!-- Question Review -->
-                            <div class="bg-light rounded p-3 mb-3">
-                                <h6 class="text-primary mb-2">
-                                    <i class="bi bi-chat-square-text me-2"></i>Question
-                                </h6>
-                                <p class="mb-0">{{ mcq.question_text }}</p>
-                            </div>
-
-                            <!-- Answer Analysis -->
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="card border-success h-100">
-                                        <div class="card-header bg-success text-white">
-                                            <h6 class="mb-0">
-                                                <i class="bi bi-check-circle me-2"></i>Correct Answer
-                                            </h6>
-                                        </div>
-                                        <div class="card-body">
-                                            <p class="mb-2">
-                                                <span class="badge bg-success me-2">{{ feedback.correct_choice.text|slice:":1" }}</span>
-                                                {{ feedback.correct_choice.text }}
-                                            </p>
-                                            {% if feedback.general_explanation %}
-                                                <small class="text-muted">
-                                                    <strong>Explanation:</strong> {{ feedback.general_explanation }}
-                                                </small>
+                                        <strong>Incorrect.</strong> The correct answer was <strong>{{ feedback.correct_choice.text }}</strong>
+                                        {% if is_practice %}
+                                        <br><small class="text-muted">Practice mode - schedule not affected</small>
+                                        {% else %}
+                                        <br><small class="text-muted">
+                                            {% if mcq.schedule.first %}
+                                                Reset to: <span class="badge bg-{{ mcq.schedule.first.get_srs_stage_display_with_color.color }}">{{ mcq.schedule.first.get_srs_stage_display }}</span>
+                                                - Review in {{ mcq.schedule.first.SRS_INTERVALS|lookup:mcq.schedule.first.srs_stage }} hours
                                             {% endif %}
-                                        </div>
+                                        </small>
+                                        {% endif %}
                                     </div>
                                 </div>
-
-                                {% if not feedback.is_correct %}
-                                <div class="col-md-6">
-                                    <div class="card border-danger h-100">
-                                        <div class="card-header bg-danger text-white">
-                                            <h6 class="mb-0">
-                                                <i class="bi bi-x-circle me-2"></i>Your Answer
-                                            </h6>
-                                        </div>
-                                        <div class="card-body">
-                                            <p class="mb-2">
-                                                <span class="badge bg-danger me-2">{{ feedback.selected_choice.text|slice:":1" }}</span>
-                                                {{ feedback.selected_choice.text }}
-                                            </p>
-                                            {% if feedback.selected_explanation %}
-                                                <small class="text-muted">
-                                                    <strong>Why incorrect:</strong> {{ feedback.selected_explanation }}
-                                                </small>
-                                            {% endif %}
-                                        </div>
-                                    </div>
-                                </div>
-                                {% endif %}
-                            </div>
-
-                            <!-- Detailed Explanations -->
-                            <div class="mt-4">
-                                <details class="details-custom">
-                                    <summary class="btn btn-outline-info w-100">
-                                        <i class="bi bi-info-circle me-2"></i>Show All Answer Explanations
-                                    </summary>
-                                    <div class="mt-3">
-                                        {% for item in choices_labeled %}
-                                            <div class="card mb-2 {% if item.choice.is_correct %}border-success{% endif %}">
-                                                <div class="card-body py-2">
-                                                    <div class="d-flex align-items-start">
-                                                        <span class="badge {% if item.choice.is_correct %}bg-success{% else %}bg-secondary{% endif %} me-3">
-                                                            {{ item.label }}
-                                                        </span>
-                                                        <div class="flex-grow-1">
-                                                            <p class="mb-1">{{ item.choice.text }}</p>
-                                                            {% if item.choice.is_correct %}
-                                                                <small class="text-success fw-bold">
-                                                                    <i class="bi bi-check-circle me-1"></i>Correct Answer
-                                                                </small>
-                                                            {% elif item.choice.explanation %}
-                                                                <small class="text-muted">{{ item.choice.explanation }}</small>
-                                                            {% endif %}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        {% endfor %}
-                                    </div>
-                                </details>
-                            </div>
-                        </div>
-
-                        <!-- Next Question Button -->
+                            {% endif %}                        <!-- Next Question Button -->
                         <div class="d-grid gap-2 d-md-flex justify-content-md-between">
-                            <a href="{% url 'mcq:quiz' %}" class="btn btn-outline-secondary">
-                                <i class="bi bi-house me-2"></i>Quiz Home
+                            <a href="{% url 'mcq:landing' %}" class="btn btn-outline-secondary">
+                                <i class="bi bi-house me-2"></i>Dashboard
                             </a>
                             <form method="get" class="d-grid col-md-6">
                                 <button type="submit" class="btn btn-primary btn-lg">
-                                    <i class="bi bi-arrow-right me-2"></i>Next Question
+                                    <i class="bi bi-arrow-right me-2"></i>
+                                    {% if is_practice %}Next Practice{% else %}Next Question{% endif %}
                                 </button>
                             </form>
                         </div>
+                    {% else %}
+                        <!-- Question Header for Practice Mode -->
+                        {% if is_practice %}
+                        <div class="alert alert-info mb-3">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>Practice Mode:</strong> This session won't affect your spaced repetition schedule.
+                        </div>
+                        {% endif %}
                     {% endif %}
                 </div>
             </div>

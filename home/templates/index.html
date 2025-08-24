@@ -28,8 +28,8 @@
                     <a href="{% url 'writing:writing_list' %}" class="btn btn-outline-light btn-lg">
                         <i class="bi bi-pen"></i> Writing
                     </a>
-                    <a href="{% url 'mcq:quiz' %}" class="btn btn-outline-light btn-lg">
-                        <i class="bi bi-question-circle"></i> MCQ
+                                        <a href="{% url 'mcq:landing' %}" class="btn btn-outline-light btn-lg">
+                        MCQ Dashboard
                     </a>
                 </div>
             </div>
@@ -109,7 +109,7 @@
                     </div>
                     <h3 class="card-title h1 text-primary">{{ stats.mcqs }}</h3>
                     <p class="card-text text-muted">Quiz Questions</p>
-                    <a href="{% url 'mcq:quiz' %}" class="btn btn-outline-danger btn-sm">Start Quiz</a>
+                    <a href="{% url 'mcq:landing' %}" class="btn btn-outline-danger btn-sm">MCQ Dashboard</a>
                 </div>
             </div>
         </div>

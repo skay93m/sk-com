@@ -4,6 +4,18 @@
 
 {% block content %}
 <div class="container-fluid">
+    <!-- Navigation -->
+    <div class="row mb-3">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'mcq:landing' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Create Question</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+    
     <div class="row">
         <!-- Main Content -->
         <div class="col-lg-8">

@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
+from django.utils import timezone
 from .forms import MCQForm, ChoiceFormSet, validate_single_correct
 from .models import MCQ, Choice, ReviewSchedule
 
@@ -46,6 +47,7 @@ def mcq_list(request):
         'mcqs': mcqs,
         'total_mcqs': total_mcqs,
         'difficulty_stats': difficulty_stats,
+        'now': timezone.now(),
     }
     
     return render(request, "mcq_list.html", context)

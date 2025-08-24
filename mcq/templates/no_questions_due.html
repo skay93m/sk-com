@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}No Questions Due{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-body text-center p-5">
+                    <div class="mb-4">
+                        <i class="fas fa-check-circle text-success" style="font-size: 4rem;"></i>
+                    </div>
+                    
+                    <h2 class="mb-3">All Caught Up!</h2>
+                    <p class="text-muted mb-4 lead">
+                        Great job! You don't have any questions due for review right now.
+                    </p>
+                    
+                    {% if next_review_time %}
+                    <div class="alert alert-info">
+                        <i class="fas fa-clock me-2"></i>
+                        <strong>Next review:</strong> {{ next_review_time|date:"M j, Y g:i A" }}
+                        <br>
+                        <small class="text-muted">
+                            ({{ next_review_hours }} hour{{ next_review_hours|pluralize }} from now)
+                        </small>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Action Options -->
+                    <div class="row mt-5">
+                        <div class="col-md-6 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <i class="fas fa-plus-circle text-success me-2"></i>
+                                        Add More Questions
+                                    </h5>
+                                    <p class="card-text">
+                                        Create new questions to expand your learning collection.
+                                    </p>
+                                    <a href="{% url 'mcq:create_mcq' %}" class="btn btn-success">
+                                        <i class="fas fa-plus me-2"></i>Create Question
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <i class="fas fa-chart-bar text-info me-2"></i>
+                                        Review Progress
+                                    </h5>
+                                    <p class="card-text">
+                                        Check your learning statistics and achievements.
+                                    </p>
+                                    <a href="{% url 'mcq:stats' %}" class="btn btn-info">
+                                        <i class="fas fa-chart-line me-2"></i>View Stats
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Optional Practice Mode -->
+                    {% if total_mcqs > 0 %}
+                    <div class="mt-4 p-4 bg-light rounded">
+                        <h6 class="mb-3">Optional Practice</h6>
+                        <p class="text-muted mb-3">
+                            Want to practice anyway? You can review questions that aren't due yet, 
+                            but this won't affect their spaced repetition schedule.
+                        </p>
+                        <a href="{% url 'mcq:practice' %}" class="btn btn-outline-primary">
+                            <i class="fas fa-play me-2"></i>Practice Mode
+                        </a>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Navigation -->
+                    <div class="mt-5">
+                        <a href="{% url 'mcq:landing' %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.card {
+    transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+</style>
+{% endblock %}

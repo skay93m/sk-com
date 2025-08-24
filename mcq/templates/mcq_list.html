@@ -14,6 +14,14 @@
                             <h2 class="mb-1">
                                 <i class="bi bi-collection me-2"></i>MCQ Dashboard
                             </h2>
+                            <p class="mb-0 opacity-75">Manage your questions</p>
+                        </div>
+                        <div>
+                            <a href="{% url 'mcq:landing' %}" class="btn btn-light">
+                                <i class="bi bi-house me-2"></i>Dashboard
+                            </a>
+                        </div>
+                            </h2>
                             <p class="mb-0 opacity-75">Manage your multiple choice questions</p>
                         </div>
                         <a href="{% url 'mcq:create_mcq' %}" class="btn btn-light btn-lg">
@@ -75,6 +83,7 @@
                                         <th scope="col">#</th>
                                         <th scope="col">Question</th>
                                         <th scope="col">Difficulty</th>
+                                        <th scope="col">SRS Stage</th>
                                         <th scope="col">Choices</th>
                                         <th scope="col">Actions</th>
                                     </tr>
@@ -102,6 +111,25 @@
                                                 {% else %}bg-danger{% endif %}">
                                                 Level {{ mcq.difficulty }}
                                             </span>
+                                        </td>
+                                        <td class="align-middle">
+                                            {% with schedule=mcq.schedule.first %}
+                                                {% if schedule %}
+                                                    <span class="badge bg-{{ schedule.get_srs_stage_display_with_color.color }}">
+                                                        {{ schedule.get_srs_stage_display }}
+                                                    </span>
+                                                    <br>
+                                                    <small class="text-muted">
+                                                        {% if schedule.next_review <= now %}
+                                                            <i class="bi bi-clock-history text-warning"></i> Due now
+                                                        {% else %}
+                                                            <i class="bi bi-clock"></i> Due {{ schedule.next_review|timeuntil }}
+                                                        {% endif %}
+                                                    </small>
+                                                {% else %}
+                                                    <span class="badge bg-secondary">No Schedule</span>
+                                                {% endif %}
+                                            {% endwith %}
                                         </td>
                                         <td class="align-middle">
                                             <span class="badge bg-info">{{ mcq.choices.count }} choices</span>
@@ -199,8 +227,8 @@
                         <i class="bi bi-lightning me-2"></i>Quick Actions
                     </h6>
                     <div class="d-flex gap-2 flex-wrap">
-                        <a href="{% url 'mcq:quiz' %}" class="btn btn-outline-primary">
-                            <i class="bi bi-play-circle me-1"></i>Start Quiz
+                        <a href="{% url 'mcq:study' %}" class="btn btn-outline-primary">
+                            <i class="bi bi-play-circle me-1"></i>Start Study
                         </a>
                         <a href="{% url 'mcq:create_mcq' %}" class="btn btn-outline-success">
                             <i class="bi bi-plus me-1"></i>Add MCQ
