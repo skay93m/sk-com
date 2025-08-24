@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h3>{{ mcq.question_text }}</h3>
+<form method="post">
+    {% csrf_token %}
+    {% for item in choices_labeled %}
+        <div>
+            <label>
+                <input type="radio" name="choice_id" value="{{ item.choice.id }} required">
+                <strong>{{ item.label }}.</strong> {{ item.choice.text }}
+            </label>
+        </div>
+    {% endfor %}
+    <button type="submit">Submit</button>
+</form>
+{% endblock %}

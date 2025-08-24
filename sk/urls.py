@@ -26,4 +26,5 @@ urlpatterns = [
     path('projects/', include('projects.urls')),
     path('writing/', include('writing.urls')),
     path('cv/', include('cv.urls')),
+    # path('mcq/', include('mcq.urls')),
 ]
