@@ -1,0 +1,128 @@
+{% extends 'cv_main.html' %}
+
+{% block title %}Paste LLM Response{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4><i class="bi bi-clipboard-data"></i> Step 2: Paste LLM Response</h4>
+                        <a href="{% url 'mcq:llm_generation_home' %}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left"></i> Back
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Progress Indicator -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <div class="progress" style="height: 8px;">
+                                <div class="progress-bar bg-primary" role="progressbar" style="width: 50%"></div>
+                            </div>
+                            <div class="d-flex justify-content-between mt-2">
+                                <small class="text-success">✓ 1. Create Prompt</small>
+                                <small class="text-primary fw-bold">2. Paste Response</small>
+                                <small class="text-muted">3. Review Questions</small>
+                                <small class="text-muted">4. Finalize</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Your Prompt Display -->
+                    <div class="card bg-light mb-4">
+                        <div class="card-header">
+                            <h6 class="mb-0"><i class="bi bi-chat-text"></i> Your Prompt</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="small">
+                                <strong>Topic:</strong> 
+                                {% if generation.topic %}
+                                    <span class="badge" style="background-color: {{ generation.topic.color }};">
+                                        {{ generation.topic.name }}
+                                    </span>
+                                {% else %}
+                                    <span class="text-muted">No specific topic</span>
+                                {% endif %}
+                                <br>
+                                <strong>Difficulty:</strong> <span class="badge bg-secondary">Level {{ generation.difficulty }}</span>
+                            </div>
+                            <hr>
+                            <div class="font-monospace small bg-white p-3 rounded border">
+                                {{ generation.prompt_text|linebreaksbr }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Instructions -->
+                    <div class="alert alert-info mb-4">
+                        <h6><i class="bi bi-info-circle"></i> Instructions:</h6>
+                        <ol class="mb-0">
+                            <li><strong>Copy your prompt</strong> and send it to your preferred LLM (ChatGPT, Claude, Gemini, etc.)</li>
+                            <li><strong>Copy the entire response</strong> from the LLM and paste it below</li>
+                            <li><strong>Our parser</strong> will automatically extract questions and choices</li>
+                            <li><strong>Supported formats:</strong> JSON, numbered lists, or structured text</li>
+                        </ol>
+                    </div>
+
+                    <!-- Form -->
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.llm_response.id_for_label }}" class="form-label">{{ form.llm_response.label }}</label>
+                            {{ form.llm_response }}
+                            <div class="form-text">
+                                Paste the complete response from your LLM here. The system will automatically parse questions and choices.
+                            </div>
+                        </div>
+
+                        <!-- Format Examples -->
+                        <div class="card bg-light mb-4">
+                            <div class="card-header">
+                                <h6 class="mb-0"><i class="bi bi-file-earmark-text"></i> Supported Response Formats</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h6>JSON Format</h6>
+                                        <pre class="small bg-white p-2 rounded border"><code>[
+  {
+    "question": "What is a Python list?",
+    "choices": [
+      {"text": "A sequence", "is_correct": true},
+      {"text": "A number", "is_correct": false}
+    ]
+  }
+]</code></pre>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h6>Text Format</h6>
+                                        <pre class="small bg-white p-2 rounded border"><code>Question 1: What is a Python list?
+A) A mutable sequence
+B) An immutable sequence  
+C) A single value
+D) A function
+Answer: A</code></pre>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'mcq:create_llm_prompt' %}" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left"></i> Back to Prompt
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                Parse Response & Continue <i class="bi bi-arrow-right"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

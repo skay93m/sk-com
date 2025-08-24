@@ -1,0 +1,168 @@
+{% extends 'cv_main.html' %}
+
+{% block title %}Create LLM Prompt{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4><i class="bi bi-chat-text"></i> Step 1: Create LLM Prompt</h4>
+                        <a href="{% url 'mcq:llm_generation_home' %}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left"></i> Back
+                        </a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Progress Indicator -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <div class="progress" style="height: 8px;">
+                                <div class="progress-bar bg-primary" role="progressbar" style="width: 25%"></div>
+                            </div>
+                            <div class="d-flex justify-content-between mt-2">
+                                <small class="text-primary fw-bold">1. Create Prompt</small>
+                                <small class="text-muted">2. Paste Response</small>
+                                <small class="text-muted">3. Review Questions</small>
+                                <small class="text-muted">4. Finalize</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tips Card -->
+                    <div class="alert alert-info mb-4">
+                        <h6><i class="bi bi-lightbulb"></i> Tips for Effective Prompts:</h6>
+                        <ul class="mb-0">
+                            <li><strong>Be specific:</strong> Mention the topic, number of questions, and difficulty level</li>
+                            <li><strong>Request format:</strong> Ask for clear question text and 4 multiple choice options</li>
+                            <li><strong>Include explanations:</strong> Request explanations for both correct and incorrect answers</li>
+                            <li><strong>Set context:</strong> Provide background or specify the audience level</li>
+                        </ul>
+                    </div>
+
+                    <!-- Form -->
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="{{ form.topic.id_for_label }}" class="form-label">{{ form.topic.label }}</label>
+                                {{ form.topic }}
+                                {% if form.topic.help_text %}
+                                    <div class="form-text">{{ form.topic.help_text }}</div>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.difficulty.id_for_label }}" class="form-label">{{ form.difficulty.label }}</label>
+                                {{ form.difficulty }}
+                                <div class="form-text">This will be the default difficulty for generated questions</div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.prompt_text.id_for_label }}" class="form-label">{{ form.prompt_text.label }}</label>
+                            {{ form.prompt_text }}
+                            {% if form.prompt_text.help_text %}
+                                <div class="form-text">{{ form.prompt_text.help_text }}</div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Example Prompts -->
+                        <div class="card bg-light mb-4">
+                            <div class="card-header">
+                                <h6 class="mb-0"><i class="bi bi-clipboard-check"></i> Example Prompts</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="accordion" id="exampleAccordion">
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header">
+                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#example1">
+                                                Basic Programming Questions
+                                            </button>
+                                        </h2>
+                                        <div id="example1" class="accordion-collapse collapse" data-bs-parent="#exampleAccordion">
+                                            <div class="accordion-body">
+                                                <code class="small">
+Generate 5 multiple choice questions about Python lists and dictionaries.
+Each question should have 4 choices (A, B, C, D) with only one correct answer.
+Include explanations for why each answer is correct or incorrect.
+Difficulty level: Intermediate (suitable for someone with 6 months Python experience)
+Focus on: list comprehensions, dictionary methods, and common operations.
+                                                </code>
+                                                <button class="btn btn-sm btn-outline-primary mt-2" onclick="copyExample(this.previousElementSibling.textContent)">
+                                                    Copy Example
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header">
+                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#example2">
+                                                JSON Format Request
+                                            </button>
+                                        </h2>
+                                        <div id="example2" class="accordion-collapse collapse" data-bs-parent="#exampleAccordion">
+                                            <div class="accordion-body">
+                                                <code class="small">
+Create 3 advanced JavaScript questions about async/await and promises.
+Please format your response as a JSON array with this structure:
+[
+  {
+    "question": "Question text here",
+    "choices": [
+      {"text": "Option A", "is_correct": false, "explanation": "Why it's wrong"},
+      {"text": "Option B", "is_correct": true, "explanation": "Why it's correct"},
+      {"text": "Option C", "is_correct": false, "explanation": "Why it's wrong"},
+      {"text": "Option D", "is_correct": false, "explanation": "Why it's wrong"}
+    ],
+    "difficulty": 3,
+    "explanation": "General explanation of the concept"
+  }
+]
+                                                </code>
+                                                <button class="btn btn-sm btn-outline-primary mt-2" onclick="copyExample(this.previousElementSibling.textContent)">
+                                                    Copy Example
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'mcq:llm_generation_home' %}" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                Continue to Step 2 <i class="bi bi-arrow-right"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function copyExample(text) {
+    navigator.clipboard.writeText(text.trim()).then(() => {
+        // Show temporary success message
+        const btn = event.target;
+        const originalText = btn.textContent;
+        btn.textContent = 'Copied!';
+        btn.classList.remove('btn-outline-primary');
+        btn.classList.add('btn-success');
+        
+        setTimeout(() => {
+            btn.textContent = originalText;
+            btn.classList.remove('btn-success');
+            btn.classList.add('btn-outline-primary');
+        }, 2000);
+    });
+}
+</script>
+{% endblock %}
