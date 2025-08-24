@@ -5,79 +5,164 @@
 
 {% block content %}
 <link rel="stylesheet" href="{% static 'css/writing.css' %}">
-<div class="row">
-    <div class="col-12">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1>Writing</h1>
-            {% if user.is_authenticated %}
-                <a href="{% url 'writing:writing_create' %}" class="btn btn-primary">
-                    <i class="bi bi-plus-lg"></i> New Writing
-                </a>
-            {% endif %}
-        </div>
 
-        <!-- Search and Filter Form -->
-        <div class="card mb-4 writing-filters">
-            <div class="card-body">
-                <form method="get" class="row g-3">
-                    <div class="col-md-6">
-                        <input type="text" name="search" class="form-control" 
-                               placeholder="Search writings..." value="{{ search_query }}">
-                    </div>
-                    <div class="col-md-4">
-                        <select name="type" class="form-select">
-                            <option value="">All Types</option>
-                            {% for value, label in writing_types %}
-                                <option value="{{ value }}" {% if selected_type == value %}selected{% endif %}>
-                                    {{ label }}
-                                </option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="col-md-2">
-                        <button type="submit" class="btn btn-outline-primary w-100">Filter</button>
-                    </div>
-                </form>
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h1 class="display-5 mb-2">
+                        <i class="bi bi-pen text-warning me-2"></i>Writing
+                    </h1>
+                    <p class="text-muted mb-0">Thoughts, stories, and insights</p>
+                </div>
+                {% if user.is_authenticated %}
+                <a href="{% url 'writing:writing_create' %}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle me-2"></i>New Writing
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Search and Filter Form -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm border-0 writing-filters">
+                <div class="card-body">
+                    <form method="get" class="row g-3 align-items-end">
+                        <div class="col-md-5">
+                            <label class="form-label text-muted small">
+                                <i class="bi bi-search me-1"></i>Search
+                            </label>
+                            <input type="text" name="search" class="form-control" 
+                                   placeholder="Search by title, content, or tags..." value="{{ search_query }}">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label text-muted small">
+                                <i class="bi bi-funnel me-1"></i>Type
+                            </label>
+                            <select name="type" class="form-select">
+                                <option value="">All Types</option>
+                                {% for value, label in writing_types %}
+                                    <option value="{{ value }}" {% if selected_type == value %}selected{% endif %}>
+                                        {{ label }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="submit" class="btn btn-outline-primary w-100">
+                                <i class="bi bi-search me-1"></i>Filter
+                            </button>
+                        </div>
+                        {% if search_query or selected_type %}
+                        <div class="col-md-2">
+                            <a href="{% url 'writing:writing_list' %}" class="btn btn-outline-secondary w-100">
+                                <i class="bi bi-x-circle me-1"></i>Clear
+                            </a>
+                        </div>
+                        {% endif %}
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Writing List -->
+    {% if page_obj %}
+        <!-- Results summary -->
+        <div class="row mb-3">
+            <div class="col-12">
+                <p class="text-muted mb-0">
+                    {% if search_query or selected_type %}
+                        Found {{ page_obj.paginator.count }} writing{{ page_obj.paginator.count|pluralize }}
+                        {% if search_query %}for "<strong>{{ search_query }}</strong>"{% endif %}
+                        {% if selected_type %}in <strong>{{ selected_type|title }}</strong>{% endif %}
+                    {% else %}
+                        Showing {{ page_obj.paginator.count }} writing{{ page_obj.paginator.count|pluralize }}
+                    {% endif %}
+                </p>
             </div>
         </div>
 
-        <!-- Writing List -->
-        {% if page_obj %}
-            <div class="row">
-                {% for writing in page_obj %}
-                    <div class="col-lg-6 col-xl-4 mb-4">
-                        <div class="card h-100 writing-card {% if writing.featured %}writing-featured{% endif %}">
-                            <div class="card-body d-flex flex-column">
-                                <div class="d-flex justify-content-between align-items-start mb-2">
-                                    <span class="badge bg-secondary">{{ writing.get_writing_type_display }}</span>
-                                    {% if writing.featured %}
-                                        <span class="badge bg-warning text-dark">Featured</span>
+        <div class="row g-4">
+            {% for writing in page_obj %}
+                <div class="col-lg-6 col-xl-4">
+                    <div class="card h-100 writing-card shadow-sm border-0 {% if writing.featured %}writing-featured{% endif %}">
+                        {% if writing.featured %}
+                        <div class="card-header bg-warning text-dark border-0 py-2">
+                            <small class="fw-bold">
+                                <i class="bi bi-star-fill me-1"></i>Featured
+                            </small>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="card-body d-flex flex-column">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <span class="badge 
+                                    {% if writing.writing_type == 'article' %} bg-primary
+                                    {% elif writing.writing_type == 'blog' %} bg-info
+                                    {% elif writing.writing_type == 'story' %} bg-success
+                                    {% elif writing.writing_type == 'poem' %} bg-danger
+                                    {% elif writing.writing_type == 'essay' %} bg-secondary
+                                    {% else %} bg-dark
+                                    {% endif %}">
+                                    {% if writing.writing_type == 'article' %}
+                                        <i class="bi bi-newspaper me-1"></i>
+                                    {% elif writing.writing_type == 'blog' %}
+                                        <i class="bi bi-journal-text me-1"></i>
+                                    {% elif writing.writing_type == 'story' %}
+                                        <i class="bi bi-book me-1"></i>
+                                    {% elif writing.writing_type == 'poem' %}
+                                        <i class="bi bi-heart me-1"></i>
+                                    {% elif writing.writing_type == 'essay' %}
+                                        <i class="bi bi-file-text me-1"></i>
+                                    {% else %}
+                                        <i class="bi bi-file-richtext me-1"></i>
                                     {% endif %}
-                                </div>
+                                    {{ writing.get_writing_type_display }}
+                                </span>
                                 
-                                <h5 class="card-title">
-                                    <a href="{% url 'writing:writing_detail' writing.pk %}" class="text-decoration-none">
-                                        {{ writing.title }}
-                                    </a>
-                                </h5>
-                                
-                                {% if writing.excerpt %}
-                                    <p class="card-text text-muted">{{ writing.excerpt|truncatewords:20 }}</p>
-                                {% else %}
-                                    <p class="card-text text-muted">{{ writing.content|truncatewords:20 }}</p>
+                                {% if writing.status != 'published' %}
+                                    <span class="badge bg-warning text-dark">
+                                        {{ writing.get_status_display }}
+                                    </span>
                                 {% endif %}
-                                
-                                <div class="mt-auto">
-                                    {% if writing.tags %}
-                                        <div class="mb-2">
-                                            {% for tag in writing.get_tags_list %}
-                                                <span class="badge bg-light text-dark me-1">#{{ tag }}</span>
-                                            {% endfor %}
-                                        </div>
-                                    {% endif %}
-                                    
+                            </div>
+                            
+                            <h5 class="card-title mb-3">
+                                <a href="{% url 'writing:writing_detail' writing.pk %}" 
+                                   class="text-decoration-none text-dark fw-bold">
+                                    {{ writing.title }}
+                                </a>
+                            </h5>
+                            
+                            <p class="card-text text-muted mb-3 flex-grow-1">
+                                {% if writing.excerpt %}
+                                    {{ writing.excerpt|truncatewords:25 }}
+                                {% else %}
+                                    {{ writing.content|truncatewords:25 }}
+                                {% endif %}
+                            </p>
+                            
+                            <!-- Tags -->
+                            {% if writing.tags %}
+                                <div class="mb-3">
+                                    {% for tag in writing.get_tags_list %}
+                                        <span class="badge bg-light text-dark me-1 small">#{{ tag }}</span>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            
+                            <!-- Footer -->
+                            <div class="mt-auto">
+                                <div class="d-flex justify-content-between align-items-center">
                                     <small class="text-muted">
-                                        By {{ writing.author.username }} • 
+                                        <i class="bi bi-person me-1"></i>{{ writing.author.username }}
+                                    </small>
+                                    <small class="text-muted">
+                                        <i class="bi bi-calendar me-1"></i>
                                         {% if writing.published_at %}
                                             {{ writing.published_at|date:"M j, Y" }}
                                         {% else %}
@@ -85,53 +170,131 @@
                                         {% endif %}
                                     </small>
                                 </div>
+                                <div class="mt-2">
+                                    <a href="{% url 'writing:writing_detail' writing.pk %}" 
+                                       class="btn btn-outline-primary btn-sm w-100">
+                                        <i class="bi bi-eye me-1"></i>Read More
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
-                {% endfor %}
-            </div>
+                </div>
+            {% endfor %}
+        </div>
 
-            <!-- Pagination -->
-            {% if page_obj.has_other_pages %}
-                <nav aria-label="Writing pagination">
-                    <ul class="pagination justify-content-center">
-                        {% if page_obj.has_previous %}
-                            <li class="page-item">
-                                <a class="page-link" href="?page=1{% if search_query %}&search={{ search_query }}{% endif %}{% if selected_type %}&type={{ selected_type }}{% endif %}">&laquo; First</a>
-                            </li>
-                            <li class="page-item">
-                                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if selected_type %}&type={{ selected_type }}{% endif %}">Previous</a>
-                            </li>
-                        {% endif %}
-
-                        <li class="page-item active">
-                            <span class="page-link">
-                                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
-                            </span>
+        <!-- Pagination -->
+        {% if page_obj.has_other_pages %}
+            <nav aria-label="Writing pagination" class="mt-5">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1{% if search_query %}&search={{ search_query }}{% endif %}{% if selected_type %}&type={{ selected_type }}{% endif %}">
+                                <i class="bi bi-chevron-double-left"></i>
+                            </a>
                         </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if selected_type %}&type={{ selected_type }}{% endif %}">
+                                <i class="bi bi-chevron-left"></i>
+                            </a>
+                        </li>
+                    {% endif %}
 
-                        {% if page_obj.has_next %}
-                            <li class="page-item">
-                                <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if selected_type %}&type={{ selected_type }}{% endif %}">Next</a>
-                            </li>
-                            <li class="page-item">
-                                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if search_query %}&search={{ search_query }}{% endif %}{% if selected_type %}&type={{ selected_type }}{% endif %}">Last &raquo;</a>
-                            </li>
-                        {% endif %}
-                    </ul>
-                </nav>
-            {% endif %}
-        {% else %}
-            <div class="text-center py-5">
-                <h3 class="text-muted">No writings found</h3>
-                {% if user.is_authenticated %}
-                    <p class="text-muted">Start by creating your first writing piece.</p>
-                    <a href="{% url 'writing:writing_create' %}" class="btn btn-primary">Create Writing</a>
-                {% else %}
-                    <p class="text-muted">Check back later for new content.</p>
-                {% endif %}
-            </div>
+                    <li class="page-item active">
+                        <span class="page-link">
+                            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                        </span>
+                    </li>
+
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if selected_type %}&type={{ selected_type }}{% endif %}">
+                                <i class="bi bi-chevron-right"></i>
+                            </a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if search_query %}&search={{ search_query }}{% endif %}{% if selected_type %}&type={{ selected_type }}{% endif %}">
+                                <i class="bi bi-chevron-double-right"></i>
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
         {% endif %}
-    </div>
+    {% else %}
+        <!-- Empty state -->
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="text-center py-5">
+                    <div class="mb-4">
+                        {% if search_query or selected_type %}
+                            <i class="bi bi-search display-1 text-muted" style="font-size: 6rem;"></i>
+                        {% else %}
+                            <i class="bi bi-pen display-1 text-muted" style="font-size: 6rem;"></i>
+                        {% endif %}
+                    </div>
+                    
+                    {% if search_query or selected_type %}
+                        <h2 class="display-6 text-muted mb-3">No Results Found</h2>
+                        <p class="lead text-muted mb-4">
+                            No writings match your search criteria. Try adjusting your filters.
+                        </p>
+                        <a href="{% url 'writing:writing_list' %}" class="btn btn-outline-primary btn-lg">
+                            <i class="bi bi-arrow-left me-2"></i>View All Writings
+                        </a>
+                    {% else %}
+                        <h2 class="display-6 text-muted mb-3">No Writings Yet</h2>
+                        <p class="lead text-muted mb-4">
+                            Start sharing your thoughts and stories with the world.
+                        </p>
+                        
+                        <div class="card border-0 bg-light mb-4">
+                            <div class="card-body">
+                                <div class="row text-center">
+                                    <div class="col-md-6 mb-3 mb-md-0">
+                                        <i class="bi bi-newspaper h4 text-primary"></i>
+                                        <p class="mb-0 small text-muted">Articles & Essays</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <i class="bi bi-heart h4 text-danger"></i>
+                                        <p class="mb-0 small text-muted">Stories & Poems</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        {% if user.is_authenticated %}
+                        <a href="{% url 'writing:writing_create' %}" class="btn btn-primary btn-lg">
+                            <i class="bi bi-plus-circle me-2"></i>Create Your First Writing
+                        </a>
+                        {% else %}
+                        <a href="{% url 'secure_admin_login' %}?next={{ request.path }}" class="btn btn-outline-primary btn-lg">
+                            <i class="bi bi-box-arrow-in-right me-2"></i>Login to Create Writings
+                        </a>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    {% endif %}
 </div>
+
+<style>
+.writing-card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.writing-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
+}
+
+.writing-featured {
+    border-left: 4px solid #ffc107 !important;
+}
+
+.writing-filters {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+</style>
 {% endblock %}

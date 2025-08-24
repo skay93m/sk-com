@@ -1,0 +1,310 @@
+{% extends "base.html" %}
+{% load static %}
+{% load math_filters %}
+
+{% block title %}MCQ Statistics{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h1>Study Statistics</h1>
+                <a href="{% url 'mcq:landing' %}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title text-primary">{{ total_mcqs }}</h5>
+                    <p class="card-text">Total Questions</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title text-warning">{{ due_now }}</h5>
+                    <p class="card-text">Due Now</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title text-info">{{ upcoming_week }}</h5>
+                    <p class="card-text">Due This Week</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title text-success">{{ avg_srs_stage }}</h5>
+                    <p class="card-text">Avg SRS Stage</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title text-purple">{{ total_reviews }}</h5>
+                    <p class="card-text">Total Reviews</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Difficulty Breakdown -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Questions by Difficulty</h5>
+                </div>
+                <div class="card-body">
+                    {% for stat in difficulty_stats %}
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <span class="fw-bold">{{ stat.label }}</span>
+                            <span class="text-muted">{{ stat.count }} questions ({{ stat.percentage }}%)</span>
+                        </div>
+                        <div class="progress" style="height: 20px;">
+                            <div class="progress-bar 
+                                {% if stat.label == 'Recall' %}bg-success
+                                {% elif stat.label == 'Application' %}bg-warning
+                                {% else %}bg-danger
+                                {% endif %}" 
+                                role="progressbar" 
+                                style="width: {{ stat.percentage }}%"
+                                aria-valuenow="{{ stat.percentage }}" 
+                                aria-valuemin="0" 
+                                aria-valuemax="100">
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">SRS Stage Distribution</h5>
+                    <small class="text-muted">WaniKani-style spaced repetition stages</small>
+                </div>
+                <div class="card-body">
+                    {% for stat in srs_stats %}
+                    {% if stat.count > 0 %}
+                    <div class="mb-2">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <span class="fw-bold">{{ stat.label }}</span>
+                            <span class="text-muted">{{ stat.count }} ({{ stat.percentage }}%)</span>
+                        </div>
+                        <div class="progress" style="height: 15px;">
+                            <div class="progress-bar bg-{{ stat.color }}" 
+                                role="progressbar" 
+                                style="width: {{ stat.percentage }}%"
+                                aria-valuenow="{{ stat.percentage }}" 
+                                aria-valuemin="0" 
+                                aria-valuemax="100">
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% endfor %}
+                    
+                    <!-- SRS Stage Legend -->
+                    <div class="mt-3 pt-3 border-top">
+                        <small class="text-muted">
+                            <strong>SRS Intervals:</strong><br>
+                            Apprentice: 4h → 8h → 1d → 2d<br>
+                            Guru: 1w → 2w<br>
+                            Master: 1m → Enlightened: 4m → Burned: ∞
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Study Insights -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Study Insights</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled">
+                        {% if avg_srs_stage >= 6 %}
+                        <li class="mb-2">
+                            <i class="fas fa-trophy text-success me-2"></i>
+                            <small>Excellent progress! Most questions are at Guru level or higher</small>
+                        </li>
+                        {% elif avg_srs_stage >= 3 %}
+                        <li class="mb-2">
+                            <i class="fas fa-chart-line text-info me-2"></i>
+                            <small>Good progress! Questions are advancing through the SRS stages</small>
+                        </li>
+                        {% else %}
+                        <li class="mb-2">
+                            <i class="fas fa-seedling text-warning me-2"></i>
+                            <small>Building foundation - most questions are in early learning stages</small>
+                        </li>
+                        {% endif %}
+                        
+                        {% if due_now > 0 %}
+                        <li class="mb-2">
+                            <i class="fas fa-clock text-warning me-2"></i>
+                            <small>{{ due_now }} question{{ due_now|pluralize }} ready for review</small>
+                        </li>
+                        {% else %}
+                        <li class="mb-2">
+                            <i class="fas fa-check-circle text-success me-2"></i>
+                            <small>All caught up with reviews!</small>
+                        </li>
+                        {% endif %}
+                        
+                        {% if upcoming_week > 0 %}
+                        <li class="mb-2">
+                            <i class="fas fa-calendar text-info me-2"></i>
+                            <small>{{ upcoming_week }} question{{ upcoming_week|pluralize }} coming up this week</small>
+                        </li>
+                        {% endif %}
+                        
+                        {% if total_reviews > 0 %}
+                        <li class="mb-2">
+                            <i class="fas fa-repeat text-primary me-2"></i>
+                            <small>{{ total_reviews }} total review{{ total_reviews|pluralize }} completed</small>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">SRS Progress</h5>
+                </div>
+                <div class="card-body text-center">
+                    <div class="mb-3">
+                        <div class="progress mb-2" style="height: 25px;">
+                            <div class="progress-bar bg-gradient" 
+                                 style="width: {{ avg_srs_stage|floatformat:0|add:'0'|mul:'11.1' }}%; background: linear-gradient(90deg, #dc3545 0%, #ffc107 30%, #17a2b8 60%, #28a745 90%);"
+                                 role="progressbar">
+                            </div>
+                        </div>
+                        <small class="text-muted">Average Stage: {{ avg_srs_stage }} / 9</small>
+                    </div>
+                    
+                    {% if avg_srs_stage >= 7 %}
+                    <div class="alert alert-success p-2">
+                        <i class="fas fa-crown me-1"></i>
+                        <small><strong>Master Level!</strong></small>
+                    </div>
+                    {% elif avg_srs_stage >= 5 %}
+                    <div class="alert alert-info p-2">
+                        <i class="fas fa-graduation-cap me-1"></i>
+                        <small><strong>Guru Status</strong></small>
+                    </div>
+                    {% elif avg_srs_stage >= 2 %}
+                    <div class="alert alert-warning p-2">
+                        <i class="fas fa-seedling me-1"></i>
+                        <small><strong>Apprentice Level</strong></small>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-secondary p-2">
+                        <i class="fas fa-play me-1"></i>
+                        <small><strong>Just Getting Started</strong></small>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Study Recommendations -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Recommendations</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% if due_now > 5 %}
+                        <div class="col-md-6 mb-3">
+                            <div class="alert alert-warning">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                <strong>Catch up needed:</strong> You have {{ due_now }} questions due for review. 
+                                Review sessions help maintain SRS progress.
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        {% if total_mcqs < 10 %}
+                        <div class="col-md-6 mb-3">
+                            <div class="alert alert-info">
+                                <i class="fas fa-plus-circle me-2"></i>
+                                <strong>Build your collection:</strong> Add more questions to improve your learning experience and SRS effectiveness.
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        {% if avg_srs_stage < 2 %}
+                        <div class="col-md-6 mb-3">
+                            <div class="alert alert-info">
+                                <i class="fas fa-chart-line me-2"></i>
+                                <strong>Early stage:</strong> Keep reviewing to advance questions through the SRS stages.
+                            </div>
+                        </div>
+                        {% endif %}
+                        
+                        {% if total_reviews > 50 and avg_srs_stage >= 6 %}
+                        <div class="col-md-6 mb-3">
+                            <div class="alert alert-success">
+                                <i class="fas fa-medal me-2"></i>
+                                <strong>Excellent progress!</strong> You're consistently advancing questions to higher SRS stages.
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    {% if due_now == 0 and upcoming_week == 0 and total_mcqs > 0 %}
+                    <div class="alert alert-success">
+                        <i class="fas fa-trophy me-2"></i>
+                        <strong>Excellent work!</strong> You're all caught up with your SRS reviews. 
+                        Consider adding new questions or exploring practice mode.
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="row mt-4">
+        <div class="col-12 text-center">
+            {% if due_now > 0 %}
+            <a href="{% url 'mcq:study' %}" class="btn btn-primary btn-lg me-3">
+                <i class="fas fa-play me-2"></i>Start Studying
+            </a>
+            {% endif %}
+            <a href="{% url 'mcq:create_mcq' %}" class="btn btn-success btn-lg me-3">
+                <i class="fas fa-plus me-2"></i>Add Question
+            </a>
+            <a href="{% url 'mcq:mcq_list' %}" class="btn btn-info btn-lg">
+                <i class="fas fa-list me-2"></i>Manage Questions
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

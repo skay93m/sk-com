@@ -7,6 +7,7 @@ from home.models import Hero
 from cv.models import Credentials
 from projects.models import Project
 from writing.models import Writing
+from mcq.models import MCQ
 
 def home(request):
     # Get stats for the homepage
@@ -16,6 +17,7 @@ def home(request):
     current_projects = Project.objects.filter(category='now').count()
     total_writings = Writing.objects.filter(status='published').count()
     featured_writings = Writing.objects.filter(featured=True, status='published').count()
+    total_mcqs = MCQ.objects.count()
     
     # Project breakdown by category
     project_stats = Project.objects.values('category').annotate(count=Count('category'))
@@ -35,6 +37,7 @@ def home(request):
             'current_projects': current_projects,
             'writings': total_writings,
             'featured_writings': featured_writings,
+            'mcqs': total_mcqs,
         },
         'project_breakdown': project_breakdown,
         'writing_breakdown': writing_breakdown,

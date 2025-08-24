@@ -1,59 +1,187 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Delete Writing: {{ writing.title }}{% endblock %}
+{% block title %}Delete {{ writing.title }} - Writing{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header bg-danger text-white">
-                <h3 class="card-title mb-0">
-                    <i class="bi bi-exclamation-triangle"></i> Delete Writing
-                </h3>
+<div class="container">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="{% url 'home' %}" class="text-decoration-none">
+                    <i class="bi bi-house-fill"></i> Home
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{% url 'writing:writing_list' %}" class="text-decoration-none">
+                    <i class="bi bi-pen"></i> Writing
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{% url 'writing:writing_detail' writing.pk %}" class="text-decoration-none">
+                    {{ writing.title|truncatechars:20 }}
+                </a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">Delete</li>
+        </ol>
+    </nav>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Warning Header -->
+            <div class="text-center mb-4">
+                <div class="mb-3">
+                    <i class="bi bi-exclamation-triangle-fill display-1 text-danger"></i>
+                </div>
+                <h1 class="display-6 text-danger mb-2">Delete Writing</h1>
+                <p class="text-muted">This action cannot be undone</p>
             </div>
-            <div class="card-body">
-                <div class="alert alert-warning" role="alert">
-                    <strong>Warning!</strong> This action cannot be undone.
+
+            <!-- Writing details card -->
+            <div class="card shadow-sm border-danger mb-4">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-trash me-2"></i>You are about to delete:
+                    </h5>
                 </div>
-                
-                <p>Are you sure you want to delete the following writing?</p>
-                
-                <div class="card bg-light">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ writing.title }}</h5>
-                        <p class="card-text">
-                            <small class="text-muted">
-                                <span class="badge bg-secondary me-2">{{ writing.get_writing_type_display }}</span>
-                                By {{ writing.author.username }} • 
-                                {% if writing.published_at %}
-                                    {{ writing.published_at|date:"M j, Y" }}
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-8">
+                            <h4 class="card-title text-danger mb-3">{{ writing.title }}</h4>
+                        </div>
+                        <div class="col-md-4 text-md-end">
+                            <span class="badge fs-6
+                                {% if writing.writing_type == 'article' %} bg-primary
+                                {% elif writing.writing_type == 'blog' %} bg-info
+                                {% elif writing.writing_type == 'story' %} bg-success
+                                {% elif writing.writing_type == 'poem' %} bg-danger
+                                {% elif writing.writing_type == 'essay' %} bg-secondary
+                                {% else %} bg-dark
+                                {% endif %}">
+                                {% if writing.writing_type == 'article' %}
+                                    <i class="bi bi-newspaper me-1"></i>
+                                {% elif writing.writing_type == 'blog' %}
+                                    <i class="bi bi-journal-text me-1"></i>
+                                {% elif writing.writing_type == 'story' %}
+                                    <i class="bi bi-book me-1"></i>
+                                {% elif writing.writing_type == 'poem' %}
+                                    <i class="bi bi-heart me-1"></i>
+                                {% elif writing.writing_type == 'essay' %}
+                                    <i class="bi bi-file-text me-1"></i>
                                 {% else %}
-                                    {{ writing.created_at|date:"M j, Y" }}
+                                    <i class="bi bi-file-richtext me-1"></i>
                                 {% endif %}
-                            </small>
-                        </p>
-                        {% if writing.excerpt %}
-                            <p class="card-text">{{ writing.excerpt|truncatewords:30 }}</p>
-                        {% else %}
-                            <p class="card-text">{{ writing.content|truncatewords:30 }}</p>
-                        {% endif %}
+                                {{ writing.get_writing_type_display }}
+                            </span>
+                            {% if writing.featured %}
+                                <span class="badge bg-warning text-dark fs-6 ms-1">
+                                    <i class="bi bi-star-fill me-1"></i>Featured
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <strong>Author:</strong> {{ writing.author.get_full_name|default:writing.author.username }}
+                        </div>
+                        <div class="col-md-6">
+                            <strong>Status:</strong> {{ writing.get_status_display }}
+                        </div>
+                        <div class="col-md-6">
+                            <strong>Created:</strong> {{ writing.created_at|date:"M d, Y" }}
+                        </div>
+                        <div class="col-md-6">
+                            <strong>Last Updated:</strong> {{ writing.updated_at|date:"M d, Y" }}
+                        </div>
+                    </div>
+                    
+                    {% if writing.excerpt %}
+                        <div class="mb-3">
+                            <strong>Excerpt:</strong>
+                            <p class="mt-2 text-muted">{{ writing.excerpt|truncatewords:50 }}</p>
+                        </div>
+                    {% endif %}
+                    
+                    <div class="mb-3">
+                        <strong>Content Preview:</strong>
+                        <p class="mt-2 text-muted">{{ writing.content|truncatewords:50 }}</p>
+                    </div>
+
+                    {% if writing.tags %}
+                        <div class="mb-3">
+                            <strong>Tags:</strong>
+                            <div class="mt-2">
+                                {% for tag in writing.get_tags_list %}
+                                    <span class="badge bg-light text-dark me-1">#{{ tag }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+                    
+                    <div class="alert alert-warning" role="alert">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-exclamation-triangle me-2"></i>
+                            <div>
+                                <strong>Warning:</strong> Once deleted, this writing and all its data will be permanently removed. 
+                                This action cannot be reversed.
+                            </div>
+                        </div>
                     </div>
                 </div>
-                
-                <form method="post" class="mt-4">
-                    {% csrf_token %}
-                    <div class="d-flex justify-content-between">
-                        <a href="{% url 'writing:writing_detail' writing.pk %}" class="btn btn-outline-secondary">
-                            <i class="bi bi-arrow-left"></i> Cancel
-                        </a>
-                        <button type="submit" class="btn btn-danger">
-                            <i class="bi bi-trash"></i> Delete Writing
-                        </button>
-                    </div>
-                </form>
+            </div>
+
+            <!-- Confirmation form -->
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h6 class="text-muted mb-3">
+                        <i class="bi bi-shield-check me-1"></i>Confirm Deletion
+                    </h6>
+                    <p class="text-muted mb-4">
+                        Type the writing title <strong>"{{ writing.title }}"</strong> to confirm deletion:
+                    </p>
+                    
+                    <form method="post" id="writing-delete-form">
+                        {% csrf_token %}
+                        <div class="mb-4">
+                            <input type="text" class="form-control" id="confirm-title" 
+                                   placeholder="Type writing title to confirm" required>
+                            <div class="form-text">This helps prevent accidental deletions</div>
+                        </div>
+                        
+                        <div class="d-flex gap-3 justify-content-end">
+                            <a href="{% url 'writing:writing_detail' writing.pk %}" class="btn btn-outline-secondary btn-lg">
+                                <i class="bi bi-arrow-left me-2"></i>Cancel
+                            </a>
+                            <button type="submit" class="btn btn-danger btn-lg" id="delete-button" disabled>
+                                <i class="bi bi-trash me-2"></i>Delete Writing
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const confirmInput = document.getElementById('confirm-title');
+    const deleteButton = document.getElementById('delete-button');
+    const expectedTitle = "{{ writing.title|escapejs }}";
+    
+    confirmInput.addEventListener('input', function() {
+        if (this.value === expectedTitle) {
+            deleteButton.disabled = false;
+            deleteButton.classList.remove('btn-outline-danger');
+            deleteButton.classList.add('btn-danger');
+        } else {
+            deleteButton.disabled = true;
+            deleteButton.classList.remove('btn-danger');
+            deleteButton.classList.add('btn-outline-danger');
+        }
+    });
+});
+</script>
 {% endblock %}

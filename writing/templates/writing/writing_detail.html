@@ -5,59 +5,264 @@
 
 {% block content %}
 <link rel="stylesheet" href="{% static 'css/writing.css' %}">
-<div class="row justify-content-center">
-    <div class="col-lg-8">
-        <article class="mb-4">
-            <!-- Header -->
-            <header class="mb-4">
-                <div class="d-flex justify-content-between align-items-start mb-3">
-                    <div>
-                        <span class="badge bg-secondary me-2">{{ writing.get_writing_type_display }}</span>
-                        {% if writing.featured %}
-                            <span class="badge bg-warning text-dark">Featured</span>
-                        {% endif %}
-                        {% if writing.status != 'published' and user.is_staff %}
-                            <span class="badge bg-info text-dark">{{ writing.get_status_display }}</span>
+
+<div class="container">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="{% url 'home' %}" class="text-decoration-none">
+                    <i class="bi bi-house-fill"></i> Home
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{% url 'writing:writing_list' %}" class="text-decoration-none">
+                    <i class="bi bi-pen"></i> Writing
+                </a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">{{ writing.title|truncatechars:30 }}</li>
+        </ol>
+    </nav>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <article class="mb-4">
+                <!-- Header -->
+                <header class="mb-5">
+                    <div class="d-flex justify-content-between align-items-start mb-4">
+                        <div class="d-flex flex-wrap gap-2">
+                            <span class="badge fs-6
+                                {% if writing.writing_type == 'article' %} bg-primary
+                                {% elif writing.writing_type == 'blog' %} bg-info
+                                {% elif writing.writing_type == 'story' %} bg-success
+                                {% elif writing.writing_type == 'poem' %} bg-danger
+                                {% elif writing.writing_type == 'essay' %} bg-secondary
+                                {% else %} bg-dark
+                                {% endif %}">
+                                {% if writing.writing_type == 'article' %}
+                                    <i class="bi bi-newspaper me-1"></i>
+                                {% elif writing.writing_type == 'blog' %}
+                                    <i class="bi bi-journal-text me-1"></i>
+                                {% elif writing.writing_type == 'story' %}
+                                    <i class="bi bi-book me-1"></i>
+                                {% elif writing.writing_type == 'poem' %}
+                                    <i class="bi bi-heart me-1"></i>
+                                {% elif writing.writing_type == 'essay' %}
+                                    <i class="bi bi-file-text me-1"></i>
+                                {% else %}
+                                    <i class="bi bi-file-richtext me-1"></i>
+                                {% endif %}
+                                {{ writing.get_writing_type_display }}
+                            </span>
+                            
+                            {% if writing.featured %}
+                                <span class="badge bg-warning text-dark fs-6">
+                                    <i class="bi bi-star-fill me-1"></i>Featured
+                                </span>
+                            {% endif %}
+                            
+                            {% if writing.status != 'published' and user.is_staff %}
+                                <span class="badge bg-info text-dark fs-6">
+                                    <i class="bi bi-eye-slash me-1"></i>{{ writing.get_status_display }}
+                                </span>
+                            {% endif %}
+                        </div>
+                        
+                        {% if user.is_authenticated and writing.author == user or user.is_staff %}
+                            <div class="dropdown">
+                                <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" 
+                                        data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-gear"></i> Actions
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end">
+                                    <li>
+                                        <a class="dropdown-item" href="{% url 'writing:writing_edit' writing.pk %}">
+                                            <i class="bi bi-pencil me-2"></i> Edit
+                                        </a>
+                                    </li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <a class="dropdown-item text-danger" href="{% url 'writing:writing_delete' writing.pk %}">
+                                            <i class="bi bi-trash me-2"></i> Delete
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
                         {% endif %}
                     </div>
                     
-                    {% if user.is_authenticated and writing.author == user or user.is_staff %}
-                        <div class="dropdown">
-                            <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" 
-                                    data-bs-toggle="dropdown" aria-expanded="false">
-                                Actions
-                            </button>
-                            <ul class="dropdown-menu">
-                                <li>
-                                    <a class="dropdown-item" href="{% url 'writing:writing_edit' writing.pk %}">
-                                        <i class="bi bi-pencil"></i> Edit
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item text-danger" href="{% url 'writing:writing_delete' writing.pk %}">
-                                        <i class="bi bi-trash"></i> Delete
-                                    </a>
-                                </li>
-                            </ul>
+                    <h1 class="display-4 mb-4 fw-bold">{{ writing.title }}</h1>
+                    
+                    {% if writing.excerpt %}
+                        <div class="lead text-muted mb-4 p-3 bg-light rounded">
+                            <i class="bi bi-quote me-2"></i>{{ writing.excerpt }}
                         </div>
                     {% endif %}
+                    
+                    <!-- Author and date info -->
+                    <div class="card border-0 bg-light mb-4">
+                        <div class="card-body py-3">
+                            <div class="row align-items-center">
+                                <div class="col-md-8">
+                                    <div class="d-flex align-items-center">
+                                        <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" 
+                                             style="width: 40px; height: 40px;">
+                                            <i class="bi bi-person-fill text-white"></i>
+                                        </div>
+                                        <div>
+                                            <h6 class="mb-0">{{ writing.author.get_full_name|default:writing.author.username }}</h6>
+                                            <small class="text-muted">Author</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 text-md-end mt-2 mt-md-0">
+                                    <div class="text-muted small">
+                                        {% if writing.published_at %}
+                                            <i class="bi bi-calendar-check me-1"></i>
+                                            Published {{ writing.published_at|date:"F j, Y" }}
+                                        {% else %}
+                                            <i class="bi bi-calendar me-1"></i>
+                                            Created {{ writing.created_at|date:"F j, Y" }}
+                                        {% endif %}
+                                        {% if writing.updated_at != writing.created_at %}
+                                            <br><i class="bi bi-arrow-repeat me-1"></i>
+                                            Updated {{ writing.updated_at|date:"F j, Y" }}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Tags -->
+                    {% if writing.tags %}
+                        <div class="mb-4">
+                            <h6 class="text-muted mb-2">
+                                <i class="bi bi-tags me-1"></i>Tags
+                            </h6>
+                            <div>
+                                {% for tag in writing.get_tags_list %}
+                                    <span class="badge bg-light text-dark me-2 mb-1">#{{ tag }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+                </header>
+                
+                <hr class="my-5">
+                
+                <!-- Content -->
+                <div class="writing-content">
+                    <div class="content">
+                        {{ writing.content|linebreaks }}
+                    </div>
                 </div>
-                
-                <h1 class="display-4 mb-3">{{ writing.title }}</h1>
-                
-                {% if writing.excerpt %}
-                    <p class="lead text-muted">{{ writing.excerpt }}</p>
+            </article>
+        </div>
+
+        <!-- Sidebar (on larger screens) -->
+        <div class="col-lg-4">
+            <div class="sticky-lg-top" style="top: 2rem;">
+                <!-- Quick info card -->
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-header bg-light">
+                        <h6 class="mb-0">
+                            <i class="bi bi-info-circle me-2"></i>Quick Info
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-6">
+                                <div class="text-center">
+                                    <div class="text-muted small">Type</div>
+                                    <div class="fw-bold">{{ writing.get_writing_type_display }}</div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="text-center">
+                                    <div class="text-muted small">Status</div>
+                                    <div class="fw-bold">{{ writing.get_status_display }}</div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="text-center">
+                                    <div class="text-muted small">Created</div>
+                                    <div class="fw-bold">{{ writing.created_at|date:"M j" }}</div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="text-center">
+                                    <div class="text-muted small">Updated</div>
+                                    <div class="fw-bold">{{ writing.updated_at|date:"M j" }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action buttons -->
+                {% if user.is_authenticated and writing.author == user or user.is_staff %}
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-header bg-light">
+                        <h6 class="mb-0">
+                            <i class="bi bi-gear me-2"></i>Manage Writing
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-grid gap-2">
+                            <a href="{% url 'writing:writing_edit' writing.pk %}" class="btn btn-primary">
+                                <i class="bi bi-pencil me-2"></i>Edit Writing
+                            </a>
+                            <a href="{% url 'writing:writing_delete' writing.pk %}" class="btn btn-outline-danger">
+                                <i class="bi bi-trash me-2"></i>Delete Writing
+                            </a>
+                        </div>
+                    </div>
+                </div>
                 {% endif %}
-                
-                <div class="text-muted">
-                    <small>
-                        By <strong>{{ writing.author.get_full_name|default:writing.author.username }}</strong> • 
-                        {% if writing.published_at %}
-                            Published {{ writing.published_at|date:"F j, Y \a\t g:i A" }}
-                        {% else %}
-                            Created {{ writing.created_at|date:"F j, Y \a\t g:i A" }}
-                        {% endif %}
-                        {% if writing.updated_at != writing.created_at %}
+
+                <!-- Navigation -->
+                <div class="card shadow-sm border-0">
+                    <div class="card-body">
+                        <div class="d-grid">
+                            <a href="{% url 'writing:writing_list' %}" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left me-2"></i>Back to Writings
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.writing-content {
+    font-size: 1.1rem;
+    line-height: 1.8;
+}
+
+.writing-content p {
+    margin-bottom: 1.5rem;
+}
+
+.writing-content h1,
+.writing-content h2,
+.writing-content h3,
+.writing-content h4,
+.writing-content h5,
+.writing-content h6 {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+}
+
+@media (max-width: 991.98px) {
+    .sticky-lg-top {
+        position: static !important;
+    }
+}
+</style>
+{% endblock %}
                             • Updated {{ writing.updated_at|date:"F j, Y" }}
                         {% endif %}
                     </small>

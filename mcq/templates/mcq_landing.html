@@ -1,0 +1,258 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}MCQ Dashboard{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="mb-4">MCQ Dashboard</h1>
+            <p class="text-muted">Welcome to your Multiple Choice Questions study system</p>
+        </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title text-primary">{{ total_mcqs }}</h5>
+                    <p class="card-text">Total Questions</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title text-warning">{{ due_count }}</h5>
+                    <p class="card-text">Due for Review</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title text-success">{{ studied_today }}</h5>
+                    <p class="card-text">Studied Today</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-center">
+                <div class="card-body">
+                    <h5 class="card-title text-info">{{ next_review_hours }}</h5>
+                    <p class="card-text">Hours to Next Review</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Actions -->
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">
+                        <i class="fas fa-brain text-primary me-2"></i>
+                        Study Session
+                    </h5>
+                    <p class="card-text flex-grow-1">
+                        Practice questions using spaced repetition. Focus on questions that are due for review.
+                    </p>
+                    <div class="mt-auto">
+                        {% if due_count > 0 %}
+                            <a href="{% url 'mcq:study' %}" class="btn btn-primary btn-lg w-100 mb-2">
+                                <i class="fas fa-play me-2"></i>Start Studying ({{ due_count }} due)
+                            </a>
+                            <a href="{% url 'mcq:topic_selection' %}" class="btn btn-outline-primary btn-sm w-100">
+                                <i class="fas fa-filter me-2"></i>Study by Topic
+                            </a>
+                        {% else %}
+                            <a href="{% url 'mcq:topic_selection' %}" class="btn btn-primary btn-lg w-100 mb-2">
+                                <i class="fas fa-filter me-2"></i>Study by Topic
+                            </a>
+                            <a href="{% url 'mcq:study' %}" class="btn btn-outline-primary btn-sm w-100">
+                                <i class="fas fa-play me-2"></i>Practice Mode
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">
+                        <i class="fas fa-plus-circle text-success me-2"></i>
+                        Add New Question
+                    </h5>
+                    <p class="card-text flex-grow-1">
+                        Create a new multiple choice question with explanations and difficulty settings.
+                    </p>
+                    <div class="mt-auto">
+                        <a href="{% url 'mcq:create_mcq' %}" class="btn btn-success btn-lg w-100">
+                            <i class="fas fa-plus me-2"></i>Add Question
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card h-100 border-primary">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">
+                        <i class="fas fa-robot text-primary me-2"></i>
+                        LLM Question Generation
+                        <span class="badge bg-primary ms-2">New!</span>
+                    </h5>
+                    <p class="card-text flex-grow-1">
+                        Use AI to generate multiple questions quickly. Create prompts, review generated questions, and add them to your database.
+                    </p>
+                    <div class="mt-auto">
+                        <a href="{% url 'mcq:llm_generation_home' %}" class="btn btn-primary btn-lg w-100 mb-2">
+                            <i class="fas fa-robot me-2"></i>Generate with AI
+                        </a>
+                        <a href="{% url 'mcq:llm_generation_manual' %}" class="btn btn-outline-primary btn-sm w-100">
+                            <i class="fas fa-book me-2"></i>View Manual
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">
+                        <i class="fas fa-list text-info me-2"></i>
+                        Manage Questions
+                    </h5>
+                    <p class="card-text flex-grow-1">
+                        View, edit, and organize your existing questions. Browse by difficulty or search.
+                    </p>
+                    <div class="mt-auto">
+                        <a href="{% url 'mcq:mcq_list' %}" class="btn btn-info btn-lg w-100">
+                            <i class="fas fa-edit me-2"></i>Manage Questions
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">
+                        <i class="fas fa-tags text-warning me-2"></i>
+                        Topics & Organization
+                    </h5>
+                    <p class="card-text flex-grow-1">
+                        Organize questions by topics and study specific subjects. Create and manage topic tags.
+                    </p>
+                    <div class="mt-auto">
+                        <a href="{% url 'mcq:manage_topics' %}" class="btn btn-warning btn-lg w-100 mb-2">
+                            <i class="fas fa-cog me-2"></i>Manage Topics
+                        </a>
+                        <a href="{% url 'mcq:topic_selection' %}" class="btn btn-outline-warning btn-sm w-100">
+                            <i class="fas fa-filter me-2"></i>Study by Topic
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">
+                        <i class="fas fa-chart-bar text-info me-2"></i>
+                        Study Statistics
+                    </h5>
+                    <p class="card-text flex-grow-1">
+                        View your learning progress, review patterns, and performance analytics.
+                    </p>
+                    <div class="mt-auto">
+                        <a href="{% url 'mcq:stats' %}" class="btn btn-info btn-lg w-100">
+                            <i class="fas fa-chart-line me-2"></i>View Stats
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Difficulty Breakdown -->
+    {% if difficulty_stats %}
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Questions by Difficulty</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        {% for difficulty, count in difficulty_stats.items %}
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <h6 class="text-muted">{{ difficulty }}</h6>
+                                <span class="badge badge-lg 
+                                    {% if difficulty == 'Recall' %}bg-success
+                                    {% elif difficulty == 'Application' %}bg-warning
+                                    {% else %}bg-danger
+                                    {% endif %}">
+                                    {{ count }} questions
+                                </span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Recent Activity or Quick Tips -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">Study Tips</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2"><i class="fas fa-lightbulb text-warning me-2"></i>Regular review sessions help improve long-term retention</li>
+                        <li class="mb-2"><i class="fas fa-clock text-info me-2"></i>Study at consistent times for better habit formation</li>
+                        <li class="mb-2"><i class="fas fa-target text-success me-2"></i>Focus on understanding explanations, not just getting answers right</li>
+                        <li class="mb-0"><i class="fas fa-graduation-cap text-primary me-2"></i>Create questions on topics you want to master</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.badge-lg {
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+}
+
+.card {
+    transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.btn-lg {
+    font-size: 1.1rem;
+    padding: 0.75rem 1.5rem;
+}
+</style>
+{% endblock %}
