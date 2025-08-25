@@ -59,38 +59,18 @@
     {% block search %}{% search_form cl %}{% endblock %}
     {% block date_hierarchy %}{% date_hierarchy cl %}{% endblock %}
 
-    <form id="changelist-search" method="get">
-        <div class="results">
-            <table id="result_list" class="table table-striped">
-                <thead>
-                    {% result_headers cl %}
-                </thead>
-                <tbody>
-                    {% for result in results %}
-                        {% if result.form and result.form.non_field_errors %}
-                            <tr><td colspan="{{ result|length }}">{{ result.form.non_field_errors }}</td></tr>
-                        {% endif %}
-                        <tr class="{% cycle 'row1' 'row2' %}">{% for item in result %}{{ item }}{% endfor %}</tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-        {% if cl.formset and cl.result_count %}
-            <div class="actions">
-                <label>{% trans "Action:" %} <select name="action" required>
-                    <option value="" selected>---------</option>
-                    {% for choice in action_form.action.field.choices %}
-                        <option value="{{ choice.0 }}">{{ choice.1 }}</option>
-                    {% endfor %}
-                </select></label>
-                <button type="submit" class="btn btn-primary btn-sm" title="{% trans "Run the selected action" %}" name="index" value="{{ action_index|default:0 }}">{% trans "Go" %}</button>
-                {% if action_form.select_across %}
-                    <label class="ms-3">
-                        {{ action_form.select_across }} {% trans "Select all" %} {{ cl.result_count }} {{ cl.opts.verbose_name_plural }}
-                    </label>
-                {% endif %}
-            </div>
+    <form id="changelist-form" method="post"{% if cl.formset and cl.formset.is_multipart %} enctype="multipart/form-data"{% endif %} novalidate>{% csrf_token %}
+        {% if cl.formset %}
+            <div>{{ cl.formset.management_form }}</div>
         {% endif %}
+
+        {% block result_list %}
+            {% if action_form and actions_on_top and cl.show_admin_actions %}{% admin_actions %}{% endif %}
+            {% result_list cl %}
+            {% if action_form and actions_on_bottom and cl.show_admin_actions %}{% admin_actions %}{% endif %}
+        {% endblock %}
+        
+        {% block pagination %}{% pagination cl %}{% endblock %}
     </form>
 
     <p class="paginator">

@@ -10,9 +10,35 @@ from .models import MCQ, ReviewSchedule, Choice
 
 LABELS = ["A", "B", "C", "D"]
 
+def mcq_index(request):
+    """Public MCQ page that shows different content based on authentication status"""
+    if request.user.is_authenticated:
+        # Redirect authenticated users to the dashboard
+        return mcq_dashboard(request)
+    else:
+        # Show information page for unauthenticated users
+        return mcq_info_page(request)
+
+def mcq_info_page(request):
+    """Information page about MCQ system for unauthenticated users"""
+    # Get some basic public stats
+    total_mcqs = MCQ.objects.count()
+    
+    # Get difficulty distribution
+    difficulty_stats = {}
+    for difficulty, label in MCQ.DIFFICULTY_CHOICES:
+        difficulty_stats[label] = MCQ.objects.filter(difficulty=difficulty).count()
+    
+    context = {
+        'total_mcqs': total_mcqs,
+        'difficulty_stats': difficulty_stats,
+    }
+    
+    return render(request, 'mcq_info.html', context)
+
 @login_required
-def mcq_landing(request):
-    """Landing page with dashboard and navigation options"""
+def mcq_dashboard(request):
+    """Dashboard page for authenticated users (renamed from mcq_landing)"""
     # Basic stats
     total_mcqs = MCQ.objects.count()
     
@@ -47,6 +73,12 @@ def mcq_landing(request):
     }
     
     return render(request, 'mcq_landing.html', context)
+
+# Keep the old function name for backward compatibility
+@login_required
+def mcq_landing(request):
+    """Landing page with dashboard and navigation options (kept for URL compatibility)"""
+    return mcq_dashboard(request)
 
 def get_due_mcq(topics=None):
     """Get the next MCQ that is actually due for review, optionally filtered by topics"""

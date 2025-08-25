@@ -95,34 +95,28 @@
             </div>
         </nav>
     </header>
-    <main class="{% if request.resolver_match.url_name == 'home' %}pt-0{% else %}mt-2 p-5{% endif %} flex-grow-1">
-        {% if request.resolver_match.url_name != 'home' %}
-        <div class="container">
+    <main class="{% if request.resolver_match.url_name == 'home' %}pt-0{% else %}pt-2{% endif %} flex-grow-1">
+        <!-- Display Messages -->
+        {% if messages %}
+            <div class="messages mb-4 container">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
+                        {% if message.tags == 'error' %}
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                        {% elif message.tags == 'success' %}
+                            <i class="bi bi-check-circle-fill me-2"></i>
+                        {% elif message.tags == 'warning' %}
+                            <i class="bi bi-exclamation-triangle me-2"></i>
+                        {% else %}
+                            <i class="bi bi-info-circle-fill me-2"></i>
+                        {% endif %}
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            </div>
         {% endif %}
-            <!-- Display Messages -->
-            {% if messages %}
-                <div class="messages mb-4 {% if request.resolver_match.url_name == 'home' %}container{% endif %}">
-                    {% for message in messages %}
-                        <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
-                            {% if message.tags == 'error' %}
-                                <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                            {% elif message.tags == 'success' %}
-                                <i class="bi bi-check-circle-fill me-2"></i>
-                            {% elif message.tags == 'warning' %}
-                                <i class="bi bi-exclamation-triangle me-2"></i>
-                            {% else %}
-                                <i class="bi bi-info-circle-fill me-2"></i>
-                            {% endif %}
-                            {{ message }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                        </div>
-                    {% endfor %}
-                </div>
-            {% endif %}
-            {% block content %}{% endblock %}
-        {% if request.resolver_match.url_name != 'home' %}
-        </div>
-        {% endif %}
+        {% block content %}{% endblock %}
     </main>
     <footer class="footer mt-auto py-3 ">
         <div class="container text-center">
