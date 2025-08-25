@@ -3,6 +3,25 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/projects.css' %}">
+<style>
+.project-section {
+    border-left: 4px solid #007bff;
+    padding-left: 1rem;
+    margin-bottom: 2rem;
+}
+.milestone-card {
+    border-left: 3px solid #28a745;
+}
+.task-card {
+    border-left: 3px solid #ffc107;
+}
+.status-badge {
+    font-size: 0.75rem;
+}
+.priority-high { color: #dc3545; }
+.priority-medium { color: #ffc107; }
+.priority-low { color: #28a745; }
+</style>
 {% endblock %}
 
 {% block title %}{{ project.title }} - Projects{% endblock %}
@@ -18,7 +37,7 @@
                 </a>
             </li>
             <li class="breadcrumb-item">
-                <a href="{% url 'projects:project_home' %}" class="text-decoration-none">
+                <a href="{% url 'projects:project_list' %}" class="text-decoration-none">
                     <i class="bi bi-folder"></i> Projects
                 </a>
             </li>
@@ -26,151 +45,462 @@
         </ol>
     </nav>
 
-    <div class="row">
-        <div class="col-lg-8">
-            <!-- Main project card -->
-            <div class="card shadow-sm border-0 mb-4">
-                <div class="card-header bg-white border-bottom">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <div class="flex-grow-1">
-                            <h1 class="h2 mb-2">{{ project.title }}</h1>
-                            <div class="d-flex align-items-center gap-3">
-                                <span class="badge 
-                                    {% if project.category == 'now' %} bg-success
-                                    {% elif project.category == 'backburner' %} bg-warning text-dark
-                                    {% else %} bg-secondary
-                                    {% endif %} fs-6">
-                                    {% if project.category == 'now' %}
-                                        <i class="bi bi-lightning-fill me-1"></i>
-                                    {% elif project.category == 'backburner' %}
-                                        <i class="bi bi-pause-circle me-1"></i>
-                                    {% else %}
-                                        <i class="bi bi-clock me-1"></i>
-                                    {% endif %}
-                                    {{ project.get_category_display }}
-                                </span>
-                                <small class="text-muted">
-                                    <i class="bi bi-calendar me-1"></i>
-                                    Updated {{ project.updated_at|date:"M d, Y" }}
-                                </small>
-                            </div>
-                        </div>
+    <!-- Project Header -->
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-header bg-white border-bottom">
+            <div class="d-flex justify-content-between align-items-start">
+                <div class="flex-grow-1">
+                    <h1 class="h2 mb-2">{{ project.title }}</h1>
+                    <div class="d-flex align-items-center gap-3">
+                        <span class="badge 
+                            {% if project.category == 'now' %} bg-success
+                            {% elif project.category == 'backburner' %} bg-warning text-dark
+                            {% else %} bg-secondary
+                            {% endif %} fs-6">
+                            {{ project.get_category_display }}
+                        </span>
+                        <small class="text-muted">
+                            <i class="bi bi-calendar me-1"></i>
+                            Updated {{ project.updated_at|date:"M d, Y" }}
+                        </small>
                     </div>
                 </div>
-                <div class="card-body">
-                    <h5 class="text-secondary mb-3">
-                        <i class="bi bi-file-text me-2"></i>Project Description
-                    </h5>
-                    <div class="project-description">
-                        {{ project.description|linebreaks }}
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-4">
-            <!-- Project metadata -->
-            <div class="card shadow-sm border-0 mb-4">
-                <div class="card-header bg-light">
-                    <h6 class="mb-0">
-                        <i class="bi bi-info-circle me-2"></i>Project Information
-                    </h6>
-                </div>
-                <div class="card-body">
-                    <div class="row g-3">
-                        <div class="col-12">
-                            <div class="d-flex justify-content-between">
-                                <span class="text-muted">Status:</span>
-                                <span class="badge 
-                                    {% if project.category == 'now' %} bg-success
-                                    {% elif project.category == 'backburner' %} bg-warning text-dark
-                                    {% else %} bg-secondary
-                                    {% endif %}">
-                                    {{ project.get_category_display }}
-                                </span>
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <div class="d-flex justify-content-between">
-                                <span class="text-muted">Created:</span>
-                                <span>{{ project.created_at|date:"M d, Y" }}</span>
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <div class="d-flex justify-content-between">
-                                <span class="text-muted">Last Updated:</span>
-                                <span>{{ project.updated_at|date:"M d, Y" }}</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Action buttons -->
-            {% if user.is_authenticated %}
-            <div class="card shadow-sm border-0">
-                <div class="card-header bg-light">
-                    <h6 class="mb-0">
-                        <i class="bi bi-gear me-2"></i>Manage Project
-                    </h6>
-                </div>
-                <div class="card-body">
-                    <div class="d-grid gap-2">
-                        <a href="{% url 'projects:project_edit' project.pk %}" class="btn btn-primary">
+                <div class="dropdown">
+                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        <i class="bi bi-gear"></i> Actions
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="{% url 'projects:project_edit' project.pk %}">
                             <i class="bi bi-pencil me-2"></i>Edit Project
-                        </a>
-                        <a href="{% url 'projects:project_delete' project.pk %}" class="btn btn-outline-danger">
+                        </a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="{% url 'projects:project_delete' project.pk %}">
                             <i class="bi bi-trash me-2"></i>Delete Project
-                        </a>
-                        <hr class="my-2">
-                        <a href="{% url 'projects:project_home' %}" class="btn btn-outline-secondary">
-                            <i class="bi bi-arrow-left me-2"></i>Back to Projects
-                        </a>
-                    </div>
+                        </a></li>
+                    </ul>
                 </div>
             </div>
-            {% else %}
-            <div class="card shadow-sm border-0">
-                <div class="card-body text-center">
-                    <i class="bi bi-lock text-muted display-6"></i>
-                    <h6 class="mt-2 mb-3">Project Management</h6>
-                    <p class="text-muted small mb-3">Login to edit and manage projects</p>
-                    <a href="{% url 'secure_admin_login' %}?next={{ request.path }}" class="btn btn-outline-primary btn-sm">
-                        <i class="bi bi-box-arrow-in-right me-1"></i>Login
-                    </a>
-                </div>
-            </div>
-            {% endif %}
         </div>
     </div>
 
-    <hr>
-
-    <h2>Project Plan</h2>
-    <div>
-        {{ project.plan_html|safe }}
+    <!-- Project Overview Section -->
+    {% if project.purpose or project.success_criteria %}
+    <div class="project-section">
+        <h3><i class="bi bi-bullseye me-2"></i>Project Overview</h3>
+        <div class="row">
+            <div class="col-md-6">
+                {% if project.purpose %}
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h6 class="card-title text-primary">Purpose / Goal</h6>
+                        <p class="card-text">{{ project.purpose|linebreaks }}</p>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            <div class="col-md-6">
+                {% if project.success_criteria %}
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h6 class="card-title text-success">Success Criteria</h6>
+                        <p class="card-text">{{ project.success_criteria|linebreaks }}</p>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
     </div>
+    {% endif %}
 
-    <hr>
+    <!-- Key Considerations Section -->
+    {% if project.stakeholders or project.constraints or project.risks or project.dependencies %}
+    <div class="project-section">
+        <h3><i class="bi bi-exclamation-triangle me-2"></i>Key Considerations</h3>
+        <div class="row">
+            <div class="col-md-6">
+                {% if project.stakeholders %}
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h6 class="card-title">Stakeholders</h6>
+                        <p class="card-text">{{ project.stakeholders|linebreaks }}</p>
+                    </div>
+                </div>
+                {% endif %}
+                {% if project.risks %}
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h6 class="card-title text-warning">Risks</h6>
+                        <p class="card-text">{{ project.risks|linebreaks }}</p>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            <div class="col-md-6">
+                {% if project.constraints %}
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h6 class="card-title">Constraints</h6>
+                        <p class="card-text">{{ project.constraints|linebreaks }}</p>
+                    </div>
+                </div>
+                {% endif %}
+                {% if project.dependencies %}
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h6 class="card-title">Dependencies</h6>
+                        <p class="card-text">{{ project.dependencies|linebreaks }}</p>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
 
-    <h2>Activity Feed</h2>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-success">Log Activity</button>
-    </form>
-
-    <div class="mt-4">
-        {% for activity in activities %}
-            <div class="card mb-2">
-                <div class="card-body">
-                    <p class="card-text">{{ activity.log }}</p>
-                    <p class="card-subtitle mb-2 text-muted">{{ activity.created_at|date:"Y-m-d H:i" }}</p>
+    <!-- Milestones Section -->
+    <div class="project-section">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3><i class="bi bi-flag me-2"></i>Milestones</h3>
+            <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#addMilestoneModal">
+                <i class="bi bi-plus"></i> Add Milestone
+            </button>
+        </div>
+        
+        {% for milestone in milestones %}
+        <div class="card milestone-card mb-3">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div class="flex-grow-1">
+                        <h6 class="card-title">
+                            {% if milestone.completed %}
+                                <i class="bi bi-check-circle text-success me-2"></i>
+                            {% else %}
+                                <i class="bi bi-circle me-2"></i>
+                            {% endif %}
+                            {{ milestone.title }}
+                        </h6>
+                        <p class="card-text">{{ milestone.description }}</p>
+                        <div class="d-flex gap-3">
+                            {% if milestone.target_date %}
+                            <small class="text-muted">
+                                <i class="bi bi-calendar-event me-1"></i>Target: {{ milestone.target_date }}
+                            </small>
+                            {% endif %}
+                            {% if milestone.owner %}
+                            <small class="text-muted">
+                                <i class="bi bi-person me-1"></i>{{ milestone.owner }}
+                            </small>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-three-dots"></i>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><button class="dropdown-item toggle-milestone" data-milestone-id="{{ milestone.pk }}">
+                                {% if milestone.completed %}
+                                    <i class="bi bi-arrow-counterclockwise me-2"></i>Mark Incomplete
+                                {% else %}
+                                    <i class="bi bi-check-circle me-2"></i>Mark Complete
+                                {% endif %}
+                            </button></li>
+                            <li><a class="dropdown-item" href="{% url 'projects:milestone_edit' project.pk milestone.pk %}">
+                                <i class="bi bi-pencil me-2"></i>Edit
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger" href="{% url 'projects:milestone_delete' project.pk milestone.pk %}">
+                                <i class="bi bi-trash me-2"></i>Delete
+                            </a></li>
+                        </ul>
+                    </div>
                 </div>
             </div>
+        </div>
         {% empty %}
-            <p>No activities logged yet.</p>
+        <div class="text-center text-muted py-4">
+            <i class="bi bi-flag display-4"></i>
+            <p>No milestones defined yet. Add your first milestone to track project progress.</p>
+        </div>
         {% endfor %}
     </div>
+
+    <!-- Tasks Section -->
+    <div class="project-section">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3><i class="bi bi-list-task me-2"></i>Action Plan</h3>
+            <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#addTaskModal">
+                <i class="bi bi-plus"></i> Add Task
+            </button>
+        </div>
+        
+        {% for task in tasks %}
+        <div class="card task-card mb-3">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div class="flex-grow-1">
+                        <h6 class="card-title">
+                            <span class="priority-{{ task.priority }}">
+                                {% if task.priority == 'high' %}●{% elif task.priority == 'medium' %}●{% else %}●{% endif %}
+                            </span>
+                            {{ task.title }}
+                            <span class="badge status-badge 
+                                {% if task.status == 'done' %}bg-success
+                                {% elif task.status == 'in_progress' %}bg-primary
+                                {% elif task.status == 'blocked' %}bg-danger
+                                {% else %}bg-secondary{% endif %}">
+                                {{ task.get_status_display }}
+                            </span>
+                        </h6>
+                        {% if task.description %}
+                        <p class="card-text">{{ task.description }}</p>
+                        {% endif %}
+                        <div class="d-flex gap-3">
+                            <small class="text-muted">Priority: {{ task.get_priority_display }}</small>
+                            {% if task.deadline %}
+                            <small class="text-muted">
+                                <i class="bi bi-calendar-event me-1"></i>{{ task.deadline }}
+                            </small>
+                            {% endif %}
+                            {% if task.milestone %}
+                            <small class="text-muted">
+                                <i class="bi bi-flag me-1"></i>{{ task.milestone.title }}
+                            </small>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="dropdown">
+                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-three-dots"></i>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><h6 class="dropdown-header">Update Status</h6></li>
+                            <li><button class="dropdown-item update-task-status" data-task-id="{{ task.pk }}" data-status="not_started">Not Started</button></li>
+                            <li><button class="dropdown-item update-task-status" data-task-id="{{ task.pk }}" data-status="in_progress">In Progress</button></li>
+                            <li><button class="dropdown-item update-task-status" data-task-id="{{ task.pk }}" data-status="done">Done</button></li>
+                            <li><button class="dropdown-item update-task-status" data-task-id="{{ task.pk }}" data-status="blocked">Blocked</button></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'projects:task_edit' project.pk task.pk %}">
+                                <i class="bi bi-pencil me-2"></i>Edit
+                            </a></li>
+                            <li><a class="dropdown-item text-danger" href="{% url 'projects:task_delete' project.pk task.pk %}">
+                                <i class="bi bi-trash me-2"></i>Delete
+                            </a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="text-center text-muted py-4">
+            <i class="bi bi-list-task display-4"></i>
+            <p>No tasks defined yet. Add tasks to break down your project into actionable items.</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Resources Section -->
+    {% if project.tools_needed or project.people_needed or project.budget or project.knowledge_training %}
+    <div class="project-section">
+        <h3><i class="bi bi-tools me-2"></i>Resources Needed</h3>
+        <div class="row">
+            <div class="col-md-6">
+                {% if project.tools_needed %}
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h6 class="card-title">Tools</h6>
+                        <p class="card-text">{{ project.tools_needed|linebreaks }}</p>
+                    </div>
+                </div>
+                {% endif %}
+                {% if project.budget %}
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h6 class="card-title">Budget</h6>
+                        <p class="card-text">{{ project.budget|linebreaks }}</p>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            <div class="col-md-6">
+                {% if project.people_needed %}
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h6 class="card-title">People</h6>
+                        <p class="card-text">{{ project.people_needed|linebreaks }}</p>
+                    </div>
+                </div>
+                {% endif %}
+                {% if project.knowledge_training %}
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h6 class="card-title">Knowledge / Training</h6>
+                        <p class="card-text">{{ project.knowledge_training|linebreaks }}</p>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Activity Feed Section -->
+    <div class="project-section">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3><i class="bi bi-chat-dots me-2"></i>Activity Feed</h3>
+            <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#addActivityModal">
+                <i class="bi bi-plus"></i> Log Activity
+            </button>
+        </div>
+        
+        {% for activity in activities %}
+        <div class="card mb-3">
+            <div class="card-body">
+                <p class="card-text">{{ activity.log|linebreaks }}</p>
+                <div class="d-flex justify-content-between">
+                    <small class="text-muted">{{ activity.created_at|date:"M d, Y H:i" }}</small>
+                    {% if activity.milestone or activity.task %}
+                    <small class="text-muted">
+                        {% if activity.milestone %}
+                            <i class="bi bi-flag me-1"></i>{{ activity.milestone.title }}
+                        {% endif %}
+                        {% if activity.task %}
+                            <i class="bi bi-list-task me-1"></i>{{ activity.task.title }}
+                        {% endif %}
+                    </small>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="text-center text-muted py-4">
+            <i class="bi bi-chat-dots display-4"></i>
+            <p>No activities logged yet. Start logging your project activities and updates.</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Legacy Project Plan (if exists) -->
+    {% if project.plan %}
+    <div class="project-section">
+        <h3><i class="bi bi-file-text me-2"></i>Legacy Project Plan</h3>
+        <div class="card">
+            <div class="card-body">
+                {{ project.plan_html|safe }}
+            </div>
+        </div>
+    </div>
+    {% endif %}
 </div>
+
+<!-- Add Milestone Modal -->
+<div class="modal fade" id="addMilestoneModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Milestone</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    {{ milestone_form.as_p }}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" name="add_milestone" class="btn btn-success">Add Milestone</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Add Task Modal -->
+<div class="modal fade" id="addTaskModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Task</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    {{ task_form.as_p }}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" name="add_task" class="btn btn-primary">Add Task</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Add Activity Modal -->
+<div class="modal fade" id="addActivityModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h5 class="modal-title">Log Activity</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    {{ activity_form.as_p }}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" name="add_activity" class="btn btn-info">Log Activity</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+// Handle milestone completion toggle
+document.querySelectorAll('.toggle-milestone').forEach(button => {
+    button.addEventListener('click', function() {
+        const milestoneId = this.dataset.milestoneId;
+        fetch(`{% url 'projects:milestone_toggle_complete' project.pk 0 %}`.replace('0', milestoneId), {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            }
+        });
+    });
+});
+
+// Handle task status updates
+document.querySelectorAll('.update-task-status').forEach(button => {
+    button.addEventListener('click', function() {
+        const taskId = this.dataset.taskId;
+        const status = this.dataset.status;
+        
+        const formData = new FormData();
+        formData.append('status', status);
+        formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
+        
+        fetch(`{% url 'projects:task_update_status' project.pk 0 %}`.replace('0', taskId), {
+            method: 'POST',
+            body: formData,
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            }
+        });
+    });
+});
+</script>
 {% endblock %}
