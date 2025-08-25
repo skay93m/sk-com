@@ -256,43 +256,8 @@
     </div>
 </div>
 
-<script>
-// Auto-generate slug from title
-document.addEventListener('DOMContentLoaded', function() {
-    const titleField = document.getElementById('{{ form.title.id_for_label }}');
-    const slugField = document.getElementById('{{ form.slug.id_for_label }}');
-    
-    if (titleField && slugField && !slugField.value) {
-        titleField.addEventListener('input', function() {
-            const title = this.value;
-            const slug = title.toLowerCase()
-                .replace(/[^a-z0-9\s-]/g, '')
-                .replace(/\s+/g, '-')
-                .replace(/-+/g, '-')
-                .trim('-');
-            slugField.value = slug;
-        });
-    }
-    
-    // Form validation feedback
-    const form = document.querySelector('form');
-    if (form) {
-        form.addEventListener('submit', function(e) {
-            // Add Bootstrap validation classes
-            const inputs = form.querySelectorAll('input, textarea, select');
-            inputs.forEach(input => {
-                if (input.checkValidity()) {
-                    input.classList.remove('is-invalid');
-                    input.classList.add('is-valid');
-                } else {
-                    input.classList.remove('is-valid');
-                    input.classList.add('is-invalid');
-                }
-            });
-        });
-    }
-});
-</script>
+{% block extra_js %}
+<script src="{% static 'js/writing.js' %}"></script>
 {% endblock %}
                         <label for="{{ form.excerpt.id_for_label }}" class="form-label">Excerpt</label>
                         {{ form.excerpt }}

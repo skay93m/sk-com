@@ -1,4 +1,9 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/projects.css' %}">
+{% endblock %} extends 'base.html' %}
 {% load static %}
 
 {% block title %}Projects{% endblock %}
@@ -143,15 +148,4 @@
     {% endif %}
     {% endblock %}
 </div>
-
-<style>
-.project-card {
-    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-}
-
-.project-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
-}
-</style>
 {% endblock %}

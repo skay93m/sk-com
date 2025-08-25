@@ -1,5 +1,9 @@
-{% extends "admin/base_site.html" %}
+{% extends "base.html" %}
 {% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/analytics.css' %}">
+{% endblock %}
 
 {% block title %}Website Analytics Dashboard{% endblock %}
 
@@ -443,80 +447,15 @@
 
 <!-- Chart.js for visualizations -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+{% block extra_js %}
 <script>
-// Daily Views Chart (Line Chart)
-const dailyCtx = document.getElementById('dailyViewsChart').getContext('2d');
-const dailyData = {{ daily_views|safe }};
-
-new Chart(dailyCtx, {
-    type: 'line',
-    data: {
-        labels: dailyData.map(d => d.date),
-        datasets: [{
-            label: 'Daily Views',
-            data: dailyData.map(d => d.views),
-            borderColor: '#0d6efd',
-            backgroundColor: 'rgba(13, 110, 253, 0.1)',
-            tension: 0.4,
-            fill: true
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: {
-                display: false
-            }
-        },
-        scales: {
-            y: {
-                beginAtZero: true,
-                grid: {
-                    color: 'rgba(0,0,0,0.1)'
-                }
-            },
-            x: {
-                grid: {
-                    display: false
-                }
-            }
-        }
-    }
-});
-
-// Response Time Distribution (Doughnut Chart)
-const responseCtx = document.getElementById('responseTimeChart').getContext('2d');
-new Chart(responseCtx, {
-    type: 'doughnut',
-    data: {
-        labels: ['Fast (<200ms)', 'Good (200-500ms)', 'Slow (>500ms)'],
-        datasets: [{
-            data: [70, 25, 5], // Sample data - you can make this dynamic
-            backgroundColor: ['#28a745', '#ffc107', '#dc3545'],
-            borderWidth: 0
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: {
-                position: 'bottom',
-                labels: {
-                    boxWidth: 12,
-                    fontSize: 10
-                }
-            }
-        }
-    }
-});
-
-// Auto-refresh every 30 seconds (optional)
-setTimeout(function() {
-    location.reload();
-}, 30000);
+// Make data available to JavaScript
+window.dailyViewsData = {{ daily_views|safe }};
+window.responseTimeData = [70, 25, 5]; // You can make this dynamic too
 </script>
+<script src="{% static 'js/dashboard.js' %}"></script>
+{% endblock %}
 
 <style>
 .analytics-dashboard {

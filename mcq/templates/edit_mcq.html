@@ -1,4 +1,9 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/mcq.css' %}">
+{% endblock %}
 
 {% block title %}Edit MCQ - Syafiq Kay{% endblock %}
 
@@ -8,7 +13,7 @@
         <!-- Main Content -->
         <div class="col-lg-8">
             <div class="card shadow-sm border-0">
-                <div class="card-header bg-gradient text-white text-center py-4" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                <div class="card-header mcq-edit-header text-white text-center py-4">
                     <h2 class="mb-0">
                         <i class="bi bi-pencil-square me-3"></i>Edit MCQ
                     </h2>
@@ -84,14 +89,12 @@
                             {{ formset.management_form }}
                             <div id="choices-container">
                                 {% for form in formset %}
-                                    <div class="choice-item mb-3 {% cycle 'border-start border-primary' 'border-start border-success' 'border-start border-warning' 'border-start border-danger' %}" 
-                                         style="border-width: 4px !important;">
+                                    <div class="choice-item mb-3 choice-card-thick {% cycle 'border-start border-primary' 'border-start border-success' 'border-start border-warning' 'border-start border-danger' %}">
                                         <div class="card shadow-sm">
                                             <div class="card-body">
                                                 <div class="row align-items-center">
                                                     <div class="col-auto">
-                                                        <div class="choice-number bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" 
-                                                             style="width: 40px; height: 40px; font-weight: bold;">
+                                                        <div class="choice-number bg-primary text-white rounded-circle d-flex align-items-center justify-content-center">
                                                             {{ forloop.counter }}
                                                         </div>
                                                     </div>
@@ -159,7 +162,7 @@
 
         <!-- Sidebar -->
         <div class="col-lg-4">
-            <div class="sticky-top" style="top: 1rem;">
+            <div class="sticky-sidebar-top">
                 <!-- MCQ Info -->
                 <div class="card shadow-sm border-0 mb-4">
                     <div class="card-header bg-info text-white">
@@ -251,80 +254,6 @@
     </div>
 </div>
 
-<style>
-.choice-number {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important;
-}
-
-.choice-item:nth-child(1) .choice-number {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-}
-
-.choice-item:nth-child(2) .choice-number {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important;
-}
-
-.choice-item:nth-child(3) .choice-number {
-    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%) !important;
-}
-
-.choice-item:nth-child(4) .choice-number {
-    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%) !important;
-}
-
-.choice-item:nth-child(5) .choice-number {
-    background: linear-gradient(135deg, #fa709a 0%, #fee140 100%) !important;
-}
-
-.choice-item:nth-child(6) .choice-number {
-    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%) !important;
-}
-
-.card {
-    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-}
-
-.choice-item .card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0,0,0,0.1) !important;
-}
-
-.form-control:focus {
-    border-color: #f093fb;
-    box-shadow: 0 0 0 0.2rem rgba(240, 147, 251, 0.25);
-}
-
-.btn-warning {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-    border: none;
-    color: white;
-}
-
-.btn-warning:hover {
-    background: linear-gradient(135deg, #e080e8 0%, #e04455 100%);
-    transform: translateY(-1px);
-    color: white;
-}
-</style>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Add classes to form fields
-    const formControls = document.querySelectorAll('input[type="text"], textarea, select');
-    formControls.forEach(function(control) {
-        control.classList.add('form-control');
-    });
-    
-    // Add classes to checkboxes
-    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-    checkboxes.forEach(function(checkbox) {
-        checkbox.classList.add('form-check-input');
-    });
-    
-    // Smooth scroll on form submission
-    document.getElementById('mcq-form').addEventListener('submit', function() {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-});
-</script>
+{% block extra_js %}
+<script src="{% static 'js/mcq.js' %}"></script>
 {% endblock %}

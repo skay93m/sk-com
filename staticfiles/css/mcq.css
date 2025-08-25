@@ -1,0 +1,454 @@
+/* MCQ app styles */
+
+/* Header gradient background */
+.mcq-header-gradient {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* Table hover effect */
+.table-hover tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+/* Badge styles */
+.badge {
+    font-size: 0.75em;
+}
+
+/* Button group styles */
+.btn-group .btn {
+    border-radius: 0.375rem;
+    margin-right: 0.25rem;
+}
+
+.btn-group .btn:last-child {
+    margin-right: 0;
+}
+
+/* Card hover effects for choices */
+.card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    animation: fadeIn 0.6s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.choice-item .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Topic badge with custom colors */
+.topic-badge {
+    color: white;
+}
+
+/* Dynamic topic badge styling */
+.topic-badge-dynamic {
+    color: white;
+    background-color: var(--topic-color, #6c757d);
+}
+
+/* Icon styling */
+.mcq-icon-large {
+    font-size: 4rem;
+    color: #6c757d;
+}
+
+.mcq-icon-medium {
+    font-size: 3rem;
+    color: #6c757d;
+}
+
+.mcq-icon-primary {
+    font-size: 4rem;
+}
+
+/* Circle badge for numbers */
+.circle-badge {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.circle-badge-primary {
+    background-color: var(--bs-primary);
+    color: white;
+    border-radius: 50%;
+}
+
+.circle-badge-success {
+    background-color: var(--bs-success);
+    color: white;
+    border-radius: 50%;
+}
+
+/* Print styles */
+@media print {
+
+    .card-header,
+    .card-footer,
+    .btn,
+    .quick-actions {
+        display: none !important;
+    }
+}
+
+/* Loading animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+/* Question card styles */
+.question-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border-left: 4px solid transparent;
+}
+
+.question-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-left-color: var(--bs-primary);
+}
+
+/* Difficulty indicators */
+.difficulty-easy {
+    border-left-color: var(--bs-success) !important;
+}
+
+.difficulty-medium {
+    border-left-color: var(--bs-warning) !important;
+}
+
+.difficulty-hard {
+    border-left-color: var(--bs-danger) !important;
+}
+
+/* Progress bars */
+.progress-thin {
+    height: 4px;
+}
+
+/* Topic selection cards */
+.topic-card {
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.topic-card:hover {
+    border-color: var(--bs-primary);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.topic-card.selected {
+    border-color: var(--bs-success);
+    background-color: rgba(40, 167, 69, 0.1);
+}
+
+/* MCQ form styles */
+.form-floating label {
+    transition: all 0.2s ease;
+}
+
+.form-floating input:focus~label,
+.form-floating textarea:focus~label {
+    color: var(--bs-primary);
+}
+
+/* Answer option styles */
+.answer-option {
+    transition: background-color 0.2s ease;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 10px;
+    cursor: pointer;
+}
+
+.answer-option:hover {
+    background-color: rgba(0, 123, 255, 0.05);
+    border-color: rgba(0, 123, 255, 0.2);
+}
+
+.answer-option.correct {
+    background-color: rgba(40, 167, 69, 0.1);
+    border-color: var(--bs-success);
+}
+
+.answer-option.incorrect {
+    background-color: rgba(220, 53, 69, 0.1);
+    border-color: var(--bs-danger);
+}
+
+/* Statistics cards */
+.stat-card {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border: none;
+    transition: transform 0.2s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+}
+
+/* Dashboard grid */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .circle-badge {
+        width: 35px;
+        height: 35px;
+    }
+
+    .mcq-icon-large {
+        font-size: 3rem;
+    }
+
+    .mcq-icon-medium {
+        font-size: 2.5rem;
+    }
+}
+
+/* Details/Summary styling */
+.details-custom summary {
+    outline: none;
+    border: none;
+    cursor: pointer;
+}
+
+.details-custom[open] summary {
+    margin-bottom: 1rem;
+}
+
+/* Primary button gradient styling */
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+    transform: translateY(-1px);
+}
+
+/* Card transitions */
+.card {
+    transition: all 0.3s ease;
+}
+
+/* Progress styles */
+.progress-thin {
+    height: 8px;
+}
+
+.progress-25 {
+    width: 25%;
+}
+
+.progress-50 {
+    width: 50%;
+}
+
+.progress-75 {
+    width: 75%;
+}
+
+/* Icon styles */
+.icon-circle-40 {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-circle-60 {
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-circle-80 {
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Large icon styling */
+.icon-large {
+    font-size: 5rem !important;
+    opacity: 0.6;
+}
+
+.display-1.icon-large {
+    font-size: 6rem !important;
+}
+
+/* Utility classes */
+.rounded-circle {
+    flex-shrink: 0;
+}
+
+/* Edit MCQ specific styles */
+.mcq-edit-header {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+/* Create MCQ specific styles */
+.mcq-create-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+/* Topics container styling */
+.scrollable-topics-container {
+    max-height: 150px;
+    overflow-y: auto;
+    border: 1px solid #ced4da;
+    border-radius: 0.375rem;
+    padding: 0.5rem;
+}
+
+/* Choice number styling with gradients for create MCQ */
+.choice-number {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    width: 40px;
+    height: 40px;
+    font-weight: bold;
+}
+
+.choice-item:nth-child(1) .choice-number {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+}
+
+.choice-item:nth-child(2) .choice-number {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important;
+}
+
+.choice-item:nth-child(3) .choice-number {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%) !important;
+}
+
+.choice-item:nth-child(4) .choice-number {
+    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%) !important;
+}
+
+.choice-item:nth-child(5) .choice-number {
+    background: linear-gradient(135deg, #fa709a 0%, #fee140 100%) !important;
+}
+
+.choice-item:nth-child(6) .choice-number {
+    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%) !important;
+}
+
+/* Form focus styles for create MCQ */
+.form-control:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+/* Custom button styling for create MCQ */
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+    transform: translateY(-1px);
+}
+
+.choice-item:nth-child(1) .choice-number {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+}
+
+.choice-item:nth-child(2) .choice-number {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important;
+}
+
+.choice-item:nth-child(3) .choice-number {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%) !important;
+}
+
+.choice-item:nth-child(4) .choice-number {
+    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%) !important;
+}
+
+.choice-item:nth-child(5) .choice-number {
+    background: linear-gradient(135deg, #fa709a 0%, #fee140 100%) !important;
+}
+
+.choice-item:nth-child(6) .choice-number {
+    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%) !important;
+}
+
+/* Card hover effects for choices */
+.card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.choice-item .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Form focus styles */
+.form-control:focus {
+    border-color: #f093fb;
+    box-shadow: 0 0 0 0.2rem rgba(240, 147, 251, 0.25);
+}
+
+/* Custom button styling */
+.btn-warning {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    border: none;
+    color: white;
+}
+
+.btn-warning:hover {
+    background: linear-gradient(135deg, #e080e8 0%, #e04455 100%);
+    transform: translateY(-1px);
+    color: white;
+}
+
+/* Choice cards with thick borders */
+.choice-card-thick {
+    border-width: 4px !important;
+}
+
+/* Sticky sidebar positioning */
+.sticky-sidebar-top {
+    position: sticky;
+    top: 1rem;
+}

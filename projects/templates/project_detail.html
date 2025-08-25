@@ -1,4 +1,9 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/projects.css' %}">
+{% endblock %} extends 'base.html' %}
 {% load static %}
 
 {% block title %}{{ project.title }} - Projects{% endblock %}
@@ -140,15 +145,4 @@
         </div>
     </div>
 </div>
-
-<style>
-.project-description {
-    line-height: 1.6;
-    font-size: 1.05rem;
-}
-
-.project-description p {
-    margin-bottom: 1rem;
-}
-</style>
 {% endblock %}

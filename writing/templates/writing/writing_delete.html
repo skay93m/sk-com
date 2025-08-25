@@ -165,23 +165,28 @@
     </div>
 </div>
 
+{% block extra_js %}
+<script src="{% static 'js/writing.js' %}"></script>
 <script>
+// Additional delete confirmation functionality
 document.addEventListener('DOMContentLoaded', function() {
     const confirmInput = document.getElementById('confirm-title');
     const deleteButton = document.getElementById('delete-button');
     const expectedTitle = "{{ writing.title|escapejs }}";
     
-    confirmInput.addEventListener('input', function() {
-        if (this.value === expectedTitle) {
-            deleteButton.disabled = false;
-            deleteButton.classList.remove('btn-outline-danger');
-            deleteButton.classList.add('btn-danger');
-        } else {
-            deleteButton.disabled = true;
-            deleteButton.classList.remove('btn-danger');
-            deleteButton.classList.add('btn-outline-danger');
-        }
-    });
+    if (confirmInput && deleteButton) {
+        confirmInput.addEventListener('input', function() {
+            if (this.value === expectedTitle) {
+                deleteButton.disabled = false;
+                deleteButton.classList.remove('btn-outline-danger');
+                deleteButton.classList.add('btn-danger');
+            } else {
+                deleteButton.disabled = true;
+                deleteButton.classList.remove('btn-danger');
+                deleteButton.classList.add('btn-outline-danger');
+            }
+        });
+    }
 });
 </script>
 {% endblock %}

@@ -72,28 +72,28 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-3 text-center">
-                            <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                            <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center icon-circle-60">
                                 <i class="bi bi-chat-text fs-4"></i>
                             </div>
                             <h6 class="mt-2">1. Create Prompt</h6>
                             <p class="small text-muted">Design your LLM prompt with specific requirements</p>
                         </div>
                         <div class="col-md-3 text-center">
-                            <div class="bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                            <div class="bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center icon-circle-60">
                                 <i class="bi bi-clipboard-data fs-4"></i>
                             </div>
                             <h6 class="mt-2">2. Paste Response</h6>
                             <p class="small text-muted">Paste LLM response for automatic parsing</p>
                         </div>
                         <div class="col-md-3 text-center">
-                            <div class="bg-warning text-white rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                            <div class="bg-warning text-white rounded-circle d-inline-flex align-items-center justify-content-center icon-circle-60">
                                 <i class="bi bi-eye fs-4"></i>
                             </div>
                             <h6 class="mt-2">3. Review Questions</h6>
                             <p class="small text-muted">Review, edit, and approve each question</p>
                         </div>
                         <div class="col-md-3 text-center">
-                            <div class="bg-info text-white rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                            <div class="bg-info text-white rounded-circle d-inline-flex align-items-center justify-content-center icon-circle-60">
                                 <i class="bi bi-check-circle fs-4"></i>
                             </div>
                             <h6 class="mt-2">4. Add to Database</h6>
@@ -140,7 +140,7 @@
                                         </td>
                                         <td>
                                             {% if session.topic %}
-                                                <span class="badge" style="background-color: {{ session.topic.color }};">
+                                                <span class="badge topic-badge-dynamic" data-topic-color="{{ session.topic.color }}">
                                                     {{ session.topic.name }}
                                                 </span>
                                             {% else %}

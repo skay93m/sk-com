@@ -89,7 +89,7 @@
                                         <div class="form-check">
                                             {{ topic.tag }}
                                             <label class="form-check-label" for="{{ topic.id_for_label }}">
-                                                <span class="badge me-1" style="background-color: {{ topic.choice_value.color }};">
+                                                <span class="badge topic-badge-dynamic me-1" data-topic-color="{{ topic.choice_value.color }}">
                                                     {{ topic.choice_label }}
                                                 </span>
                                             </label>

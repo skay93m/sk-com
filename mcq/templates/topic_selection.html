@@ -1,6 +1,10 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/mcq.css' %}">
+{% endblock %}
+
 {% block title %}Select Topics to Study{% endblock %}
 
 {% block content %}
@@ -20,7 +24,7 @@
     <div class="row">
         <div class="col-lg-8">
             <div class="card shadow-sm border-0">
-                <div class="card-header bg-gradient text-white py-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <div class="card-header mcq-header-gradient text-white py-4">>
                     <h2 class="mb-0">
                         <i class="fas fa-tags me-3"></i>Select Topics to Study
                     </h2>
@@ -62,7 +66,7 @@
                                         <label class="form-check-label d-flex justify-content-between align-items-center w-100" 
                                                for="topic_{{ topic_stat.topic.id }}">
                                             <div>
-                                                <span class="badge me-2" style="background-color: {{ topic_stat.topic.color }}; color: white;">
+                                                <span class="badge topic-badge-dynamic me-2" data-topic-color="{{ topic_stat.topic.color }}">
                                                     {{ topic_stat.topic.name }}
                                                 </span>
                                                 {% if topic_stat.topic.description %}
@@ -105,7 +109,7 @@
                     {% else %}
                     <!-- No topics available -->
                     <div class="text-center py-5">
-                        <i class="fas fa-tags text-muted" style="font-size: 3rem;"></i>
+                        <i class="fas fa-tags text-muted mcq-icon-medium"></i>
                         <h4 class="mt-3 text-muted">No Topics Available</h4>
                         <p class="text-muted">Create some topics first to organize your questions.</p>
                         <a href="{% url 'mcq:manage_topics' %}" class="btn btn-primary">
@@ -153,23 +157,6 @@
     </div>
 </div>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const selectAllBtn = document.getElementById('select-all');
-    const clearAllBtn = document.getElementById('clear-all');
-    const checkboxes = document.querySelectorAll('input[name="topics"]');
-    
-    if (selectAllBtn) {
-        selectAllBtn.addEventListener('click', function() {
-            checkboxes.forEach(cb => cb.checked = true);
-        });
-    }
-    
-    if (clearAllBtn) {
-        clearAllBtn.addEventListener('click', function() {
-            checkboxes.forEach(cb => cb.checked = false);
-        });
-    }
-});
-</script>
+{% block extra_js %}
+<script src="{% static 'js/mcq.js' %}"></script>
 {% endblock %}

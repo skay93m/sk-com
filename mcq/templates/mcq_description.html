@@ -1,4 +1,9 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/mcq.css' %}">
+{% endblock %}
 
 {% block title %}MCQ Quiz - Login Required - Syafiq Kay{% endblock %}
 
@@ -8,7 +13,7 @@
         <div class="col-lg-8 col-xl-6">
             <div class="card shadow border-0">
                 <!-- Header -->
-                <div class="card-header bg-gradient text-white py-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <div class="card-header mcq-header-gradient text-white py-4">>
                     <div class="text-center">
                         <h4 class="mb-0">
                             <i class="bi bi-question-circle-fill me-2"></i>MCQ Quiz System
@@ -21,7 +26,7 @@
                     <!-- Description Section -->
                     <div class="text-center mb-4">
                         <div class="mb-4">
-                            <i class="bi bi-mortarboard-fill text-primary" style="font-size: 4rem;"></i>
+                            <i class="bi bi-mortarboard-fill text-primary mcq-icon-primary"></i>
                         </div>
                         <h5 class="text-primary mb-3">Welcome to the MCQ Quiz System</h5>
                         <p class="lead text-muted mb-4">
@@ -34,7 +39,7 @@
                     <div class="row mb-4">
                         <div class="col-md-6">
                             <div class="d-flex align-items-start mb-3">
-                                <div class="bg-primary text-white rounded-circle p-2 me-3" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+                                <div class="bg-primary text-white rounded-circle p-2 me-3 circle-badge">>
                                     <i class="bi bi-arrow-repeat"></i>
                                 </div>
                                 <div>
@@ -45,7 +50,7 @@
                         </div>
                         <div class="col-md-6">
                             <div class="d-flex align-items-start mb-3">
-                                <div class="bg-success text-white rounded-circle p-2 me-3" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+                                <div class="bg-success text-white rounded-circle p-2 me-3 circle-badge">>
                                     <i class="bi bi-lightbulb"></i>
                                 </div>
                                 <div>
@@ -56,7 +61,7 @@
                         </div>
                         <div class="col-md-6">
                             <div class="d-flex align-items-start mb-3">
-                                <div class="bg-info text-white rounded-circle p-2 me-3" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+                                <div class="bg-info text-white rounded-circle p-2 me-3 icon-circle-40">
                                     <i class="bi bi-speedometer2"></i>
                                 </div>
                                 <div>
@@ -67,7 +72,7 @@
                         </div>
                         <div class="col-md-6">
                             <div class="d-flex align-items-start mb-3">
-                                <div class="bg-warning text-white rounded-circle p-2 me-3" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+                                <div class="bg-warning text-white rounded-circle p-2 me-3 icon-circle-40">
                                     <i class="bi bi-graph-up"></i>
                                 </div>
                                 <div>
@@ -157,34 +162,4 @@
         </div>
     </div>
 </div>
-
-<style>
-.details-custom summary {
-    outline: none;
-    border: none;
-    cursor: pointer;
-}
-
-.details-custom[open] summary {
-    margin-bottom: 1rem;
-}
-
-.btn-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border: none;
-}
-
-.btn-primary:hover {
-    background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
-    transform: translateY(-1px);
-}
-
-.card {
-    transition: all 0.3s ease;
-}
-
-.rounded-circle {
-    flex-shrink: 0;
-}
-</style>
 {% endblock %}

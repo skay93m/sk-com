@@ -228,9 +228,9 @@
                 <div class="text-center py-5">
                     <div class="mb-4">
                         {% if search_query or selected_type %}
-                            <i class="bi bi-search display-1 text-muted" style="font-size: 6rem;"></i>
+                            <i class="bi bi-search display-1 text-muted large-icon"></i>
                         {% else %}
-                            <i class="bi bi-pen display-1 text-muted" style="font-size: 6rem;"></i>
+                            <i class="bi bi-pen display-1 text-muted large-icon"></i>
                         {% endif %}
                     </div>
                     
@@ -278,23 +278,4 @@
         </div>
     {% endif %}
 </div>
-
-<style>
-.writing-card {
-    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-}
-
-.writing-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
-}
-
-.writing-featured {
-    border-left: 4px solid #ffc107 !important;
-}
-
-.writing-filters {
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-}
-</style>
 {% endblock %}

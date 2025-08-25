@@ -19,8 +19,8 @@
                     <!-- Progress Indicator -->
                     <div class="row mb-4">
                         <div class="col-12">
-                            <div class="progress" style="height: 8px;">
-                                <div class="progress-bar bg-primary" role="progressbar" style="width: 50%"></div>
+                            <div class="progress progress-thin">
+                                <div class="progress-bar bg-primary progress-50" role="progressbar"></div>
                             </div>
                             <div class="d-flex justify-content-between mt-2">
                                 <small class="text-success">✓ 1. Create Prompt</small>
@@ -40,7 +40,7 @@
                             <div class="small">
                                 <strong>Topic:</strong> 
                                 {% if generation.topic %}
-                                    <span class="badge" style="background-color: {{ generation.topic.color }};">
+                                    <span class="badge topic-badge-dynamic" data-topic-color="{{ generation.topic.color }}">
                                         {{ generation.topic.name }}
                                     </span>
                                 {% else %}
