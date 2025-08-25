@@ -83,3 +83,67 @@
         font-size: 1rem;
     }
 }
+
+@media (max-width: 991.98px) {
+    .sticky-sidebar {
+        position: static !important;
+    }
+}
+
+/* Author avatar styling */
+.author-avatar {
+    width: 40px;
+    height: 40px;
+}
+
+/* Sticky sidebar */
+.sticky-sidebar {
+    position: sticky;
+    top: 2rem;
+}
+
+/* Large icons for empty states */
+.large-icon {
+    font-size: 6rem;
+}
+
+/* Additional writing-specific styles */
+.featured-badge {
+    background: linear-gradient(135deg, #ffc107, #ff8c00);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.writing-meta {
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.writing-excerpt {
+    color: #495057;
+    line-height: 1.6;
+}
+
+.category-tag {
+    background: rgba(0, 123, 255, 0.1);
+    color: #007bff;
+    padding: 0.2rem 0.6rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.category-tag:hover {
+    background: rgba(0, 123, 255, 0.2);
+    color: #0056b3;
+    text-decoration: none;
+}
+
+/* Featured writing indicator */
+.writing-featured {
+    border-left: 4px solid #ffc107 !important;
+}

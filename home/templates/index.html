@@ -6,35 +6,8 @@
 {% endblock %}
 
 {% block content %}
-
 <!-- Hero Section -->
-<div class="container-fluid text-white py-5 mb-5 hero-section">
-    <div class="container">
-        <div class="row align-items-center min-vh-75">
-            <div class="col-lg-8">
-                <h1 class="display-4 fw-bold mb-3">{{ header }}</h1>
-                <p class="lead mb-4">{{ tagline }}</p>
-                <div class="d-flex gap-3 flex-wrap">
-                    <a href="{% url 'cv:cv_main' %}" class="btn btn-light btn-lg">
-                        <i class="bi bi-file-earmark-person"></i> View CV
-                    </a>
-                    <a href="{% url 'projects:project_home' %}" class="btn btn-outline-light btn-lg">
-                        <i class="bi bi-folder"></i> Projects
-                    </a>
-                    <a href="{% url 'writing:writing_list' %}" class="btn btn-outline-light btn-lg">
-                        <i class="bi bi-pen"></i> Writing
-                    </a>
-                                        <a href="{% url 'mcq:landing' %}" class="btn btn-outline-light btn-lg">
-                        MCQ Dashboard
-                    </a>
-                </div>
-            </div>
-            <div class="col-lg-4 text-center">
-                <i class="bi bi-person-circle display-1"></i>
-            </div>
-        </div>
-    </div>
-</div>
+{% include '_hero-section.html' %}
 
 <!-- Stats Section -->
 <div class="container mb-5">

@@ -1,0 +1,70 @@
+<header class="{% if request.resolver_match.url_name == 'home' %}position-absolute w-100 start-0{% else %}container mt-2 mb-2{% endif %} header-style">
+    <nav class="navbar navbar-expand-lg {% if request.resolver_match.url_name == 'home' %}navbar-dark{% else %}navbar-light{% endif %}">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="{% url 'home' %}">
+                <i class="bi bi-house-fill me-2"></i>Syafiq Kay
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'home' %}text-white-75{% endif %}" href="{% url 'cv:cv_main' %}">
+                            <i class="bi bi-file-earmark-person"></i> CV
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'home' %}text-white-75{% endif %}" href="{% url 'projects:project_home' %}">
+                            <i class="bi bi-folder"></i> Projects
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'home' %}text-white-75{% endif %}" href="{% url 'writing:writing_list' %}">
+                            <i class="bi bi-pen"></i> Writing
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'home' %}text-white-75{% endif %}" href="{% url 'mcq:landing' %}">
+                            <i class="bi bi-question-circle"></i> MCQ
+                        </a>
+                    </li>
+                    {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'home' %}text-white-75{% endif %}" href="{% url 'analytics:dashboard' %}">
+                            <i class="bi bi-graph-up"></i> Analytics
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-warning {% if request.resolver_match.url_name == 'home' %}text-white{% endif %}" href="{% url 'hero_list' %}">
+                            <i class="bi bi-star-fill"></i> Manage Heroes
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+                <ul class="navbar-nav ms-auto">
+                    {% if user.is_authenticated %}
+                        <li class="nav-item d-flex align-items-center">
+                            <span class="navbar-text text-success {% if request.resolver_match.url_name == 'home' %}text-white{% endif %} me-3">
+                                <i class="bi bi-check-circle-fill"></i> Authenticated as {{ user.username }}
+                            </span>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'home' %}text-white-75{% endif %}" href="{% url 'admin:index' %}">Admin</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'home' %}text-white-75{% endif %}" href="{% url 'secure_admin_logout' %}">Logout</a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link btn {% if request.resolver_match.url_name == 'home' %}btn-outline-light{% else %}btn-outline-primary{% endif %} btn-sm" href="{% url 'secure_admin_login' %}?next={{ request.get_full_path }}">
+                                <i class="bi bi-box-arrow-in-right"></i>
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>
