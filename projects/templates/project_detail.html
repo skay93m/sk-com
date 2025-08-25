@@ -3,8 +3,7 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/projects.css' %}">
-{% endblock %} extends 'base.html' %}
-{% load static %}
+{% endblock %}
 
 {% block title %}{{ project.title }} - Projects{% endblock %}
 
@@ -143,6 +142,35 @@
             </div>
             {% endif %}
         </div>
+    </div>
+
+    <hr>
+
+    <h2>Project Plan</h2>
+    <div>
+        {{ project.plan_html|safe }}
+    </div>
+
+    <hr>
+
+    <h2>Activity Feed</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-success">Log Activity</button>
+    </form>
+
+    <div class="mt-4">
+        {% for activity in activities %}
+            <div class="card mb-2">
+                <div class="card-body">
+                    <p class="card-text">{{ activity.log }}</p>
+                    <p class="card-subtitle mb-2 text-muted">{{ activity.created_at|date:"Y-m-d H:i" }}</p>
+                </div>
+            </div>
+        {% empty %}
+            <p>No activities logged yet.</p>
+        {% endfor %}
     </div>
 </div>
 {% endblock %}
