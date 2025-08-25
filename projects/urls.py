@@ -8,6 +8,8 @@ urlpatterns = [
     path('', views.project_list, name='project_list'),
     path('<int:pk>/', views.project_detail, name='project_detail'),
     path('new/', views.project_create, name='project_create'),
+    path('new/from-template/', views.project_create_from_template, name='project_create_from_template'),
+    path('template/download/', views.project_template_download, name='project_template_download'),
     path('<int:pk>/edit/', views.project_edit, name='project_edit'),
     path('<int:pk>/delete/', views.project_delete, name='project_delete'),
     

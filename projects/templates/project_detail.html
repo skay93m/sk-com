@@ -344,6 +344,45 @@
     </div>
     {% endif %}
 
+    <!-- Tracking & Review Section -->
+    {% if project.progress_checkpoints or project.adjustments_flexibility or project.final_review_learnings %}
+    <div class="project-section">
+        <h3><i class="bi bi-graph-up me-2"></i>Tracking & Review</h3>
+        <div class="row">
+            <div class="col-md-4">
+                {% if project.progress_checkpoints %}
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h6 class="card-title text-info">Progress Checkpoints</h6>
+                        <p class="card-text">{{ project.progress_checkpoints|linebreaks }}</p>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            <div class="col-md-4">
+                {% if project.adjustments_flexibility %}
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h6 class="card-title text-warning">Adjustments / Flexibility</h6>
+                        <p class="card-text">{{ project.adjustments_flexibility|linebreaks }}</p>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            <div class="col-md-4">
+                {% if project.final_review_learnings %}
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h6 class="card-title text-success">Final Review & Learnings</h6>
+                        <p class="card-text">{{ project.final_review_learnings|linebreaks }}</p>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
     <!-- Activity Feed Section -->
     <div class="project-section">
         <div class="d-flex justify-content-between align-items-center mb-3">
