@@ -1,4 +1,9 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/cv.css' %}">
+{% endblock %} extends 'base.html' %}
 {% load static %}
 
 {% block title %}CV - Syafiq Kay{% endblock %}
@@ -65,7 +70,7 @@
                                                     <img src="{% static 'icon/' %}{{ credential.icon }}" 
                                                          alt="{{ credential.title }} icon" 
                                                          class="img-fluid" 
-                                                         style="max-width: 40px; max-height: 40px;"
+                                                         class="credential-icon-medium"
                                                          onerror="this.style.display='none'">
                                                 </div>
                                             {% endif %}
@@ -103,7 +108,7 @@
                         </div>
                     {% else %}
                         <div class="text-center py-4">
-                            <i class="bi bi-award text-muted" style="font-size: 3rem;"></i>
+                            <i class="bi bi-award text-muted award-icon-medium"></i>
                             <h5 class="text-muted mt-3">No credentials added yet</h5>
                             {% if user.is_authenticated %}
                                 <p class="text-secondary">Start building your professional profile by adding your first credential.</p>
@@ -148,15 +153,4 @@
         </div>
     </div>
 </div>
-
-<style>
-.credential-badge {
-    transition: transform 0.2s ease-in-out;
-}
-
-.credential-badge:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-}
-</style>
 {% endblock %}

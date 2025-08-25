@@ -1,0 +1,21 @@
+/* Home page styles */
+
+/* Custom responsive grid column */
+@media (min-width: 1200px) {
+    .col-xl-2-4 {
+        flex: 0 0 auto;
+        width: 20%;
+    }
+}
+
+/* Minimum height utility */
+.min-vh-75 {
+    min-height: 75vh;
+}
+
+/* Hero section styling */
+.hero-section {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    min-height: 100vh;
+    padding-top: 120px !important;
+}

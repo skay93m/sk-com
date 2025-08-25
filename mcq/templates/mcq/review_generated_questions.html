@@ -19,8 +19,8 @@
                     <!-- Progress Indicator -->
                     <div class="row mb-4">
                         <div class="col-12">
-                            <div class="progress" style="height: 8px;">
-                                <div class="progress-bar bg-primary" role="progressbar" style="width: 75%"></div>
+                            <div class="progress progress-thin">
+                                <div class="progress-bar bg-primary progress-75" role="progressbar"></div>
                             </div>
                             <div class="d-flex justify-content-between mt-2">
                                 <small class="text-success">✓ 1. Create Prompt</small>
@@ -41,7 +41,7 @@
                                         <div class="col-md-6">
                                             <strong>Topic:</strong> 
                                             {% if generation.topic %}
-                                                <span class="badge" style="background-color: {{ generation.topic.color }};">
+                                                <span class="badge topic-badge-dynamic" data-topic-color="{{ generation.topic.color }}">
                                                     {{ generation.topic.name }}
                                                 </span>
                                             {% else %}
@@ -133,7 +133,7 @@
                                         {% if question.topics.all %}
                                             <div class="mb-2">
                                                 {% for topic in question.topics.all %}
-                                                    <span class="badge me-1" style="background-color: {{ topic.color }};">
+                                                    <span class="badge topic-badge-dynamic me-1" data-topic-color="{{ topic.color }}">
                                                         {{ topic.name }}
                                                     </span>
                                                 {% endfor %}

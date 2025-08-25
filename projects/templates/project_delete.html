@@ -138,24 +138,12 @@
 </div>
 
 {% if user.is_authenticated %}
+{% block extra_js %}
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const confirmInput = document.getElementById('confirm-title');
-    const deleteButton = document.getElementById('delete-button');
-    const expectedTitle = "{{ project.title|escapejs }}";
-    
-    confirmInput.addEventListener('input', function() {
-        if (this.value === expectedTitle) {
-            deleteButton.disabled = false;
-            deleteButton.classList.remove('btn-outline-danger');
-            deleteButton.classList.add('btn-danger');
-        } else {
-            deleteButton.disabled = true;
-            deleteButton.classList.remove('btn-danger');
-            deleteButton.classList.add('btn-outline-danger');
-        }
-    });
-});
+// Make project title available to JavaScript
+window.projectTitle = "{{ project.title|escapejs }}";
 </script>
+<script src="{% static 'js/projects.js' %}"></script>
+{% endblock %}
 {% endif %}
 {% endblock %}

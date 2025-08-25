@@ -106,7 +106,7 @@
                                 <div class="col-md-8">
                                     <div class="d-flex align-items-center">
                                         <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" 
-                                             style="width: 40px; height: 40px;">
+                                             class="author-avatar rounded-circle">>
                                             <i class="bi bi-person-fill text-white"></i>
                                         </div>
                                         <div>
@@ -162,7 +162,7 @@
 
         <!-- Sidebar (on larger screens) -->
         <div class="col-lg-4">
-            <div class="sticky-lg-top" style="top: 2rem;">
+            <div class="sticky-sidebar">>
                 <!-- Quick info card -->
                 <div class="card shadow-sm border-0 mb-4">
                     <div class="card-header bg-light">
@@ -235,33 +235,6 @@
         </div>
     </div>
 </div>
-
-<style>
-.writing-content {
-    font-size: 1.1rem;
-    line-height: 1.8;
-}
-
-.writing-content p {
-    margin-bottom: 1.5rem;
-}
-
-.writing-content h1,
-.writing-content h2,
-.writing-content h3,
-.writing-content h4,
-.writing-content h5,
-.writing-content h6 {
-    margin-top: 2rem;
-    margin-bottom: 1rem;
-}
-
-@media (max-width: 991.98px) {
-    .sticky-lg-top {
-        position: static !important;
-    }
-}
-</style>
 {% endblock %}
                             • Updated {{ writing.updated_at|date:"F j, Y" }}
                         {% endif %}

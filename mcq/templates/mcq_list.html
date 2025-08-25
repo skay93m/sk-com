@@ -1,4 +1,9 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/mcq.css' %}">
+{% endblock %}
 
 {% block title %}MCQ Dashboard - Syafiq Kay{% endblock %}
 
@@ -8,7 +13,7 @@
     <div class="row mb-4">
         <div class="col-12">
             <div class="card shadow-sm border-0">
-                <div class="card-header bg-gradient text-white py-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                <div class="card-header mcq-header-gradient text-white py-4">>
                     <div class="d-flex justify-content-between align-items-center">
                         <div>
                             <h2 class="mb-1">
@@ -108,7 +113,7 @@
                                         <td class="align-middle">
                                             {% if mcq.topics.exists %}
                                                 {% for topic in mcq.topics.all %}
-                                                    <span class="badge me-1 mb-1" style="background-color: {{ topic.color }}; color: white;">
+                                                    <span class="badge topic-badge-dynamic me-1 mb-1" data-topic-color="{{ topic.color }}">
                                                         {{ topic.name }}
                                                     </span>
                                                     {% if not forloop.last %}<br>{% endif %}
@@ -217,7 +222,7 @@
                         <!-- Empty State -->
                         <div class="text-center py-5">
                             <div class="mb-4">
-                                <i class="bi bi-question-circle text-muted" style="font-size: 4rem;"></i>
+                                <i class="bi bi-question-circle text-muted mcq-icon-large"></i>
                             </div>
                             <h4 class="text-muted mb-3">No MCQs yet</h4>
                             <p class="text-muted mb-4">Start building your question bank by creating your first MCQ.</p>
@@ -247,7 +252,7 @@
                             <i class="bi bi-plus me-1"></i>Add MCQ
                         </a>
                         {% if total_mcqs > 0 %}
-                        <button class="btn btn-outline-info" onclick="window.print()">
+                        <button class="btn btn-outline-info print-list-btn">
                             <i class="bi bi-printer me-1"></i>Print List
                         </button>
                         {% endif %}
@@ -257,29 +262,4 @@
         </div>
     </div>
 </div>
-
-<style>
-.table-hover tbody tr:hover {
-    background-color: #f8f9fa;
-}
-
-.badge {
-    font-size: 0.75em;
-}
-
-.btn-group .btn {
-    border-radius: 0.375rem;
-    margin-right: 0.25rem;
-}
-
-.btn-group .btn:last-child {
-    margin-right: 0;
-}
-
-@media print {
-    .card-header, .card-footer, .btn, .quick-actions {
-        display: none !important;
-    }
-}
-</style>
 {% endblock %}
