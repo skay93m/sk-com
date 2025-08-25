@@ -1,6 +1,10 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/projects.css' %}">
+{% endblock %}
+
 {% block title %}Delete {{ project.title }} - Projects{% endblock %}
 
 {% block content %}
@@ -93,7 +97,7 @@
                         Type the project title <strong>"{{ project.title }}"</strong> to confirm deletion:
                     </p>
                     
-                    <form method="post" id="project-delete-form">
+                    <form method="post" id="project-delete-form" data-project-title="{{ project.title }}">
                         {% csrf_token %}
                         <div class="mb-4">
                             <input type="text" class="form-control" id="confirm-title" 
@@ -139,10 +143,6 @@
 
 {% if user.is_authenticated %}
 {% block extra_js %}
-<script>
-// Make project title available to JavaScript
-window.projectTitle = "{{ project.title|escapejs }}";
-</script>
 <script src="{% static 'js/projects.js' %}"></script>
 {% endblock %}
 {% endif %}

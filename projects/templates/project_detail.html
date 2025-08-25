@@ -3,25 +3,6 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/projects.css' %}">
-<style>
-.project-section {
-    border-left: 4px solid #007bff;
-    padding-left: 1rem;
-    margin-bottom: 2rem;
-}
-.milestone-card {
-    border-left: 3px solid #28a745;
-}
-.task-card {
-    border-left: 3px solid #ffc107;
-}
-.status-badge {
-    font-size: 0.75rem;
-}
-.priority-high { color: #dc3545; }
-.priority-medium { color: #ffc107; }
-.priority-low { color: #28a745; }
-</style>
 {% endblock %}
 
 {% block title %}{{ project.title }} - Projects{% endblock %}
@@ -198,7 +179,7 @@
                             <i class="bi bi-three-dots"></i>
                         </button>
                         <ul class="dropdown-menu">
-                            <li><button class="dropdown-item toggle-milestone" data-milestone-id="{{ milestone.pk }}">
+                            <li><button class="dropdown-item toggle-milestone" data-milestone-id="{{ milestone.pk }}" data-project-id="{{ project.pk }}">
                                 {% if milestone.completed %}
                                     <i class="bi bi-arrow-counterclockwise me-2"></i>Mark Incomplete
                                 {% else %}
@@ -275,10 +256,10 @@
                         </button>
                         <ul class="dropdown-menu">
                             <li><h6 class="dropdown-header">Update Status</h6></li>
-                            <li><button class="dropdown-item update-task-status" data-task-id="{{ task.pk }}" data-status="not_started">Not Started</button></li>
-                            <li><button class="dropdown-item update-task-status" data-task-id="{{ task.pk }}" data-status="in_progress">In Progress</button></li>
-                            <li><button class="dropdown-item update-task-status" data-task-id="{{ task.pk }}" data-status="done">Done</button></li>
-                            <li><button class="dropdown-item update-task-status" data-task-id="{{ task.pk }}" data-status="blocked">Blocked</button></li>
+                            <li><button class="dropdown-item update-task-status" data-task-id="{{ task.pk }}" data-project-id="{{ project.pk }}" data-status="not_started">Not Started</button></li>
+                            <li><button class="dropdown-item update-task-status" data-task-id="{{ task.pk }}" data-project-id="{{ project.pk }}" data-status="in_progress">In Progress</button></li>
+                            <li><button class="dropdown-item update-task-status" data-task-id="{{ task.pk }}" data-project-id="{{ project.pk }}" data-status="done">Done</button></li>
+                            <li><button class="dropdown-item update-task-status" data-task-id="{{ task.pk }}" data-project-id="{{ project.pk }}" data-status="blocked">Blocked</button></li>
                             <li><hr class="dropdown-divider"></li>
                             <li><a class="dropdown-item" href="{% url 'projects:task_edit' project.pk task.pk %}">
                                 <i class="bi bi-pencil me-2"></i>Edit
@@ -498,48 +479,7 @@
     </div>
 </div>
 
-<script>
-// Handle milestone completion toggle
-document.querySelectorAll('.toggle-milestone').forEach(button => {
-    button.addEventListener('click', function() {
-        const milestoneId = this.dataset.milestoneId;
-        fetch(`{% url 'projects:milestone_toggle_complete' project.pk 0 %}`.replace('0', milestoneId), {
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
-                'Content-Type': 'application/json',
-            },
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                location.reload();
-            }
-        });
-    });
-});
-
-// Handle task status updates
-document.querySelectorAll('.update-task-status').forEach(button => {
-    button.addEventListener('click', function() {
-        const taskId = this.dataset.taskId;
-        const status = this.dataset.status;
-        
-        const formData = new FormData();
-        formData.append('status', status);
-        formData.append('csrfmiddlewaretoken', document.querySelector('[name=csrfmiddlewaretoken]').value);
-        
-        fetch(`{% url 'projects:task_update_status' project.pk 0 %}`.replace('0', taskId), {
-            method: 'POST',
-            body: formData,
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                location.reload();
-            }
-        });
-    });
-});
-</script>
+{% block extra_js %}
+<script src="{% static 'js/projects.js' %}"></script>
+{% endblock %}
 {% endblock %}
