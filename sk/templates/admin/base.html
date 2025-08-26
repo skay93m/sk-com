@@ -1,4 +1,11 @@
-{% load static i18n %}
+{% load s    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+    
+    <!-- Consistent styling with main site -->
+    <link rel="stylesheet" href="{% static 'css/colours.css' %}">
+    <link rel="stylesheet" href="{% static 'css/fonts.css' %}">
+    <!-- Bootstrap Icons CDN -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">"8n %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,8 +18,8 @@
     {% bootstrap_javascript %}
     
     <!-- Consistent styling with main site -->
-    <link rel="stylesheet" href="{% static 'colours.css' %}">
-    <link rel="stylesheet" href="{% static 'fonts.css' %}">
+    <link rel="stylesheet" href="{% static 'css/colours.css' %}">
+    <link rel="stylesheet" href="{% static 'css/fonts.css' %}">
     <!-- Bootstrap Icons CDN -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     

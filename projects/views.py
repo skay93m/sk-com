@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse, HttpResponse
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from .models import Project, ProjectActivity, ProjectMilestone, ProjectTask
 from .forms import ProjectForm, ProjectActivityForm, ProjectMilestoneForm, ProjectTaskForm
 from django.conf import settings
@@ -9,7 +10,23 @@ import os
 
 def project_list(request):
     projects = Project.objects.all()
-    return render(request, 'project_list.html', {'projects': projects})
+    
+    # Calculate portfolio statistics
+    current_projects_count = projects.filter(category='now').count()
+    completed_projects_count = 0  # We'll need to add a status field later
+    
+    # You could also calculate completed based on milestones:
+    # completed_projects_count = projects.filter(
+    #     projectmilestone__completed=True
+    # ).distinct().count()
+    
+    context = {
+        'projects': projects,
+        'current_projects_count': current_projects_count,
+        'completed_projects_count': completed_projects_count,
+    }
+    
+    return render(request, 'project_list.html', context)
 
 def project_detail(request, pk):
     project = get_object_or_404(Project, pk=pk)
@@ -64,6 +81,7 @@ def project_detail(request, pk):
         'task_form': task_form,
     })
 
+@login_required
 def project_create(request):
     if request.method == 'POST':
         form = ProjectForm(request.POST)
@@ -75,6 +93,7 @@ def project_create(request):
         form = ProjectForm()
     return render(request, 'project_create.html', {'form': form})
 
+@login_required
 def project_edit(request, pk):
     project = get_object_or_404(Project, pk=pk)
     if request.method == 'POST':
@@ -87,6 +106,7 @@ def project_edit(request, pk):
         form = ProjectForm(instance=project)
     return render(request, 'project_edit.html', {'form': form, 'project': project})
 
+@login_required
 def project_delete(request, pk):
     project = get_object_or_404(Project, pk=pk)
     if request.method == 'POST':
@@ -97,6 +117,7 @@ def project_delete(request, pk):
     return render(request, 'project_delete.html', {'project': project})
 
 # Milestone views
+@login_required
 def milestone_edit(request, pk, milestone_pk):
     project = get_object_or_404(Project, pk=pk)
     milestone = get_object_or_404(ProjectMilestone, pk=milestone_pk, project=project)
@@ -116,6 +137,7 @@ def milestone_edit(request, pk, milestone_pk):
         'milestone': milestone
     })
 
+@login_required
 def milestone_delete(request, pk, milestone_pk):
     project = get_object_or_404(Project, pk=pk)
     milestone = get_object_or_404(ProjectMilestone, pk=milestone_pk, project=project)
@@ -131,6 +153,7 @@ def milestone_delete(request, pk, milestone_pk):
         'milestone': milestone
     })
 
+@login_required
 def milestone_toggle_complete(request, pk, milestone_pk):
     if request.method == 'POST':
         project = get_object_or_404(Project, pk=pk)
@@ -152,6 +175,7 @@ def milestone_toggle_complete(request, pk, milestone_pk):
     return JsonResponse({'success': False})
 
 # Task views
+@login_required
 def task_edit(request, pk, task_pk):
     project = get_object_or_404(Project, pk=pk)
     task = get_object_or_404(ProjectTask, pk=task_pk, project=project)
@@ -171,6 +195,7 @@ def task_edit(request, pk, task_pk):
         'task': task
     })
 
+@login_required
 def task_delete(request, pk, task_pk):
     project = get_object_or_404(Project, pk=pk)
     task = get_object_or_404(ProjectTask, pk=task_pk, project=project)
@@ -277,6 +302,7 @@ Detailed tasks to move the project forward.
     response['Content-Disposition'] = 'attachment; filename="project_plan_template.md"'
     return response
 
+@login_required
 def project_create_from_template(request):
     """Create a new project with pre-filled template structure."""
     if request.method == 'POST':

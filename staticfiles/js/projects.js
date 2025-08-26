@@ -30,7 +30,10 @@ function initializeProjectFunctionality() {
 function initializeProjectDeleteConfirmation() {
     const confirmInput = document.getElementById('confirm-title');
     const deleteButton = document.getElementById('delete-button');
-    const expectedTitle = window.projectTitle; // Will be set by template
+    const deleteForm = document.getElementById('project-delete-form');
+    
+    // Get expected title from data attribute instead of window variable
+    const expectedTitle = deleteForm ? deleteForm.dataset.projectTitle : null;
     
     if (confirmInput && deleteButton && expectedTitle) {
         confirmInput.addEventListener('input', function() {
@@ -47,7 +50,6 @@ function initializeProjectDeleteConfirmation() {
     }
     
     // Additional delete form handling
-    const deleteForm = document.getElementById('delete-form');
     if (deleteForm) {
         deleteForm.addEventListener('submit', function(e) {
             const confirmed = confirm('Are you sure you want to delete this project? This action cannot be undone.');
@@ -390,3 +392,112 @@ window.ProjectsApp = {
     updateFilterCounts,
     initializeProjectSearch
 };
+
+/**
+ * Initialize project detail page functionality
+ * Handles milestone toggles and task status updates
+ */
+function initializeProjectDetailFunctionality() {
+    initializeMilestoneToggles();
+    initializeTaskStatusUpdates();
+}
+
+/**
+ * Initialize milestone completion toggle functionality
+ */
+function initializeMilestoneToggles() {
+    const toggleButtons = document.querySelectorAll('.toggle-milestone');
+    
+    toggleButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const milestoneId = this.dataset.milestoneId;
+            const projectId = this.dataset.projectId;
+            
+            if (!milestoneId || !projectId) {
+                console.error('Missing milestone or project ID');
+                return;
+            }
+            
+            const url = `/projects/${projectId}/milestones/${milestoneId}/toggle-complete/`;
+            
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCsrfToken(),
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    showAlert('Error updating milestone status', 'danger');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showAlert('Error updating milestone status', 'danger');
+            });
+        });
+    });
+}
+
+/**
+ * Initialize task status update functionality
+ */
+function initializeTaskStatusUpdates() {
+    const updateButtons = document.querySelectorAll('.update-task-status');
+    
+    updateButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const taskId = this.dataset.taskId;
+            const projectId = this.dataset.projectId;
+            const status = this.dataset.status;
+            
+            if (!taskId || !projectId || !status) {
+                console.error('Missing task, project ID, or status');
+                return;
+            }
+            
+            const url = `/projects/${projectId}/tasks/${taskId}/update-status/`;
+            
+            const formData = new FormData();
+            formData.append('status', status);
+            formData.append('csrfmiddlewaretoken', getCsrfToken());
+            
+            fetch(url, {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                } else {
+                    showAlert('Error updating task status', 'danger');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showAlert('Error updating task status', 'danger');
+            });
+        });
+    });
+}
+
+/**
+ * Get CSRF token from the page
+ */
+function getCsrfToken() {
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]');
+    return csrfToken ? csrfToken.value : '';
+}
+
+// Initialize project detail functionality when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    // Check if we're on a project detail page
+    if (document.querySelector('.toggle-milestone') || document.querySelector('.update-task-status')) {
+        initializeProjectDetailFunctionality();
+    }
+});

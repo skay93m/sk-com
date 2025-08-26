@@ -1,5 +1,462 @@
 /* Projects app styles */
 
+/* ===============================
+   PORTFOLIO HERO SECTION
+   =============================== */
+.portfolio-hero {
+    background: linear-gradient(135deg, var(--delft-blue) 0%, var(--cambridge-blue) 100%);
+    color: white;
+    padding: 80px 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.portfolio-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="40" r="1.5" fill="rgba(255,255,255,0.1)"/><circle cx="40" cy="80" r="1" fill="rgba(255,255,255,0.1)"/></svg>');
+    animation: float 20s ease-in-out infinite;
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-20px);
+    }
+}
+
+.min-vh-50 {
+    min-height: 50vh;
+}
+
+.hero-title {
+    font-size: 3.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 1.5rem;
+}
+
+.hero-title .text-primary {
+    background: linear-gradient(45deg, var(--cambridge-blue), var(--sunset));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.hero-subtitle {
+    font-size: 1.25rem;
+    line-height: 1.6;
+    opacity: 0.9;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.hero-stats {
+    margin: 3rem 0;
+}
+
+.stat-item {
+    padding: 1.5rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: var(--sunset);
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    opacity: 0.8;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* ===============================
+   PORTFOLIO PROJECTS SECTION
+   =============================== */
+.portfolio-projects {
+    padding: 80px 0;
+    background: var(--eggshell);
+}
+
+.project-category-section {
+    margin-bottom: 5rem;
+}
+
+.category-header {
+    display: flex;
+    align-items: center;
+    padding: 2rem;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    margin-bottom: 2rem;
+}
+
+.category-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1.5rem;
+    font-size: 1.5rem;
+}
+
+.category-icon.current {
+    background: linear-gradient(135deg, var(--cambridge-blue), var(--sunset));
+    color: white;
+}
+
+.category-icon.backburner {
+    background: linear-gradient(135deg, var(--burnt-sienna), var(--sunset));
+    color: white;
+}
+
+.category-icon.future {
+    background: linear-gradient(135deg, var(--delft-blue), var(--cambridge-blue));
+    color: white;
+}
+
+.category-info {
+    flex: 1;
+}
+
+.category-title {
+    font-size: 1.75rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    color: var(--delft-blue);
+}
+
+.category-description {
+    color: var(--delft-blue);
+    opacity: 0.7;
+    margin: 0;
+    font-size: 1rem;
+}
+
+.count-badge {
+    background: var(--cambridge-blue);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 25px;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+/* ===============================
+   PORTFOLIO CARDS
+   =============================== */
+.portfolio-card {
+    background: white;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.portfolio-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+.card-image-placeholder {
+    height: 200px;
+    background: linear-gradient(135deg, var(--delft-blue) 0%, var(--cambridge-blue) 100%);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card-image-placeholder::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.project-category-badge {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    padding: 0.5rem 1rem;
+    border-radius: 25px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: white;
+    z-index: 2;
+}
+
+.project-category-badge.now {
+    background: rgba(129, 178, 154, 0.9);
+}
+
+.project-category-badge.backburner {
+    background: rgba(224, 122, 95, 0.9);
+}
+
+.project-category-badge.someday {
+    background: rgba(61, 64, 91, 0.9);
+}
+
+.card-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 2rem;
+}
+
+.card-header-custom {
+    margin-bottom: 1rem;
+}
+
+.project-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--delft-blue);
+    margin-bottom: 0.5rem;
+    line-height: 1.3;
+}
+
+.project-meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.project-date {
+    color: var(--delft-blue);
+    opacity: 0.7;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+}
+
+.card-body-custom {
+    flex: 1;
+    margin-bottom: 1.5rem;
+}
+
+.project-description {
+    color: var(--delft-blue);
+    opacity: 0.8;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+}
+
+.project-progress {
+    margin-top: auto;
+}
+
+.progress-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.progress-label {
+    font-size: 0.85rem;
+    color: var(--delft-blue);
+    opacity: 0.7;
+    font-weight: 500;
+}
+
+.progress-value {
+    font-size: 0.85rem;
+    color: var(--delft-blue);
+    font-weight: 600;
+}
+
+.progress-custom {
+    height: 6px;
+    background: var(--eggshell);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.progress-custom .progress-bar {
+    background: linear-gradient(90deg, var(--cambridge-blue), var(--sunset));
+    border-radius: 3px;
+    transition: width 0.3s ease;
+}
+
+.card-footer-custom {
+    margin-top: auto;
+}
+
+.btn-portfolio {
+    background: linear-gradient(135deg, var(--delft-blue), var(--cambridge-blue));
+    color: white;
+    border: none;
+    padding: 0.75rem 2rem;
+    border-radius: 25px;
+    font-weight: 500;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    transition: all 0.3s ease;
+    width: 100%;
+    justify-content: center;
+}
+
+.btn-portfolio:hover {
+    background: linear-gradient(135deg, var(--cambridge-blue), var(--sunset));
+    transform: translateY(-2px);
+    color: white;
+    box-shadow: 0 8px 25px rgba(61, 64, 91, 0.3);
+}
+
+/* ===============================
+   EMPTY STATE
+   =============================== */
+.portfolio-empty {
+    padding: 5rem 0;
+    text-align: center;
+}
+
+.empty-state-card {
+    background: white;
+    border-radius: 30px;
+    padding: 4rem 2rem;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+}
+
+.empty-icon {
+    font-size: 4rem;
+    color: #667eea;
+    margin-bottom: 2rem;
+}
+
+.empty-title {
+    font-size: 2rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 1rem;
+}
+
+.empty-description {
+    font-size: 1.1rem;
+    color: #6c757d;
+    line-height: 1.6;
+    max-width: 500px;
+    margin: 0 auto 2rem;
+}
+
+.empty-actions .btn {
+    margin: 0.5rem;
+}
+
+.empty-cta p {
+    font-size: 1rem;
+    color: #6c757d;
+}
+
+/* ===============================
+   CALL TO ACTION SECTION
+   =============================== */
+.portfolio-cta {
+    background: linear-gradient(135deg, #2c3e50, #34495e);
+    color: white;
+    padding: 5rem 0;
+}
+
+.cta-card {
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.cta-title {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.cta-description {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    opacity: 0.9;
+    margin-bottom: 2rem;
+}
+
+.cta-actions .btn {
+    margin: 0.5rem;
+    padding: 0.75rem 2rem;
+    border-radius: 25px;
+}
+
+/* ===============================
+   RESPONSIVE DESIGN
+   =============================== */
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 2.5rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1.1rem;
+    }
+
+    .category-header {
+        flex-direction: column;
+        text-align: center;
+        padding: 1.5rem;
+    }
+
+    .category-icon {
+        margin-right: 0;
+        margin-bottom: 1rem;
+    }
+
+    .portfolio-hero {
+        padding: 60px 0;
+    }
+
+    .portfolio-projects {
+        padding: 60px 0;
+    }
+
+    .empty-state-card {
+        padding: 3rem 1.5rem;
+    }
+
+    .cta-actions .btn {
+        display: block;
+        width: 100%;
+        margin: 0.5rem 0;
+    }
+}
+
+/* ===============================
+   LEGACY STYLES (keeping for backward compatibility)
+   =============================== */
+
 /* Card hover effects */
 .project-card {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -309,4 +766,40 @@
 
 .project-description p {
     margin-bottom: 1rem;
+}
+
+/* Project detail page styles */
+.project-section {
+    border-left: 4px solid #007bff;
+    padding-left: 1rem;
+    margin-bottom: 2rem;
+}
+
+.milestone-card {
+    border-left: 3px solid #28a745;
+}
+
+.task-card {
+    border-left: 3px solid #ffc107;
+}
+
+.status-badge {
+    font-size: 0.75rem;
+}
+
+.priority-high {
+    color: #dc3545;
+}
+
+.priority-medium {
+    color: #ffc107;
+}
+
+.priority-low {
+    color: #28a745;
+}
+
+/* Empty state styling */
+.empty-state-icon {
+    font-size: 6rem !important;
 }

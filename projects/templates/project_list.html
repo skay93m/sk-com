@@ -1,165 +1,236 @@
 {% extends "base.html" %}
 {% load static %}
+{% load project_extras %}
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/projects.css' %}">
-{% endblock %} extends 'base.html' %}
-{% load static %}
+{% endblock %}
 
-{% block title %}Projects{% endblock %}
+{% block title %}Portfolio - Projects{% endblock %}
 
 {% block content %}
-<div class="container">
-    {% block projects_content %}
-    <div class="row">
-        <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <div>
-                    <h1 class="display-5 mb-2">
-                        <i class="bi bi-folder text-info me-2"></i>Projects
-                    </h1>
-                    <p class="text-muted mb-0">Explore my current and upcoming projects</p>
-                </div>
-                {% if user.is_authenticated %}
-                <div class="dropdown">
-                    <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                        <i class="bi bi-plus-circle me-2"></i>New Project
-                    </button>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="{% url 'projects:project_create' %}">
-                            <i class="bi bi-file-earmark-plus me-2"></i>Create Blank Project
-                        </a></li>
-                        <li><a class="dropdown-item" href="{% url 'projects:project_create_from_template' %}">
-                            <i class="bi bi-file-earmark-richtext me-2"></i>Create from Template
-                        </a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="{% url 'projects:project_template_download' %}">
-                            <i class="bi bi-download me-2"></i>Download Template (.md)
-                        </a></li>
-                    </ul>
-                </div>
-                {% endif %}
-            </div>
-        </div>
-    </div>
-
-    {% if projects %}
-    <!-- Category sections -->
-    {% regroup projects by category as category_groups %}
-    {% for category_group in category_groups %}
-    <div class="mb-5">
-        <div class="row mb-3">
-            <div class="col-12">
-                <h3 class="text-secondary border-bottom pb-2">
-                    {% if category_group.grouper == 'now' %}
-                        <i class="bi bi-lightning-fill text-success me-2"></i>Current Projects
-                    {% elif category_group.grouper == 'backburner' %}
-                        <i class="bi bi-pause-circle text-warning me-2"></i>Backburner
-                    {% else %}
-                        <i class="bi bi-clock text-secondary me-2"></i>Someday/Maybe
-                    {% endif %}
-                    <span class="badge bg-light text-dark ms-2">{{ category_group.list|length }}</span>
-                </h3>
-            </div>
-        </div>
-        
-        <div class="row g-4">
-            {% for project in category_group.list %}
-            <div class="col-lg-6 col-xl-4">
-                <div class="card h-100 shadow-sm border-0 project-card">
-                    <div class="card-header d-flex justify-content-between align-items-start">
-                        <h5 class="card-title mb-0 text-truncate" title="{{ project.title }}">
-                            {{ project.title }}
-                        </h5>
-                        <span class="badge
-                            {% if project.category == 'now' %} bg-success
-                            {% elif project.category == 'backburner' %} bg-warning text-dark
-                            {% else %} bg-secondary
-                            {% endif %} ms-2">
-                            {{ project.get_category_display }}
-                        </span>
-                    </div>
-                    <div class="card-body">
-                        <p class="card-text text-muted">
-                            {{ project.description|truncatewords:20 }}
-                        </p>
-                    </div>
-                    <div class="card-footer bg-transparent border-0 pt-0">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <small class="text-muted">
-                                <i class="bi bi-calendar me-1"></i>
-                                {{ project.updated_at|date:"M d, Y" }}
-                            </small>
-                            <a href="{% url 'projects:project_detail' project.pk %}" class="btn btn-outline-primary btn-sm">
-                                <i class="bi bi-eye me-1"></i>View
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-    </div>
-    {% endfor %}
-    
-    {% else %}
-    <!-- Empty state -->
-    <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-6">
-            <div class="text-center py-5">
-                <div class="mb-4">
-                    <i class="bi bi-folder2-open display-1 text-muted empty-state-icon"></i>
-                </div>
-                <h2 class="display-6 text-muted mb-3">No Projects Yet</h2>
-                <p class="lead text-muted mb-4">
-                    Start organizing your ideas and projects here.
+<!-- Hero Section -->
+<section class="portfolio-hero">
+    <div class="container">
+        <div class="row align-items-center min-vh-50">
+            <div class="col-lg-8 mx-auto text-center">
+                <h1 class="hero-title mb-4">
+                    My <span class="text-primary">Portfolio</span>
+                </h1>
+                <p class="hero-subtitle mb-5">
+                    Showcasing innovative projects that blend creativity with technical excellence. 
+                    From concept to completion, each project represents a journey of problem-solving and growth.
                 </p>
-                <div class="card border-0 bg-light mb-4">
-                    <div class="card-body">
-                        <div class="row text-center">
-                            <div class="col-md-4 mb-3 mb-md-0">
-                                <i class="bi bi-lightning-fill h4 text-success"></i>
-                                <p class="mb-0 small text-muted">Current projects you're actively working on</p>
+                <div class="hero-stats">
+                    <div class="row g-4">
+                        <div class="col-md-4">
+                            <div class="stat-item">
+                                <h3 class="stat-number">{{ projects.count }}</h3>
+                                <p class="stat-label">Total Projects</p>
                             </div>
-                            <div class="col-md-4 mb-3 mb-md-0">
-                                <i class="bi bi-pause-circle h4 text-warning"></i>
-                                <p class="mb-0 small text-muted">Backburner projects for later</p>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="stat-item">
+                                <h3 class="stat-number">{{ current_projects_count|default:0 }}</h3>
+                                <p class="stat-label">Active Projects</p>
                             </div>
-                            <div class="col-md-4">
-                                <i class="bi bi-clock h4 text-secondary"></i>
-                                <p class="mb-0 small text-muted">Someday/maybe ideas</p>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="stat-item">
+                                <h3 class="stat-number">{{ completed_projects_count|default:0 }}</h3>
+                                <p class="stat-label">Completed</p>
                             </div>
                         </div>
                     </div>
                 </div>
                 {% if user.is_authenticated %}
-                <a href="{% url 'projects:project_create' %}" class="btn btn-primary btn-lg">
-                    <i class="bi bi-plus-circle me-2"></i>Create Your First Project
-                </a>
-                {% else %}
-                <a href="{% url 'secure_admin_login' %}?next={{ request.path }}" class="btn btn-outline-primary btn-lg">
-                    <i class="bi bi-box-arrow-in-right me-2"></i>Login to Create Projects
-                </a>
+                <div class="hero-actions mt-5">
+                    <div class="dropdown">
+                        <button class="btn btn-primary btn-lg dropdown-toggle px-4" type="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-plus-circle me-2"></i>Add New Project
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'projects:project_create' %}">
+                                <i class="bi bi-file-earmark-plus me-2"></i>Create Blank Project
+                            </a></li>
+                            <li><a class="dropdown-item" href="{% url 'projects:project_create_from_template' %}">
+                                <i class="bi bi-file-earmark-richtext me-2"></i>Create from Template
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="{% url 'projects:project_template_download' %}">
+                                <i class="bi bi-download me-2"></i>Download Template (.md)
+                            </a></li>
+                        </ul>
+                    </div>
+                </div>
                 {% endif %}
             </div>
         </div>
     </div>
-    {% endif %}
-    {% endblock %}
+</section>
 
-    {% block projects_actions %}
-    {% if not user.is_authenticated and projects %}
-    <div class="alert alert-info mt-4" role="alert">
-        <div class="d-flex align-items-center">
-            <i class="bi bi-info-circle me-2"></i>
-            <div>
-                <strong>Want to create projects?</strong> 
-                <a href="{% url 'secure_admin_login' %}?next={{ request.path }}" class="alert-link">Login here</a> 
-                to create and manage your own projects.
+<!-- Projects Showcase -->
+<section class="portfolio-projects">
+    <div class="container">
+        {% if projects %}
+        <!-- Featured/Current Projects -->
+        {% regroup projects by category as category_groups %}
+        {% for category_group in category_groups %}
+        <div class="project-category-section mb-6">
+            <div class="row mb-5">
+                <div class="col-12">
+                    <div class="category-header">
+                        {% if category_group.grouper == 'now' %}
+                            <div class="category-icon current">
+                                <i class="bi bi-lightning-fill"></i>
+                            </div>
+                            <div class="category-info">
+                                <h2 class="category-title">Current Projects</h2>
+                                <p class="category-description">Active developments in progress</p>
+                            </div>
+                        {% elif category_group.grouper == 'backburner' %}
+                            <div class="category-icon backburner">
+                                <i class="bi bi-pause-circle"></i>
+                            </div>
+                            <div class="category-info">
+                                <h2 class="category-title">On Hold</h2>
+                                <p class="category-description">Projects paused for strategic reasons</p>
+                            </div>
+                        {% else %}
+                            <div class="category-icon future">
+                                <i class="bi bi-lightbulb"></i>
+                            </div>
+                            <div class="category-info">
+                                <h2 class="category-title">Future Concepts</h2>
+                                <p class="category-description">Ideas and concepts for future development</p>
+                            </div>
+                        {% endif %}
+                        <div class="category-count">
+                            <span class="count-badge">{{ category_group.list|length }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row g-4">
+                {% for project in category_group.list %}
+                <div class="col-lg-6 col-xl-4">
+                    <article class="portfolio-card">
+                        <div class="card-image-placeholder">
+                            <div class="project-category-badge {{ category_group.grouper }}">
+                                {% if category_group.grouper == 'now' %}
+                                    <i class="bi bi-lightning-fill me-1"></i>Active
+                                {% elif category_group.grouper == 'backburner' %}
+                                    <i class="bi bi-pause-circle me-1"></i>On Hold
+                                {% else %}
+                                    <i class="bi bi-lightbulb me-1"></i>Concept
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="card-content">
+                            <div class="card-header-custom">
+                                <h3 class="project-title">{{ project.title }}</h3>
+                                <div class="project-meta">
+                                    <span class="project-date">
+                                        <i class="bi bi-calendar3 me-1"></i>
+                                        {{ project.updated_at|date:"M Y" }}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="card-body-custom">
+                                <p class="project-description">
+                                    {{ project.description|truncatewords:25 }}
+                                </p>
+                                <div class="project-progress">
+                                    {% if project.projectmilestone_set.exists %}
+                                        <div class="progress-info">
+                                            <span class="progress-label">Progress</span>
+                                            <span class="progress-value">{{ project|completed_milestones }}/{{ project|total_milestones }}</span>
+                                        </div>
+                                        <div class="progress progress-custom">
+                                            <div class="progress-bar" style="width: {{ project|progress_percentage }}%"></div>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="card-footer-custom">
+                                <a href="{% url 'projects:project_detail' project.pk %}" class="btn btn-portfolio">
+                                    <span>View Project</span>
+                                    <i class="bi bi-arrow-right ms-2"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+        
+        {% else %}
+        <!-- Empty State for Portfolio -->
+        <section class="portfolio-empty">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 col-xl-6">
+                    <div class="empty-state-card">
+                        <div class="empty-icon">
+                            <i class="bi bi-briefcase"></i>
+                        </div>
+                        <div class="empty-content">
+                            <h2 class="empty-title">Portfolio Coming Soon</h2>
+                            <p class="empty-description">
+                                I'm currently working on exciting projects that will be showcased here. 
+                                Check back soon to see my latest work and creative endeavors.
+                            </p>
+                            {% if user.is_authenticated %}
+                            <div class="empty-actions">
+                                <a href="{% url 'projects:project_create' %}" class="btn btn-primary btn-lg">
+                                    <i class="bi bi-plus-circle me-2"></i>Add First Project
+                                </a>
+                                <a href="{% url 'projects:project_create_from_template' %}" class="btn btn-outline-primary btn-lg ms-3">
+                                    <i class="bi bi-file-earmark-richtext me-2"></i>Use Template
+                                </a>
+                            </div>
+                            {% else %}
+                            <div class="empty-cta">
+                                <p class="text-muted mb-3">Want to collaborate or learn more?</p>
+                                <a href="{% url 'home' %}" class="btn btn-outline-primary btn-lg">
+                                    <i class="bi bi-envelope me-2"></i>Get in Touch
+                                </a>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Call to Action Section -->
+{% if not user.is_authenticated and projects %}
+<section class="portfolio-cta">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center">
+                <div class="cta-card">
+                    <h3 class="cta-title">Interested in Working Together?</h3>
+                    <p class="cta-description">
+                        I'm always open to discussing new opportunities, collaborations, or just having a chat about technology and innovation.
+                    </p>
+                    <div class="cta-actions">
+                        <a href="{% url 'home' %}" class="btn btn-primary btn-lg me-3">
+                            <i class="bi bi-envelope me-2"></i>Contact Me
+                        </a>
+                        <a href="{% url 'cv:cv_main' %}" class="btn btn-outline-primary btn-lg">
+                            <i class="bi bi-file-person me-2"></i>View Resume
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-    {% endif %}
-    {% endblock %}
-</div>
+</section>
+{% endif %}
 {% endblock %}
