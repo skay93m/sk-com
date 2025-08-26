@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color System Demo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Include our centralized color variables */
+        :root {
+          --eggshell: #f4f1deff;
+          --burnt-sienna: #e07a5fff;
+          --delft-blue: #3d405bff;
+          --cambridge-blue: #81b29aff;
+          --sunset: #f2cc8fff;
+          
+          --bs-primary: var(--delft-blue);
+          --bs-secondary: var(--cambridge-blue);
+          --bs-success: var(--cambridge-blue);
+          --bs-info: var(--sunset);
+          --bs-warning: var(--burnt-sienna);
+          --bs-danger: var(--burnt-sienna);
+          --bs-light: var(--eggshell);
+          --bs-dark: var(--delft-blue);
+        }
+        
+        .color-swatch {
+            height: 100px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+        
+        .swatch-eggshell { background: var(--eggshell); color: var(--delft-blue); }
+        .swatch-burnt-sienna { background: var(--burnt-sienna); }
+        .swatch-delft-blue { background: var(--delft-blue); }
+        .swatch-cambridge-blue { background: var(--cambridge-blue); }
+        .swatch-sunset { background: var(--sunset); color: var(--delft-blue); }
+    </style>
+</head>
+<body class="bg-light">
+    <div class="container py-5">
+        <h1 class="text-primary mb-4">Centralized Color System Demo</h1>
+        
+        <div class="row mb-5">
+            <div class="col-12">
+                <h2 class="mb-3">Base Color Palette (5 Colors)</h2>
+            </div>
+            <div class="col-md-2">
+                <div class="color-swatch swatch-eggshell">Eggshell</div>
+                <small class="text-muted">#f4f1de</small>
+            </div>
+            <div class="col-md-2">
+                <div class="color-swatch swatch-burnt-sienna">Burnt Sienna</div>
+                <small class="text-muted">#e07a5f</small>
+            </div>
+            <div class="col-md-2">
+                <div class="color-swatch swatch-delft-blue">Delft Blue</div>
+                <small class="text-muted">#3d405b</small>
+            </div>
+            <div class="col-md-2">
+                <div class="color-swatch swatch-cambridge-blue">Cambridge Blue</div>
+                <small class="text-muted">#81b29a</small>
+            </div>
+            <div class="col-md-2">
+                <div class="color-swatch swatch-sunset">Sunset</div>
+                <small class="text-muted">#f2cc8f</small>
+            </div>
+        </div>
+        
+        <div class="row mb-5">
+            <div class="col-12">
+                <h2 class="mb-3">Bootstrap Color Mappings</h2>
+            </div>
+            <div class="col-md-3 mb-3">
+                <button class="btn btn-primary w-100">Primary (Delft Blue)</button>
+            </div>
+            <div class="col-md-3 mb-3">
+                <button class="btn btn-secondary w-100">Secondary (Cambridge Blue)</button>
+            </div>
+            <div class="col-md-3 mb-3">
+                <button class="btn btn-success w-100">Success (Cambridge Blue)</button>
+            </div>
+            <div class="col-md-3 mb-3">
+                <button class="btn btn-info w-100">Info (Sunset)</button>
+            </div>
+            <div class="col-md-3 mb-3">
+                <button class="btn btn-warning w-100">Warning (Burnt Sienna)</button>
+            </div>
+            <div class="col-md-3 mb-3">
+                <button class="btn btn-danger w-100">Danger (Burnt Sienna)</button>
+            </div>
+            <div class="col-md-3 mb-3">
+                <button class="btn btn-light w-100">Light (Eggshell)</button>
+            </div>
+            <div class="col-md-3 mb-3">
+                <button class="btn btn-dark w-100">Dark (Delft Blue)</button>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-12">
+                <h2 class="mb-3">Text Colors</h2>
+            </div>
+            <div class="col-md-2">
+                <p class="text-primary">Primary Text</p>
+            </div>
+            <div class="col-md-2">
+                <p class="text-secondary">Secondary Text</p>
+            </div>
+            <div class="col-md-2">
+                <p class="text-success">Success Text</p>
+            </div>
+            <div class="col-md-2">
+                <p class="text-info">Info Text</p>
+            </div>
+            <div class="col-md-2">
+                <p class="text-warning">Warning Text</p>
+            </div>
+            <div class="col-md-2">
+                <p class="text-danger">Danger Text</p>
+            </div>
+        </div>
+        
+        <div class="alert alert-info mt-4">
+            <h5>✅ Color System Benefits:</h5>
+            <ul class="mb-0">
+                <li><strong>Single Point of Control:</strong> Change all colors by editing one CSS file</li>
+                <li><strong>5 Unique Colors:</strong> Provides distinct visual separation for all Bootstrap categories</li>
+                <li><strong>Consistent Mapping:</strong> Bootstrap's 8 semantic categories map to our 5-color palette</li>
+                <li><strong>Easy Theme Changes:</strong> Update the entire site's color scheme instantly</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

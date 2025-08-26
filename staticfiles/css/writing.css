@@ -6,7 +6,7 @@
 
 .writing-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px var(--black-alpha-10);
 }
 
 .writing-content {
@@ -29,29 +29,29 @@
 }
 
 .writing-content blockquote {
-    border-left: 4px solid #007bff;
+    border-left: 4px solid var(--bootstrap-blue);
     padding-left: 1rem;
     margin: 1.5rem 0;
     font-style: italic;
-    color: #6c757d;
+    color: var(--gray-500);
 }
 
 .writing-content code {
-    background-color: #f8f9fa;
+    background-color: var(--gray-100);
     padding: 0.2rem 0.4rem;
     border-radius: 0.25rem;
     font-size: 0.9rem;
 }
 
 .writing-content pre {
-    background-color: #f8f9fa;
+    background-color: var(--gray-100);
     padding: 1rem;
     border-radius: 0.5rem;
     overflow-x: auto;
 }
 
 .writing-meta {
-    color: #6c757d;
+    color: var(--gray-500);
     font-size: 0.9rem;
 }
 
@@ -62,18 +62,18 @@
 }
 
 .writing-excerpt {
-    color: #6c757d;
+    color: var(--gray-500);
     font-style: italic;
 }
 
 /* Featured writing highlight */
 .writing-featured {
-    border-left: 4px solid #ffc107;
+    border-left: 4px solid var(--bootstrap-yellow);
 }
 
 /* Search and filter form styling */
 .writing-filters {
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    background: linear-gradient(135deg, var(--gray-100) 0%, var(--gray-200) 100%);
     border-radius: 0.5rem;
 }
 
@@ -109,8 +109,8 @@
 
 /* Additional writing-specific styles */
 .featured-badge {
-    background: linear-gradient(135deg, #ffc107, #ff8c00);
-    color: white;
+    background: linear-gradient(135deg, var(--bootstrap-yellow), #ff8c00);
+    color: var(--white);
     padding: 0.25rem 0.75rem;
     border-radius: 15px;
     font-size: 0.8rem;
@@ -118,18 +118,18 @@
 }
 
 .writing-meta {
-    color: #6c757d;
+    color: var(--gray-500);
     font-size: 0.9rem;
 }
 
 .writing-excerpt {
-    color: #495057;
+    color: var(--gray-600);
     line-height: 1.6;
 }
 
 .category-tag {
-    background: rgba(0, 123, 255, 0.1);
-    color: #007bff;
+    background: var(--bootstrap-blue-alpha-10);
+    color: var(--bootstrap-blue);
     padding: 0.2rem 0.6rem;
     border-radius: 12px;
     font-size: 0.8rem;
@@ -138,12 +138,12 @@
 }
 
 .category-tag:hover {
-    background: rgba(0, 123, 255, 0.2);
+    background: var(--bootstrap-blue-alpha-20);
     color: #0056b3;
     text-decoration: none;
 }
 
 /* Featured writing indicator */
 .writing-featured {
-    border-left: 4px solid #ffc107 !important;
+    border-left: 4px solid var(--bootstrap-yellow) !important;
 }

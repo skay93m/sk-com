@@ -1,11 +1,86 @@
 /* Custom Color Palette */
 :root {
-  /* Custom palette variables */
+  /* Custom palette variables - PRIMARY COLOR DEFINITIONS */
   --eggshell: #f4f1deff;
   --burnt-sienna: #e07a5fff;
   --delft-blue: #3d405bff;
   --cambridge-blue: #81b29aff;
   --sunset: #f2cc8fff;
+  
+  /* Additional utility colors derived from main palette */
+  --var(--white): var(--var(--white));
+  --var(--black): var(--var(--black));
+  --gray-100: var(--gray-100);
+  --gray-200: var(--gray-200);
+  --gray-300: var(--gray-300);
+  --gray-400: var(--gray-400);
+  --gray-500: var(--gray-500);
+  --gray-600: var(--gray-600);
+  --gray-700: var(--gray-700);
+  --gray-800: var(--gray-800);
+  --gray-900: var(--gray-900);
+  
+  /* Transparency variations */
+  --delft-blue-alpha-5: var(--delft-blue-alpha-5);
+  --delft-blue-alpha-10: var(--delft-blue-alpha-10);
+  --delft-blue-alpha-15: var(--delft-blue-alpha-15);
+  --delft-blue-alpha-20: var(--delft-blue-alpha-20);
+  --delft-blue-alpha-30: var(--delft-blue-alpha-30);
+  --delft-blue-alpha-40: var(--delft-blue-alpha-40);
+  --delft-blue-alpha-95: var(--delft-blue-alpha-95);
+  
+  --cambridge-blue-alpha-15: var(--cambridge-blue-alpha-15);
+  --cambridge-blue-alpha-30: var(--cambridge-blue-alpha-30);
+  --cambridge-blue-alpha-90: var(--cambridge-blue-alpha-90);
+  
+  --burnt-sienna-alpha-15: var(--burnt-sienna-alpha-15);
+  --burnt-sienna-alpha-30: var(--burnt-sienna-alpha-30);
+  --burnt-sienna-alpha-90: var(--burnt-sienna-alpha-90);
+  
+  --sunset-alpha-15: var(--sunset-alpha-15);
+  --sunset-alpha-30: var(--sunset-alpha-30);
+  
+  --eggshell-alpha-15: rgba(244, 241, 222, 0.15);
+  --eggshell-alpha-30: rgba(244, 241, 222, 0.3);
+  
+  --var(--white)-alpha-05: rgba(255, 255, 255, 0.05);
+  --var(--white)-alpha-10: var(--white-alpha-10);
+  --var(--white)-alpha-15: var(--white-alpha-15);
+  --var(--white)-alpha-20: var(--white-alpha-20);
+  --var(--white)-alpha-25: var(--white-alpha-25);
+  --var(--white)-alpha-30: var(--white-alpha-30);
+  --var(--white)-alpha-40: rgba(255, 255, 255, 0.4);
+  --var(--white)-alpha-50: var(--white-alpha-50);
+  --var(--white)-alpha-75: var(--white-alpha-75);
+  --var(--white)-alpha-95: var(--white-alpha-95);
+  
+  --var(--black)-alpha-10: var(--black-alpha-10);
+  --var(--black)-alpha-15: var(--black-alpha-15);
+  --var(--black)-alpha-20: var(--black-alpha-20);
+  
+  /* Common Bootstrap color aliases for convenience */
+  --bootstrap-blue: var(--bootstrap-blue);
+  --bootstrap-blue-alpha-10: var(--bootstrap-blue-alpha-10);
+  --bootstrap-blue-alpha-20: var(--bootstrap-blue-alpha-20);
+  --bootstrap-blue-alpha-30: var(--bootstrap-blue-alpha-30);
+  
+  --bootstrap-green: var(--bootstrap-green);
+  --bootstrap-green-alpha-10: var(--bootstrap-green-alpha-10);
+  --bootstrap-green-alpha-30: var(--bootstrap-green-alpha-30);
+  --bootstrap-green-alpha-40: var(--bootstrap-green-alpha-40);
+  
+  --bootstrap-yellow: var(--bootstrap-yellow);
+  --bootstrap-yellow-alpha-40: var(--bootstrap-yellow-alpha-40);
+  
+  --bootstrap-red: var(--bootstrap-red);
+  --bootstrap-red-alpha-40: var(--bootstrap-red-alpha-40);
+  
+  /* Additional gradients using our palette */
+  --gradient-primary: linear-gradient(135deg, var(--delft-blue), var(--cambridge-blue));
+  --gradient-secondary: linear-gradient(135deg, var(--cambridge-blue), var(--sunset));
+  --gradient-accent: linear-gradient(135deg, var(--sunset), var(--burnt-sienna));
+  --gradient-success: linear-gradient(135deg, var(--bootstrap-green), var(--cambridge-blue));
+  --gradient-info: linear-gradient(135deg, var(--bootstrap-blue), var(--delft-blue));
   
   /* Bootstrap 5 Color Variable Overrides */
   /* Primary color mapping */
@@ -55,32 +130,32 @@
   --bs-dark-text-emphasis: var(--delft-blue);
   
   /* Background colors */
-  --bs-primary-bg-subtle: rgba(61, 64, 91, 0.15);
-  --bs-secondary-bg-subtle: rgba(129, 178, 154, 0.15);
-  --bs-success-bg-subtle: rgba(129, 178, 154, 0.15);
-  --bs-info-bg-subtle: rgba(242, 204, 143, 0.15);
-  --bs-warning-bg-subtle: rgba(224, 122, 95, 0.15);
-  --bs-danger-bg-subtle: rgba(224, 122, 95, 0.15);
-  --bs-light-bg-subtle: rgba(244, 241, 222, 0.15);
-  --bs-dark-bg-subtle: rgba(61, 64, 91, 0.15);
+  --bs-primary-bg-subtle: var(--delft-blue-alpha-15);
+  --bs-secondary-bg-subtle: var(--cambridge-blue-alpha-15);
+  --bs-success-bg-subtle: var(--cambridge-blue-alpha-15);
+  --bs-info-bg-subtle: var(--sunset-alpha-15);
+  --bs-warning-bg-subtle: var(--burnt-sienna-alpha-15);
+  --bs-danger-bg-subtle: var(--burnt-sienna-alpha-15);
+  --bs-light-bg-subtle: var(--eggshell-alpha-15);
+  --bs-dark-bg-subtle: var(--delft-blue-alpha-15);
   
   /* Border colors */
-  --bs-primary-border-subtle: rgba(61, 64, 91, 0.3);
-  --bs-secondary-border-subtle: rgba(129, 178, 154, 0.3);
-  --bs-success-border-subtle: rgba(129, 178, 154, 0.3);
-  --bs-info-border-subtle: rgba(242, 204, 143, 0.3);
-  --bs-warning-border-subtle: rgba(224, 122, 95, 0.3);
-  --bs-danger-border-subtle: rgba(224, 122, 95, 0.3);
-  --bs-light-border-subtle: rgba(244, 241, 222, 0.3);
-  --bs-dark-border-subtle: rgba(61, 64, 91, 0.3);
+  --bs-primary-border-subtle: var(--delft-blue-alpha-30);
+  --bs-secondary-border-subtle: var(--cambridge-blue-alpha-30);
+  --bs-success-border-subtle: var(--cambridge-blue-alpha-30);
+  --bs-info-border-subtle: var(--sunset-alpha-30);
+  --bs-warning-border-subtle: var(--burnt-sienna-alpha-30);
+  --bs-danger-border-subtle: var(--burnt-sienna-alpha-30);
+  --bs-light-border-subtle: var(--eggshell-alpha-30);
+  --bs-dark-border-subtle: var(--delft-blue-alpha-30);
   
   /* Link colors */
   --bs-link-color: var(--delft-blue);
   --bs-link-hover-color: var(--cambridge-blue);
   
   /* Border color */
-  --bs-border-color: rgba(61, 64, 91, 0.2);
-  --bs-border-color-translucent: rgba(61, 64, 91, 0.175);
+  --bs-border-color: var(--delft-blue-alpha-20);
+  --bs-border-color-translucent: var(--delft-blue-alpha-15);
 }
 
 /* Additional overrides for direct class usage */
@@ -176,4 +251,25 @@
 .navbar-nav .nav-item {
   display: flex;
   align-items: center;
+}
+
+/* Gradient utility classes */
+.bg-gradient-success {
+  background: var(--gradient-success) !important;
+}
+
+.bg-gradient-info {
+  background: var(--gradient-info) !important;
+}
+
+.bg-gradient-primary {
+  background: var(--gradient-primary) !important;
+}
+
+.bg-gradient-secondary {
+  background: var(--gradient-secondary) !important;
+}
+
+.bg-gradient-accent {
+  background: var(--gradient-accent) !important;
 }
