@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/projects.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="my-4">Project Mindmap</h1>
+    <div class="mermaid">
+        mindmap
+          root((Projects))
+            {% for project in projects %}
+            ({{ project.name }})
+            {% endfor %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+<script src="{% static 'js/projects.js' %}"></script>
+{% endblock %}
+
