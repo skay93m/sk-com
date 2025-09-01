@@ -20,6 +20,12 @@
 - **home**: updated homepage with hero section
 - implement Hero model, forms, and views; update templates for hero details and creation
 
+## v4.3.1 (2025-09-01)
+
+### Fix
+
+- resolve Django template syntax error in writing detail page
+
 ## v4.3.0 (2025-09-01)
 
 ### Feat
