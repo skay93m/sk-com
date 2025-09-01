@@ -105,8 +105,7 @@
                             <div class="row align-items-center">
                                 <div class="col-md-8">
                                     <div class="d-flex align-items-center">
-                                        <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" 
-                                             class="author-avatar rounded-circle">>
+                                        <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3">
                                             <i class="bi bi-person-fill text-white"></i>
                                         </div>
                                         <div>
@@ -162,7 +161,7 @@
 
         <!-- Sidebar (on larger screens) -->
         <div class="col-lg-4">
-            <div class="sticky-sidebar">>
+            <div class="sticky-sidebar">
                 <!-- Quick info card -->
                 <div class="card shadow-sm border-0 mb-4">
                     <div class="card-header bg-light">
@@ -232,43 +231,6 @@
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-</div>
-{% endblock %}
-                            • Updated {{ writing.updated_at|date:"F j, Y" }}
-                        {% endif %}
-                    </small>
-                </div>
-                
-                {% if writing.tags %}
-                    <div class="mt-3">
-                        {% for tag in writing.get_tags_list %}
-                            <span class="badge bg-light text-dark me-1">#{{ tag }}</span>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            </header>
-            
-            <hr class="my-4">
-            
-            <!-- Content -->
-            <div class="content writing-content">
-                {{ writing.content|linebreaks }}
-            </div>
-        </article>
-        
-        <!-- Navigation -->
-        <div class="d-flex justify-content-between mt-5">
-            <a href="{% url 'writing:writing_list' %}" class="btn btn-outline-secondary">
-                <i class="bi bi-arrow-left"></i> Back to Writings
-            </a>
-            
-            {% if user.is_authenticated and writing.author == user or user.is_staff %}
-                <a href="{% url 'writing:writing_edit' writing.pk %}" class="btn btn-primary">
-                    <i class="bi bi-pencil"></i> Edit Writing
-                </a>
-            {% endif %}
         </div>
     </div>
 </div>
