@@ -20,6 +20,12 @@
 - **home**: updated homepage with hero section
 - implement Hero model, forms, and views; update templates for hero details and creation
 
+## v4.3.0 (2025-09-01)
+
+### Feat
+
+- integrate Hero model data into homepage template
+
 ## v4.2.0 (2025-09-01)
 
 ### Feat
