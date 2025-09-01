@@ -1,7 +1,13 @@
-<footer class="footer mt-auto py-3 ">
-    <div class="container text-center">
-        <p class="small">
-            <i class="bi bi-c-circle"></i> {% now "Y" %} Syafiq Kay Ltd. All rights reserved.
-        </p>
+<footer class="alex-footer">
+    <div class="alex-footer-container">
+        <div class="alex-footer-links">
+            <a href="{% url 'cv:cv_main' %}" class="alex-footer-link">CV</a>
+            <a href="{% url 'projects:project_list' %}" class="alex-footer-link">Portfolio</a>
+            <a href="{% url 'writing:writing_list' %}" class="alex-footer-link">Articles</a>
+            <a href="mailto:syafiq@syafiqkay.com" class="alex-footer-link">Contact</a>
+        </div>
+        <div class="alex-footer-copyright">
+            <p>&copy; 2015 - {% now "Y" %} Syafiq Kay</p>
+        </div>
     </div>
 </footer>
