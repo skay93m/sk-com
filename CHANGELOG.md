@@ -20,6 +20,12 @@
 - **home**: updated homepage with hero section
 - implement Hero model, forms, and views; update templates for hero details and creation
 
+## v4.4.0 (2025-09-01)
+
+### Feat
+
+- convert professional expertise section from hardcoded to dynamic model
+
 ## v4.3.1 (2025-09-01)
 
 ### Fix
