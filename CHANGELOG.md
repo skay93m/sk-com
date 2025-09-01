@@ -20,6 +20,18 @@
 - **home**: updated homepage with hero section
 - implement Hero model, forms, and views; update templates for hero details and creation
 
+## v4.1.0 (2025-09-01)
+
+### Feat
+
+- add compressed experience text file for static content
+- implement seamless homepage layout consistency
+
+### Fix
+
+- resolve static files loading issues (fonts.css, colours.css, icons)
+- add default editable prompt template for LLM generation step 1
+
 ## v4.0.0 (2025-08-24)
 
 ### Feat
