@@ -20,6 +20,12 @@
 - **home**: updated homepage with hero section
 - implement Hero model, forms, and views; update templates for hero details and creation
 
+## v4.2.0 (2025-09-01)
+
+### Feat
+
+- add acknowledgment for Alex Hyett design inspiration and GitHub Copilot assistance in footer
+
 ## v4.1.0 (2025-09-01)
 
 ### Feat
