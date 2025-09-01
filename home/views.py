@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Count
 from home.forms import HeroForm
-from home.models import Hero
+from home.models import Hero, Expertise
 from cv.models import Credentials
 from projects.models import Project
 from writing.models import Writing
@@ -12,6 +12,7 @@ from mcq.models import MCQ
 def home(request):
     # Get stats for the homepage
     hero = Hero.objects.first()
+    expertise_areas = Expertise.objects.filter(is_active=True)
     total_credentials = Credentials.objects.count()
     total_projects = Project.objects.count()
     current_projects = Project.objects.filter(category='now').count()
@@ -34,6 +35,7 @@ def home(request):
         'title': 'Home',
         'header': hero.header if hero else 'Welcome',
         'tagline': hero.tagline if hero else 'Personal Portfolio & Blog',
+        'expertise_areas': expertise_areas,
         'recent_posts': recent_posts,
         'stats': {
             'credentials': total_credentials,

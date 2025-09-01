@@ -114,29 +114,23 @@
         </p>
         
         <div class="main-expertise-list">
+            {% for expertise in expertise_areas %}
             <div class="main-expertise-item">
-                <span class="main-expertise-icon">🏥</span>
+                <span class="main-expertise-icon">{{ expertise.icon }}</span>
                 <div class="main-expertise-content">
-                    <h3 class="main-expertise-title">Healthcare & Pharmacy</h3>
-                    <p class="main-expertise-description">MPharm, MRPharmS - Registered pharmacist with expertise in pharmaceutical sciences, patient care, and healthcare innovation.</p>
+                    <h3 class="main-expertise-title">{{ expertise.title }}</h3>
+                    <p class="main-expertise-description">{{ expertise.description }}</p>
                 </div>
             </div>
-            
+            {% empty %}
             <div class="main-expertise-item">
-                <span class="main-expertise-icon">⚖️</span>
+                <span class="main-expertise-icon">�</span>
                 <div class="main-expertise-content">
-                    <h3 class="main-expertise-title">Law & Jurisprudence</h3>
-                    <p class="main-expertise-description">GDL - Graduate Diploma in Law with focus on healthcare law, intellectual property, and regulatory compliance.</p>
+                    <h3 class="main-expertise-title">No Expertise Areas</h3>
+                    <p class="main-expertise-description">Please add expertise areas in the admin panel.</p>
                 </div>
             </div>
-            
-            <div class="main-expertise-item">
-                <span class="main-expertise-icon">💻</span>
-                <div class="main-expertise-content">
-                    <h3 class="main-expertise-title">Technology & Innovation</h3>
-                    <p class="main-expertise-description">Full-stack development, data analysis, and digital transformation in healthcare and legal domains.</p>
-                </div>
-            </div>
+            {% endfor %}
         </div>
     </section>
 
