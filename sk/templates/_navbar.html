@@ -1,69 +1,58 @@
-<header class="{% if request.resolver_match.url_name == 'home' %}position-absolute w-100 start-0{% else %}container mt-2 mb-2{% endif %} header-style">
-    <nav class="navbar navbar-expand-lg {% if request.resolver_match.url_name == 'home' %}navbar-dark{% else %}navbar-light{% endif %}">
-        <div class="container">
-            <a class="navbar-brand fw-bold" href="{% url 'home' %}">
-                <i class="bi bi-house-fill me-2"></i>Syafiq Kay
+<!-- Modern Clean Navigation -->
+<header class="main-nav-header">
+    <nav class="main-nav">
+        <div class="main-nav-container">
+            <!-- Logo/Brand -->
+            <a class="main-nav-brand" href="{% url 'home' %}">
+                SYAFIQ KAY
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
+            
+            <!-- Mobile menu button -->
+            <button class="main-nav-toggle" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar"
+                aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="main-nav-toggle-icon"></span>
+                <span class="main-nav-toggle-icon"></span>
+                <span class="main-nav-toggle-icon"></span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.resolver_match.url_name == 'home' %}text-white-75{% endif %}" href="{% url 'cv:cv_main' %}">
-                            <i class="bi bi-file-earmark-person"></i> CV
-                        </a>
+            
+            <!-- Navigation Links -->
+            <div class="collapse navbar-collapse" id="mainNavbar">
+                <ul class="main-nav-links">
+                    <li class="main-nav-item">
+                        <a class="main-nav-link" href="{% url 'cv:cv_main' %}">CV</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.resolver_match.url_name == 'home' %}text-white-75{% endif %}" href="{% url 'projects:project_list' %}">
-                            <i class="bi bi-folder"></i> Projects
-                        </a>
+                    <li class="main-nav-item">
+                        <a class="main-nav-link" href="{% url 'projects:project_list' %}">PORTFOLIO</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.resolver_match.url_name == 'home' %}text-white-75{% endif %}" href="{% url 'writing:writing_list' %}">
-                            <i class="bi bi-pen"></i> Writing
-                        </a>
+                    <li class="main-nav-item">
+                        <a class="main-nav-link" href="{% url 'writing:writing_list' %}">ARTICLES</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.resolver_match.url_name == 'home' %}text-white-75{% endif %}" href="{% url 'mcq:landing' %}">
-                            <i class="bi bi-question-circle"></i> MCQ
-                        </a>
+                    <li class="main-nav-item">
+                        <a class="main-nav-link" href="{% url 'mcq:landing' %}">MCQ</a>
                     </li>
                     {% if user.is_authenticated %}
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.resolver_match.url_name == 'home' %}text-white-75{% endif %}" href="{% url 'analytics:dashboard' %}">
-                            <i class="bi bi-graph-up"></i> Analytics
-                        </a>
+                    <li class="main-nav-item">
+                        <a class="main-nav-link" href="{% url 'analytics:dashboard' %}">ANALYTICS</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-warning {% if request.resolver_match.url_name == 'home' %}text-white{% endif %}" href="{% url 'hero_list' %}">
-                            <i class="bi bi-star-fill"></i> Manage Heroes
+                    <li class="main-nav-item">
+                        <a class="main-nav-link main-nav-admin" href="{% url 'hero_list' %}">
+                            ADMIN
                         </a>
                     </li>
                     {% endif %}
                 </ul>
-                <ul class="navbar-nav ms-auto">
+                
+                <!-- Auth section -->
+                <div class="main-nav-auth">
                     {% if user.is_authenticated %}
-                        <li class="nav-item d-flex align-items-center">
-                            <span class="navbar-text text-success {% if request.resolver_match.url_name == 'home' %}text-white{% endif %} me-3">
-                                <i class="bi bi-check-circle-fill"></i> Authenticated as {{ user.username }}
-                            </span>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {% if request.resolver_match.url_name == 'home' %}text-white-75{% endif %}" href="{% url 'admin:index' %}">Admin</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {% if request.resolver_match.url_name == 'home' %}text-white-75{% endif %}" href="{% url 'secure_admin_logout' %}">Logout</a>
-                        </li>
+                        <span class="main-nav-user">
+                            {{ user.username }}
+                        </span>
+                        <a href="{% url 'secure_admin_logout' %}" class="main-nav-logout">Logout</a>
                     {% else %}
-                        <li class="nav-item">
-                            <a class="nav-link btn {% if request.resolver_match.url_name == 'home' %}btn-outline-light{% else %}btn-outline-primary{% endif %} btn-sm" href="{% url 'secure_admin_login' %}?next={{ request.get_full_path }}">
-                                <i class="bi bi-box-arrow-in-right"></i>
-                            </a>
-                        </li>
+                        <a href="{% url 'secure_admin_login' %}" class="main-nav-login">Login</a>
                     {% endif %}
-                </ul>
+                </div>
             </div>
         </div>
     </nav>

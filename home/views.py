@@ -46,7 +46,7 @@ def home(request):
         'project_breakdown': project_breakdown,
         'writing_breakdown': writing_breakdown,
     }
-    return render(request, 'index_alex_hyett.html', context)
+    return render(request, 'index.html', context)
 
 def hero(request):
     return render(request, 'hero.html', {'hero': Hero.objects.first()})
