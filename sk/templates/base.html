@@ -9,11 +9,12 @@
     {% bootstrap_css %}
     {% bootstrap_javascript %}
     {% include '_header.html' %}
+    <link rel="stylesheet" href="{% static 'css/main_nav.css' %}">
     {% block extra_css %}{% endblock %}
 </head>
-<body class="d-flex flex-column min-vh-100 bs-body-bg">
+<body class="d-flex flex-column min-vh-100" style="background-color: var(--eggshell);">
     {% include '_navbar.html' %}
-    <main class="{% if request.resolver_match.url_name == 'home' %}pt-0{% else %}pt-2{% endif %} flex-grow-1">
+    <main class="flex-grow-1">
         <!-- Display Messages -->
         {% include '_message.html' %}
         {% block content %}{% endblock %}

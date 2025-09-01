@@ -19,6 +19,9 @@ def home(request):
     featured_writings = Writing.objects.filter(featured=True, status='published').count()
     total_mcqs = MCQ.objects.count()
     
+    # Get recent posts for Alex Hyett style
+    recent_posts = Writing.objects.filter(status='published').order_by('-created_at')[:10]
+    
     # Project breakdown by category
     project_stats = Project.objects.values('category').annotate(count=Count('category'))
     project_breakdown = {stat['category']: stat['count'] for stat in project_stats}
@@ -31,6 +34,7 @@ def home(request):
         'title': 'Home',
         'header': hero.header if hero else 'Welcome',
         'tagline': hero.tagline if hero else 'Personal Portfolio & Blog',
+        'recent_posts': recent_posts,
         'stats': {
             'credentials': total_credentials,
             'projects': total_projects,
