@@ -2,14 +2,14 @@
 
 /* Dashboard layout */
 .analytics-dashboard {
-    background: #f8f9fa;
+    background: var(--gray-100);
     min-height: 100vh;
     padding: 2rem 0;
 }
 
 /* Card styling */
 .analytics-card {
-    background: white;
+    background: var(--white);
     border-radius: 15px;
     box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
     border: none;
@@ -19,14 +19,14 @@
 
 .analytics-card:hover {
     transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 25px var(--black-alpha-10);
 }
 
 /* Chart containers */
 .chart-container {
     position: relative;
     padding: 1rem;
-    background: white;
+    background: var(--white);
     border-radius: 10px;
     margin-bottom: 1.5rem;
 }
@@ -34,7 +34,7 @@
 /* Metric cards */
 .metric-card {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+    color: var(--white);
     padding: 2rem;
     border-radius: 15px;
     text-align: center;
@@ -49,7 +49,7 @@
     right: -50%;
     width: 200%;
     height: 200%;
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+    background: radial-gradient(circle, var(--white-alpha-10) 0%, transparent 70%);
     animation: shimmer 3s ease-in-out infinite;
 }
 
@@ -80,7 +80,7 @@
 
 /* Filter section */
 .filter-section {
-    background: white;
+    background: var(--white);
     padding: 1.5rem;
     border-radius: 15px;
     margin-bottom: 2rem;
@@ -96,16 +96,16 @@
 }
 
 .date-input {
-    border: 2px solid #e9ecef;
+    border: 2px solid var(--gray-200);
     border-radius: 8px;
     padding: 0.75rem;
     transition: border-color 0.2s ease;
 }
 
 .date-input:focus {
-    border-color: #007bff;
+    border-color: var(--bootstrap-blue);
     outline: none;
-    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+    box-shadow: 0 0 0 3px var(--bootstrap-blue-alpha-10);
 }
 
 /* Chart legends */
@@ -132,18 +132,18 @@
 
 /* Table styling */
 .analytics-table {
-    background: white;
+    background: var(--white);
     border-radius: 15px;
     overflow: hidden;
     box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
 }
 
 .analytics-table th {
-    background: #f8f9fa;
+    background: var(--gray-100);
     border: none;
     padding: 1rem;
     font-weight: 600;
-    color: #495057;
+    color: var(--gray-600);
 }
 
 .analytics-table td {
@@ -173,11 +173,11 @@
 }
 
 .progress-ring .background {
-    stroke: #e9ecef;
+    stroke: var(--gray-200);
 }
 
 .progress-ring .progress {
-    stroke: #007bff;
+    stroke: var(--bootstrap-blue);
 }
 
 /* Status indicators */
@@ -190,18 +190,18 @@
 }
 
 .status-active {
-    background: #28a745;
-    box-shadow: 0 0 8px rgba(40, 167, 69, 0.4);
+    background: var(--bootstrap-green);
+    box-shadow: 0 0 8px var(--bootstrap-green-alpha-40);
 }
 
 .status-warning {
-    background: #ffc107;
-    box-shadow: 0 0 8px rgba(255, 193, 7, 0.4);
+    background: var(--bootstrap-yellow);
+    box-shadow: 0 0 8px var(--bootstrap-yellow-alpha-40);
 }
 
 .status-error {
-    background: #dc3545;
-    box-shadow: 0 0 8px rgba(220, 53, 69, 0.4);
+    background: var(--bootstrap-red);
+    box-shadow: 0 0 8px var(--bootstrap-red-alpha-40);
 }
 
 /* Loading states */
@@ -223,9 +223,9 @@
 
 /* Export buttons */
 .export-btn {
-    background: linear-gradient(135deg, #28a745, #20c997);
+    background: linear-gradient(135deg, var(--bootstrap-green), #20c997);
     border: none;
-    color: white;
+    color: var(--white);
     padding: 0.75rem 1.5rem;
     border-radius: 25px;
     font-weight: 500;
@@ -238,8 +238,8 @@
 
 .export-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
-    color: white;
+    box-shadow: 0 4px 15px var(--bootstrap-green-alpha-30);
+    color: var(--white);
     text-decoration: none;
 }
 
@@ -296,7 +296,7 @@
 
     .analytics-card {
         box-shadow: none;
-        border: 1px solid #dee2e6;
+        border: 1px solid var(--gray-300);
         break-inside: avoid;
     }
 

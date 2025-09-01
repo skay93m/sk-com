@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/projects.css' %}">
+{% endblock %}
+
+{% block title %}Edit Milestone - {{ project.title }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="{% url 'home' %}" class="text-decoration-none">
+                    <i class="bi bi-house-fill"></i> Home
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{% url 'projects:project_list' %}" class="text-decoration-none">
+                    <i class="bi bi-folder"></i> Projects
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{% url 'projects:project_detail' project.pk %}" class="text-decoration-none">
+                    {{ project.title|truncatechars:30 }}
+                </a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">Edit Milestone</li>
+        </ol>
+    </nav>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-warning text-dark">
+                    <h2 class="h4 mb-0">
+                        <i class="bi bi-flag me-2"></i>Edit Milestone
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.title.id_for_label }}" class="form-label fw-bold">
+                                <i class="bi bi-flag me-1"></i>{{ form.title.label }}
+                            </label>
+                            {{ form.title }}
+                            {% if form.title.errors %}
+                                <div class="text-danger mt-1">{{ form.title.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.description.id_for_label }}" class="form-label fw-bold">
+                                <i class="bi bi-file-text me-1"></i>{{ form.description.label }}
+                            </label>
+                            {{ form.description }}
+                            {% if form.description.errors %}
+                                <div class="text-danger mt-1">{{ form.description.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ form.target_date.id_for_label }}" class="form-label fw-bold">
+                                        <i class="bi bi-calendar me-1"></i>{{ form.target_date.label }}
+                                    </label>
+                                    {{ form.target_date }}
+                                    {% if form.target_date.errors %}
+                                        <div class="text-danger mt-1">{{ form.target_date.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="{{ form.owner.id_for_label }}" class="form-label fw-bold">
+                                        <i class="bi bi-person me-1"></i>{{ form.owner.label }}
+                                    </label>
+                                    {{ form.owner }}
+                                    {% if form.owner.errors %}
+                                        <div class="text-danger mt-1">{{ form.owner.errors.0 }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.order.id_for_label }}" class="form-label fw-bold">
+                                <i class="bi bi-sort-numeric-up me-1"></i>{{ form.order.label }}
+                            </label>
+                            {{ form.order }}
+                            {% if form.order.errors %}
+                                <div class="text-danger mt-1">{{ form.order.errors.0 }}</div>
+                            {% endif %}
+                            <div class="form-text">Lower numbers appear first</div>
+                        </div>
+
+                        <div class="d-flex gap-3 justify-content-end">
+                            <a href="{% url 'projects:project_detail' project.pk %}" class="btn btn-outline-secondary">
+                                <i class="bi bi-x-circle me-2"></i>Cancel
+                            </a>
+                            <button type="submit" class="btn btn-warning">
+                                <i class="bi bi-check-circle me-2"></i>Update Milestone
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

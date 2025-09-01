@@ -7,7 +7,7 @@
 
 /* Table hover effect */
 .table-hover tbody tr:hover {
-    background-color: #f8f9fa;
+    background-color: var(--gray-100);
 }
 
 /* Badge styles */
@@ -45,29 +45,29 @@
 
 .choice-item .card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1) !important;
+    box-shadow: 0 6px 20px var(--black-alpha-10) !important;
 }
 
 /* Topic badge with custom colors */
 .topic-badge {
-    color: white;
+    color: var(--white);
 }
 
 /* Dynamic topic badge styling */
 .topic-badge-dynamic {
-    color: white;
-    background-color: var(--topic-color, #6c757d);
+    color: var(--white);
+    background-color: var(--topic-color, var(--gray-500));
 }
 
 /* Icon styling */
 .mcq-icon-large {
     font-size: 4rem;
-    color: #6c757d;
+    color: var(--gray-500);
 }
 
 .mcq-icon-medium {
     font-size: 3rem;
-    color: #6c757d;
+    color: var(--gray-500);
 }
 
 .mcq-icon-primary {
@@ -85,13 +85,13 @@
 
 .circle-badge-primary {
     background-color: var(--bs-primary);
-    color: white;
+    color: var(--white);
     border-radius: 50%;
 }
 
 .circle-badge-success {
     background-color: var(--bs-success);
-    color: white;
+    color: var(--white);
     border-radius: 50%;
 }
 
@@ -129,7 +129,7 @@
 
 .question-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 4px 12px var(--black-alpha-15);
     border-left-color: var(--bs-primary);
 }
 
@@ -160,12 +160,12 @@
 .topic-card:hover {
     border-color: var(--bs-primary);
     transform: translateY(-4px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 8px 25px var(--black-alpha-15);
 }
 
 .topic-card.selected {
     border-color: var(--bs-success);
-    background-color: rgba(40, 167, 69, 0.1);
+    background-color: var(--bootstrap-green-alpha-10);
 }
 
 /* MCQ form styles */
@@ -190,11 +190,11 @@
 
 .answer-option:hover {
     background-color: rgba(0, 123, 255, 0.05);
-    border-color: rgba(0, 123, 255, 0.2);
+    border-color: var(--bootstrap-blue-alpha-20);
 }
 
 .answer-option.correct {
-    background-color: rgba(40, 167, 69, 0.1);
+    background-color: var(--bootstrap-green-alpha-10);
     border-color: var(--bs-success);
 }
 
@@ -205,7 +205,7 @@
 
 /* Statistics cards */
 .stat-card {
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    background: linear-gradient(135deg, var(--gray-100) 0%, var(--gray-200) 100%);
     border: none;
     transition: transform 0.2s ease;
 }
@@ -335,7 +335,7 @@
 .scrollable-topics-container {
     max-height: 150px;
     overflow-y: auto;
-    border: 1px solid #ced4da;
+    border: 1px solid var(--gray-400);
     border-radius: 0.375rem;
     padding: 0.5rem;
 }
@@ -420,7 +420,7 @@
 
 .choice-item .card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1) !important;
+    box-shadow: 0 6px 20px var(--black-alpha-10) !important;
 }
 
 /* Form focus styles */
@@ -433,13 +433,13 @@
 .btn-warning {
     background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
     border: none;
-    color: white;
+    color: var(--white);
 }
 
 .btn-warning:hover {
     background: linear-gradient(135deg, #e080e8 0%, #e04455 100%);
     transform: translateY(-1px);
-    color: white;
+    color: var(--white);
 }
 
 /* Choice cards with thick borders */

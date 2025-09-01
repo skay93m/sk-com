@@ -1,5 +1,462 @@
 /* Projects app styles */
 
+/* ===============================
+   PORTFOLIO HERO SECTION
+   =============================== */
+.portfolio-hero {
+    background: linear-gradient(135deg, var(--delft-blue) 0%, var(--cambridge-blue) 100%);
+    color: var(--white);
+    padding: 80px 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.portfolio-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="40" r="1.5" fill="rgba(255,255,255,0.1)"/><circle cx="40" cy="80" r="1" fill="rgba(255,255,255,0.1)"/></svg>');
+    animation: float 20s ease-in-out infinite;
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-20px);
+    }
+}
+
+.min-vh-50 {
+    min-height: 50vh;
+}
+
+.hero-title {
+    font-size: 3.5rem;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 1.5rem;
+}
+
+.hero-title .text-primary {
+    background: linear-gradient(45deg, var(--cambridge-blue), var(--sunset));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.hero-subtitle {
+    font-size: 1.25rem;
+    line-height: 1.6;
+    opacity: 0.9;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.hero-stats {
+    margin: 3rem 0;
+}
+
+.stat-item {
+    padding: 1.5rem;
+    background: var(--white-alpha-10);
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--white-alpha-20);
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: var(--sunset);
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    opacity: 0.8;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* ===============================
+   PORTFOLIO PROJECTS SECTION
+   =============================== */
+.portfolio-projects {
+    padding: 80px 0;
+    background: var(--eggshell);
+}
+
+.project-category-section {
+    margin-bottom: 5rem;
+}
+
+.category-header {
+    display: flex;
+    align-items: center;
+    padding: 2rem;
+    background: var(--white);
+    border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    margin-bottom: 2rem;
+}
+
+.category-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1.5rem;
+    font-size: 1.5rem;
+}
+
+.category-icon.current {
+    background: linear-gradient(135deg, var(--cambridge-blue), var(--sunset));
+    color: var(--white);
+}
+
+.category-icon.backburner {
+    background: linear-gradient(135deg, var(--burnt-sienna), var(--sunset));
+    color: var(--white);
+}
+
+.category-icon.future {
+    background: linear-gradient(135deg, var(--delft-blue), var(--cambridge-blue));
+    color: var(--white);
+}
+
+.category-info {
+    flex: 1;
+}
+
+.category-title {
+    font-size: 1.75rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    color: var(--delft-blue);
+}
+
+.category-description {
+    color: var(--delft-blue);
+    opacity: 0.7;
+    margin: 0;
+    font-size: 1rem;
+}
+
+.count-badge {
+    background: var(--cambridge-blue);
+    color: var(--white);
+    padding: 0.5rem 1rem;
+    border-radius: 25px;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+/* ===============================
+   PORTFOLIO CARDS
+   =============================== */
+.portfolio-card {
+    background: var(--white);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.portfolio-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px var(--black-alpha-15);
+}
+
+.card-image-placeholder {
+    height: 200px;
+    background: linear-gradient(135deg, var(--delft-blue) 0%, var(--cambridge-blue) 100%);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card-image-placeholder::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--black-alpha-10);
+}
+
+.project-category-badge {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    padding: 0.5rem 1rem;
+    border-radius: 25px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--white);
+    z-index: 2;
+}
+
+.project-category-badge.now {
+    background: var(--cambridge-blue-alpha-90);
+}
+
+.project-category-badge.backburner {
+    background: var(--burnt-sienna-alpha-90);
+}
+
+.project-category-badge.someday {
+    background: rgba(61, 64, 91, 0.9);
+}
+
+.card-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 2rem;
+}
+
+.card-header-custom {
+    margin-bottom: 1rem;
+}
+
+.project-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--delft-blue);
+    margin-bottom: 0.5rem;
+    line-height: 1.3;
+}
+
+.project-meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.project-date {
+    color: var(--delft-blue);
+    opacity: 0.7;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+}
+
+.card-body-custom {
+    flex: 1;
+    margin-bottom: 1.5rem;
+}
+
+.project-description {
+    color: var(--delft-blue);
+    opacity: 0.8;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+}
+
+.project-progress {
+    margin-top: auto;
+}
+
+.progress-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.progress-label {
+    font-size: 0.85rem;
+    color: var(--delft-blue);
+    opacity: 0.7;
+    font-weight: 500;
+}
+
+.progress-value {
+    font-size: 0.85rem;
+    color: var(--delft-blue);
+    font-weight: 600;
+}
+
+.progress-custom {
+    height: 6px;
+    background: var(--eggshell);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.progress-custom .progress-bar {
+    background: linear-gradient(90deg, var(--cambridge-blue), var(--sunset));
+    border-radius: 3px;
+    transition: width 0.3s ease;
+}
+
+.card-footer-custom {
+    margin-top: auto;
+}
+
+.btn-portfolio {
+    background: linear-gradient(135deg, var(--delft-blue), var(--cambridge-blue));
+    color: var(--white);
+    border: none;
+    padding: 0.75rem 2rem;
+    border-radius: 25px;
+    font-weight: 500;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    transition: all 0.3s ease;
+    width: 100%;
+    justify-content: center;
+}
+
+.btn-portfolio:hover {
+    background: linear-gradient(135deg, var(--cambridge-blue), var(--sunset));
+    transform: translateY(-2px);
+    color: var(--white);
+    box-shadow: 0 8px 25px var(--delft-blue-alpha-30);
+}
+
+/* ===============================
+   EMPTY STATE
+   =============================== */
+.portfolio-empty {
+    padding: 5rem 0;
+    text-align: center;
+}
+
+.empty-state-card {
+    background: var(--white);
+    border-radius: 30px;
+    padding: 4rem 2rem;
+    box-shadow: 0 10px 40px var(--black-alpha-10);
+}
+
+.empty-icon {
+    font-size: 4rem;
+    color: #667eea;
+    margin-bottom: 2rem;
+}
+
+.empty-title {
+    font-size: 2rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 1rem;
+}
+
+.empty-description {
+    font-size: 1.1rem;
+    color: var(--gray-500);
+    line-height: 1.6;
+    max-width: 500px;
+    margin: 0 auto 2rem;
+}
+
+.empty-actions .btn {
+    margin: 0.5rem;
+}
+
+.empty-cta p {
+    font-size: 1rem;
+    color: var(--gray-500);
+}
+
+/* ===============================
+   CALL TO ACTION SECTION
+   =============================== */
+.portfolio-cta {
+    background: linear-gradient(135deg, #2c3e50, #34495e);
+    color: var(--white);
+    padding: 5rem 0;
+}
+
+.cta-card {
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.cta-title {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.cta-description {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    opacity: 0.9;
+    margin-bottom: 2rem;
+}
+
+.cta-actions .btn {
+    margin: 0.5rem;
+    padding: 0.75rem 2rem;
+    border-radius: 25px;
+}
+
+/* ===============================
+   RESPONSIVE DESIGN
+   =============================== */
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 2.5rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1.1rem;
+    }
+
+    .category-header {
+        flex-direction: column;
+        text-align: center;
+        padding: 1.5rem;
+    }
+
+    .category-icon {
+        margin-right: 0;
+        margin-bottom: 1rem;
+    }
+
+    .portfolio-hero {
+        padding: 60px 0;
+    }
+
+    .portfolio-projects {
+        padding: 60px 0;
+    }
+
+    .empty-state-card {
+        padding: 3rem 1.5rem;
+    }
+
+    .cta-actions .btn {
+        display: block;
+        width: 100%;
+        margin: 0.5rem 0;
+    }
+}
+
+/* ===============================
+   LEGACY STYLES (keeping for backward compatibility)
+   =============================== */
+
 /* Card hover effects */
 .project-card {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -10,7 +467,7 @@
 
 .project-card:hover {
     transform: translateY(-8px);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 12px 40px var(--black-alpha-15);
 }
 
 /* Status badges */
@@ -24,25 +481,25 @@
 }
 
 .status-now {
-    background: linear-gradient(135deg, #28a745, #20c997);
-    color: white;
+    background: linear-gradient(135deg, var(--bootstrap-green), #20c997);
+    color: var(--white);
 }
 
 .status-backburner {
-    background: linear-gradient(135deg, #ffc107, #ff8c00);
-    color: white;
+    background: linear-gradient(135deg, var(--bootstrap-yellow), #ff8c00);
+    color: var(--white);
 }
 
 .status-someday {
-    background: linear-gradient(135deg, #6c757d, #495057);
-    color: white;
+    background: linear-gradient(135deg, var(--gray-500), var(--gray-600));
+    color: var(--white);
 }
 
 /* Category badges */
 .category-badge {
-    background: rgba(0, 123, 255, 0.1);
-    color: #007bff;
-    border: 1px solid rgba(0, 123, 255, 0.2);
+    background: var(--bootstrap-blue-alpha-10);
+    color: var(--bootstrap-blue);
+    border: 1px solid var(--bootstrap-blue-alpha-20);
     border-radius: 20px;
     padding: 0.3rem 0.8rem;
     font-size: 0.8rem;
@@ -52,7 +509,7 @@
 /* Project header */
 .project-header {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+    color: var(--white);
     padding: 3rem 0;
     margin-bottom: 2rem;
     border-radius: 0 0 50px 50px;
@@ -60,14 +517,14 @@
 
 /* Progress bars */
 .progress-container {
-    background: rgba(255, 255, 255, 0.1);
+    background: var(--white-alpha-10);
     border-radius: 10px;
     overflow: hidden;
     height: 8px;
 }
 
 .progress-bar-custom {
-    background: linear-gradient(90deg, #28a745, #20c997);
+    background: linear-gradient(90deg, var(--bootstrap-green), #20c997);
     height: 100%;
     border-radius: 10px;
     transition: width 0.8s ease;
@@ -76,7 +533,7 @@
 /* Technology tags */
 .tech-tag {
     background: rgba(108, 117, 125, 0.1);
-    color: #495057;
+    color: var(--gray-600);
     border: 1px solid rgba(108, 117, 125, 0.2);
     border-radius: 15px;
     padding: 0.25rem 0.75rem;
@@ -93,21 +550,21 @@
 
 /* Links styling */
 .project-link {
-    color: #007bff;
+    color: var(--bootstrap-blue);
     text-decoration: none;
     font-weight: 500;
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
     padding: 0.5rem 1rem;
-    border: 2px solid #007bff;
+    border: 2px solid var(--bootstrap-blue);
     border-radius: 25px;
     transition: all 0.3s ease;
 }
 
 .project-link:hover {
-    background: #007bff;
-    color: white;
+    background: var(--bootstrap-blue);
+    color: var(--white);
     text-decoration: none;
     transform: translateY(-2px);
 }
@@ -116,12 +573,12 @@
 .empty-state {
     text-align: center;
     padding: 4rem 2rem;
-    color: #6c757d;
+    color: var(--gray-500);
 }
 
 .empty-state-icon {
     font-size: 4rem;
-    color: #dee2e6;
+    color: var(--gray-300);
     margin-bottom: 1rem;
 }
 
@@ -135,7 +592,7 @@
 
 /* Filters */
 .filter-tabs {
-    background: white;
+    background: var(--white);
     border-radius: 15px;
     padding: 0.5rem;
     margin-bottom: 2rem;
@@ -152,12 +609,12 @@
 }
 
 .filter-tab.active {
-    background: #007bff;
-    color: white;
+    background: var(--bootstrap-blue);
+    color: var(--white);
 }
 
 .filter-tab:hover:not(.active) {
-    background: rgba(0, 123, 255, 0.1);
+    background: var(--bootstrap-blue-alpha-10);
 }
 
 /* Responsive design */
@@ -210,7 +667,7 @@
 /* Detailed project view */
 .project-detail-header {
     background: linear-gradient(135deg, rgba(102, 126, 234, 0.9), rgba(118, 75, 162, 0.9));
-    color: white;
+    color: var(--white);
     padding: 4rem 0;
     position: relative;
     overflow: hidden;
@@ -228,34 +685,34 @@
 }
 
 .project-meta {
-    background: white;
+    background: var(--white);
     border-radius: 15px;
     padding: 2rem;
     margin-top: -3rem;
     position: relative;
     z-index: 2;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 10px 40px var(--black-alpha-10);
 }
 
 /* Documentation sections */
 .doc-section {
-    background: white;
+    background: var(--white);
     border-radius: 15px;
     padding: 2rem;
     margin-bottom: 2rem;
     box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
-    border-left: 4px solid #007bff;
+    border-left: 4px solid var(--bootstrap-blue);
 }
 
 .doc-section h3 {
-    color: #007bff;
+    color: var(--bootstrap-blue);
     margin-bottom: 1rem;
 }
 
 /* Code blocks */
 .code-block {
-    background: #f8f9fa;
-    border: 1px solid #e9ecef;
+    background: var(--gray-100);
+    border: 1px solid var(--gray-200);
     border-radius: 8px;
     padding: 1rem;
     font-family: 'Monaco', 'Consolas', monospace;
@@ -276,13 +733,13 @@
     top: 0;
     bottom: 0;
     width: 2px;
-    background: linear-gradient(to bottom, #007bff, #6610f2);
+    background: linear-gradient(to bottom, var(--bootstrap-blue), #6610f2);
 }
 
 .timeline-item {
     position: relative;
     margin-bottom: 2rem;
-    background: white;
+    background: var(--white);
     padding: 1.5rem;
     border-radius: 10px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
@@ -296,9 +753,9 @@
     width: 12px;
     height: 12px;
     border-radius: 50%;
-    background: #007bff;
-    border: 3px solid white;
-    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
+    background: var(--bootstrap-blue);
+    border: 3px solid var(--white);
+    box-shadow: 0 0 0 3px var(--bootstrap-blue-alpha-20);
 }
 
 /* Project description styling */
@@ -309,4 +766,40 @@
 
 .project-description p {
     margin-bottom: 1rem;
+}
+
+/* Project detail page styles */
+.project-section {
+    border-left: 4px solid var(--bootstrap-blue);
+    padding-left: 1rem;
+    margin-bottom: 2rem;
+}
+
+.milestone-card {
+    border-left: 3px solid var(--bootstrap-green);
+}
+
+.task-card {
+    border-left: 3px solid var(--bootstrap-yellow);
+}
+
+.status-badge {
+    font-size: 0.75rem;
+}
+
+.priority-high {
+    color: var(--bootstrap-red);
+}
+
+.priority-medium {
+    color: var(--bootstrap-yellow);
+}
+
+.priority-low {
+    color: var(--bootstrap-green);
+}
+
+/* Empty state styling */
+.empty-state-icon {
+    font-size: 6rem !important;
 }

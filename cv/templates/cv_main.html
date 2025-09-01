@@ -3,154 +3,331 @@
 
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/cv.css' %}">
-{% endblock %} extends 'base.html' %}
-{% load static %}
+{% endblock %}
 
-{% block title %}CV - Syafiq Kay{% endblock %}
+{% block title %}Professional CV - Syafiq Kay{% endblock %}
 
 {% block content %}
-<div class="container">
-    <!-- Navigation breadcrumb and actions -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Curriculum Vitae</li>
-            </ol>
-        </nav>
-        
-        {% if user.is_authenticated %}
-            <div class="btn-group" role="group" aria-label="Credential actions">
-                <a href="{% url 'cv:credential_list' %}" class="btn btn-outline-primary btn-sm">
-                    <i class="bi bi-list-ul"></i> Manage Credentials
-                </a>
-                <a href="{% url 'cv:credential_create' %}" class="btn btn-primary btn-sm">
-                    <i class="bi bi-plus-circle"></i> Add Credential
-                </a>
-            </div>
-        {% endif %}
-    </div>
-
-    <!-- Hero Section -->
-    <div class="row mb-5">
-        <div class="col-12 text-center">
-            <div class="card shadow-sm border-0">
-                <div class="card-body py-5">
-                    <h1 class="display-4 text-primary fw-bold mb-3">Syafiq Kay</h1>
-                    <h2 class="h4 text-muted mb-3">MPharm, MRPharmS, GDL</h2>
-                    <p class="lead text-secondary">Pharmacist, Aspiring Barrister, Tech Enthusiast, Lifelong Learner</p>
+<!-- Professional CV Hero Section -->
+<section class="cv-hero">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10 text-center">
+                <div class="cv-hero-content">
+                    <h1 class="cv-hero-title">Professional <span class="text-gradient">Curriculum Vitae</span></h1>
+                    <p class="cv-hero-credentials">MPharm, MRPharmS, GDL</p>
+                    <p class="cv-hero-tagline">
+                        Pharmacist, Aspiring Barrister, Tech Enthusiast, Lifelong Learner.<br>
+                        Building bridges between healthcare, law, and technology.
+                    </p>
+                    
+                    <div class="cv-hero-stats">
+                        <div class="row g-4 justify-content-center">
+                            <div class="col-md-3">
+                                <div class="cv-stat-card">
+                                    <div class="cv-stat-number">{{ credentials.count|default:"5" }}</div>
+                                    <div class="cv-stat-label">Professional Credentials</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="cv-stat-card">
+                                    <div class="cv-stat-number">3</div>
+                                    <div class="cv-stat-label">Core Disciplines</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="cv-stat-card">
+                                    <div class="cv-stat-number">10+</div>
+                                    <div class="cv-stat-label">Years Experience</div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="cv-stat-card">
+                                    <div class="cv-stat-number">∞</div>
+                                    <div class="cv-stat-label">Learning Journey</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="cv-hero-actions">
+                        <a href="#credentials" class="btn-cv-primary me-3">
+                            <i class="fas fa-award me-2"></i>
+                            View Credentials
+                        </a>
+                        {% if user.is_authenticated %}
+                        <div class="dropdown d-inline-block">
+                            <button class="btn-cv-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                <i class="fas fa-cog me-2"></i>Manage CV
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{% url 'cv:credential_create' %}">
+                                    <i class="fas fa-plus me-2"></i>Add Credential
+                                </a></li>
+                                <li><a class="dropdown-item" href="{% url 'cv:credential_list' %}">
+                                    <i class="fas fa-list me-2"></i>Manage Credentials
+                                </a></li>
+                            </ul>
+                        </div>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+</section>
 
-    <!-- Credentials Section -->
-    <div class="row mb-5">
-        <div class="col-12">
-            <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                    <h3 class="card-title mb-0">
-                        <i class="bi bi-award"></i> Professional Credentials
-                    </h3>
-                    {% if user.is_authenticated %}
-                        <a href="{% url 'cv:credential_list' %}" class="btn btn-light btn-sm">
-                            View All
-                        </a>
-                    {% endif %}
-                </div>
-                <div class="card-body">
-                    {% if credentials %}
-                        <div class="row g-3">
-                            {% for credential in credentials %}
-                                <div class="col-md-6 col-lg-4">
-                                    <div class="credential-badge p-3 border rounded bg-light h-100">
-                                        <div class="d-flex align-items-start">
-                                            {% if credential.icon %}
-                                                <div class="me-3">
-                                                    <img src="{% static 'icon/' %}{{ credential.icon }}" 
-                                                         alt="{{ credential.title }} icon" 
-                                                         class="img-fluid" 
-                                                         class="credential-icon-medium"
-                                                         onerror="this.style.display='none'">
-                                                </div>
-                                            {% endif %}
-                                            <div class="flex-grow-1">
-                                                <h6 class="fw-bold text-primary mb-1">{{ credential.title }}</h6>
-                                                <p class="text-muted mb-1 small">{{ credential.institution }}</p>
-                                                <p class="text-secondary mb-0 small">
-                                                    <i class="bi bi-calendar3"></i> 
-                                                    {{ credential.date_obtained|date:"M Y" }}
-                                                </p>
-                                                {% if credential.link %}
-                                                    <a href="{{ credential.link }}" 
-                                                       target="_blank" 
-                                                       class="text-decoration-none small">
-                                                        <i class="bi bi-box-arrow-up-right"></i> View Certificate
-                                                    </a>
-                                                {% endif %}
-                                            </div>
-                                        </div>
-                                        {% if user.is_authenticated %}
-                                            <div class="mt-2 pt-2 border-top">
-                                                <a href="{% url 'cv:credential_detail' credential.pk %}" 
-                                                   class="btn btn-outline-primary btn-sm me-1">
-                                                    <i class="bi bi-eye"></i>
-                                                </a>
-                                                <a href="{% url 'cv:credential_edit' credential.pk %}" 
-                                                   class="btn btn-outline-secondary btn-sm">
-                                                    <i class="bi bi-pencil"></i>
-                                                </a>
-                                            </div>
-                                        {% endif %}
+<!-- CV Main Content -->
+<section class="cv-main">
+    <div class="container">
+        <!-- Credentials Section -->
+        <div class="cv-section" id="credentials">
+            <h2 class="cv-section-title">Professional Credentials</h2>
+            <p class="cv-section-subtitle">Certifications and qualifications that define my expertise across pharmacy, law, and technology</p>
+            
+            {% if credentials %}
+            <div class="row g-4">
+                {% for credential in credentials %}
+                <div class="col-lg-6 col-xl-4">
+                    <div class="cv-card">
+                        <div class="cv-card-header">
+                            {% if credential.icon %}
+                            <div class="d-flex align-items-start mb-3">
+                                <img src="{% static 'icon/' %}{{ credential.icon }}" 
+                                     alt="{{ credential.title }} icon" 
+                                     class="credential-icon me-3"
+                                     style="width: 40px; height: 40px; object-fit: contain;"
+                                     onerror="this.style.display='none'">
+                                <div class="flex-grow-1">
+                                    <h3 class="cv-card-title">{{ credential.title }}</h3>
+                                    <div class="cv-institution">{{ credential.institution }}</div>
+                                    <div class="cv-date">
+                                        <i class="fas fa-calendar-alt me-1"></i>
+                                        {{ credential.date_obtained|date:"M Y" }}
                                     </div>
                                 </div>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        <div class="text-center py-4">
-                            <i class="bi bi-award text-muted award-icon-medium"></i>
-                            <h5 class="text-muted mt-3">No credentials added yet</h5>
-                            {% if user.is_authenticated %}
-                                <p class="text-secondary">Start building your professional profile by adding your first credential.</p>
-                                <a href="{% url 'cv:credential_create' %}" class="btn btn-primary">
-                                    <i class="bi bi-plus-circle"></i> Add Your First Credential
-                                </a>
+                            </div>
                             {% else %}
-                                <p class="text-secondary">Professional credentials will be displayed here.</p>
+                            <h3 class="cv-card-title">{{ credential.title }}</h3>
+                            <div class="cv-institution">{{ credential.institution }}</div>
+                            <div class="cv-date">
+                                <i class="fas fa-calendar-alt me-1"></i>
+                                {{ credential.date_obtained|date:"M Y" }}
+                            </div>
                             {% endif %}
                         </div>
+                        
+                        <div class="cv-card-content">
+                            {% if credential.description %}
+                                <p>{{ credential.description|truncatewords:20 }}</p>
+                            {% endif %}
+                            
+                            <div class="d-flex gap-2 mt-3">
+                                {% if credential.link %}
+                                <a href="{{ credential.link }}" 
+                                   target="_blank" 
+                                   class="btn btn-outline-primary btn-sm">
+                                    <i class="fas fa-external-link-alt me-1"></i> View Certificate
+                                </a>
+                                {% endif %}
+                                
+                                {% if user.is_authenticated %}
+                                <a href="{% url 'cv:credential_detail' credential.pk %}" 
+                                   class="btn btn-outline-secondary btn-sm">
+                                    <i class="fas fa-eye me-1"></i> Details
+                                </a>
+                                <a href="{% url 'cv:credential_edit' credential.pk %}" 
+                                   class="btn btn-outline-info btn-sm">
+                                    <i class="fas fa-edit me-1"></i> Edit
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="text-center py-5">
+                <div class="cv-contact-icon mx-auto mb-3">
+                    <i class="fas fa-award"></i>
+                </div>
+                <h3 class="h4 text-muted mb-3">Professional Credentials</h3>
+                <p class="text-muted mb-4">
+                    {% if user.is_authenticated %}
+                        Start building your professional profile by adding your first credential.
+                    {% else %}
+                        Professional credentials and certifications will be displayed here.
                     {% endif %}
-                </div>
+                </p>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'cv:credential_create' %}" class="btn btn-primary">
+                        <i class="fas fa-plus-circle me-2"></i>Add Your First Credential
+                    </a>
+                {% endif %}
             </div>
+            {% endif %}
         </div>
-    </div>
 
-    <!-- Future Sections Placeholder -->
-    <div class="row mb-5">
-        <div class="col-md-6 mb-4">
-            <div class="card shadow-sm h-100">
-                <div class="card-header bg-secondary text-white">
-                    <h4 class="card-title mb-0">
-                        <i class="bi bi-briefcase"></i> Employment
-                    </h4>
-                </div>
-                <div class="card-body">
-                    <p class="text-muted">Employment section coming soon...</p>
+        <!-- Education Section -->
+        <div class="cv-section">
+            <h2 class="cv-section-title">Education</h2>
+            <p class="cv-section-subtitle">Academic foundation built through rigorous study in pharmaceutical sciences and ongoing legal education</p>
+            
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <div class="cv-card">
+                        <div class="cv-card-header">
+                            <h3 class="cv-card-title">Master of Pharmacy (MPharm)</h3>
+                            <div class="cv-card-meta">
+                                <span class="cv-institution">University of Bradford</span>
+                                <span class="cv-date">2009 - 2013</span>
+                            </div>
+                            <div class="cv-location">
+                                <i class="fas fa-map-marker-alt"></i>
+                                Bradford, United Kingdom
+                            </div>
+                        </div>
+                        <div class="cv-card-content">
+                            <p>Comprehensive pharmaceutical education covering clinical pharmacy, drug development, pharmacology, and patient care.</p>
+                            <ul>
+                                <li>Clinical Pharmacy and Therapeutics</li>
+                                <li>Pharmaceutical Chemistry and Drug Development</li>
+                                <li>Pharmacology and Toxicology</li>
+                                <li>Pharmacy Practice and Patient Care</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="cv-card">
+                        <div class="cv-card-header">
+                            <h3 class="cv-card-title">Bar Professional Training Course (BPTC)</h3>
+                            <div class="cv-card-meta">
+                                <span class="cv-institution">University of Law</span>
+                                <span class="cv-date">2024 - Present</span>
+                            </div>
+                            <div class="cv-location">
+                                <i class="fas fa-map-marker-alt"></i>
+                                London, United Kingdom
+                            </div>
+                        </div>
+                        <div class="cv-card-content">
+                            <p>Pursuing qualification as a barrister with focus on advocacy, legal research, and professional ethics.</p>
+                            <ul>
+                                <li>Civil and Criminal Litigation</li>
+                                <li>Professional Ethics and Advocacy</li>
+                                <li>Legal Research and Opinion Writing</li>
+                                <li>Evidence and Procedure</li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-6 mb-4">
-            <div class="card shadow-sm h-100">
-                <div class="card-header bg-info text-white">
-                    <h4 class="card-title mb-0">
-                        <i class="bi bi-mortarboard"></i> Education
-                    </h4>
+
+        <!-- Professional Skills Section -->
+        <div class="cv-section">
+            <h2 class="cv-section-title">Professional Skills</h2>
+            <p class="cv-section-subtitle">Multidisciplinary expertise combining healthcare knowledge, legal training, and technical proficiency</p>
+            
+            <div class="cv-skills-grid">
+                <div class="cv-skill-category">
+                    <div class="cv-skill-icon">
+                        <i class="fas fa-pills"></i>
+                    </div>
+                    <h4 class="cv-skill-title">Pharmaceutical</h4>
+                    <ul class="cv-skill-list">
+                        <li>Clinical Pharmacy</li>
+                        <li>Drug Development</li>
+                        <li>Regulatory Affairs</li>
+                        <li>Patient Counseling</li>
+                        <li>Medication Safety</li>
+                    </ul>
                 </div>
-                <div class="card-body">
-                    <p class="text-muted">Education section coming soon...</p>
+                
+                <div class="cv-skill-category">
+                    <div class="cv-skill-icon">
+                        <i class="fas fa-balance-scale"></i>
+                    </div>
+                    <h4 class="cv-skill-title">Legal</h4>
+                    <ul class="cv-skill-list">
+                        <li>Legal Research</li>
+                        <li>Case Analysis</li>
+                        <li>Advocacy Skills</li>
+                        <li>Contract Law</li>
+                        <li>Professional Ethics</li>
+                    </ul>
+                </div>
+                
+                <div class="cv-skill-category">
+                    <div class="cv-skill-icon">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <h4 class="cv-skill-title">Technology</h4>
+                    <ul class="cv-skill-list">
+                        <li>Python & Django</li>
+                        <li>JavaScript & React</li>
+                        <li>Database Design</li>
+                        <li>Machine Learning</li>
+                        <li>Web Development</li>
+                    </ul>
+                </div>
+                
+                <div class="cv-skill-category">
+                    <div class="cv-skill-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h4 class="cv-skill-title">Leadership</h4>
+                    <ul class="cv-skill-list">
+                        <li>Team Management</li>
+                        <li>Project Leadership</li>
+                        <li>Training & Mentoring</li>
+                        <li>Strategic Planning</li>
+                        <li>Quality Improvement</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Section -->
+        <div class="cv-section">
+            <h2 class="cv-section-title">Professional Contact</h2>
+            <p class="cv-section-subtitle">Connect for collaboration, opportunities, or professional discussions</p>
+            
+            <div class="cv-contact-grid">
+                <div class="cv-contact-item">
+                    <div class="cv-contact-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div class="cv-contact-label">Email</div>
+                    <div class="cv-contact-value">shimz.khan@email.com</div>
+                </div>
+                
+                <div class="cv-contact-item">
+                    <div class="cv-contact-icon">
+                        <i class="fab fa-linkedin"></i>
+                    </div>
+                    <div class="cv-contact-label">LinkedIn</div>
+                    <div class="cv-contact-value">linkedin.com/in/shimzkhan</div>
+                </div>
+                
+                <div class="cv-contact-item">
+                    <div class="cv-contact-icon">
+                        <i class="fab fa-github"></i>
+                    </div>
+                    <div class="cv-contact-label">GitHub</div>
+                    <div class="cv-contact-value">github.com/shimzkhan</div>
+                </div>
+                
+                <div class="cv-contact-item">
+                    <div class="cv-contact-icon">
+                        <i class="fas fa-phone"></i>
+                    </div>
+                    <div class="cv-contact-label">Phone</div>
+                    <div class="cv-contact-value">+44 (0)123 456 789</div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</section>
 {% endblock %}

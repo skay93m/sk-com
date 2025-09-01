@@ -1,6 +1,10 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/projects.css' %}">
+{% endblock %}
+
 {% block title %}Edit {{ project.title }} - Projects{% endblock %}
 
 {% block content %}
@@ -14,7 +18,7 @@
                 </a>
             </li>
             <li class="breadcrumb-item">
-                <a href="{% url 'projects:project_home' %}" class="text-decoration-none">
+                <a href="{% url 'projects:project_list' %}" class="text-decoration-none">
                     <i class="bi bi-folder"></i> Projects
                 </a>
             </li>
@@ -28,7 +32,7 @@
     </nav>
 
     <div class="row justify-content-center">
-        <div class="col-lg-8">
+        <div class="col-lg-10">
             {% if user.is_authenticated %}
             <div class="card shadow-sm border-0">
                 <div class="card-header bg-warning text-dark">
@@ -41,67 +45,322 @@
                     <form method="post" id="project-edit-form">
                         {% csrf_token %}
                         
-                        <div class="mb-4">
-                            <label for="{{ form.title.id_for_label }}" class="form-label fw-bold">
-                                <i class="bi bi-type me-1"></i>{{ form.title.label }}
-                            </label>
-                            {{ form.title }}
-                            {% if form.title.errors %}
-                                <div class="text-danger mt-1">
-                                    <i class="bi bi-exclamation-triangle me-1"></i>
-                                    {{ form.title.errors.0 }}
+                        <!-- Basic Information Section -->
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="mb-4">
+                                    <label for="{{ form.title.id_for_label }}" class="form-label fw-bold">
+                                        <i class="bi bi-type me-1"></i>{{ form.title.label }}
+                                    </label>
+                                    {{ form.title }}
+                                    {% if form.title.errors %}
+                                        <div class="text-danger mt-1">
+                                            <i class="bi bi-exclamation-triangle me-1"></i>
+                                            {{ form.title.errors.0 }}
+                                        </div>
+                                    {% endif %}
+                                    <div class="form-text">Update the project title</div>
                                 </div>
-                            {% endif %}
-                            <div class="form-text">Update the project title</div>
+                            </div>
+                            
+                            <div class="col-md-4">
+                                <div class="mb-4">
+                                    <label for="{{ form.category.id_for_label }}" class="form-label fw-bold">
+                                        <i class="bi bi-tag me-1"></i>{{ form.category.label }}
+                                    </label>
+                                    {{ form.category }}
+                                    {% if form.category.errors %}
+                                        <div class="text-danger mt-1">
+                                            <i class="bi bi-exclamation-triangle me-1"></i>
+                                            {{ form.category.errors.0 }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
                         </div>
-                        
-                        <div class="mb-4">
-                            <label for="{{ form.category.id_for_label }}" class="form-label fw-bold">
-                                <i class="bi bi-tag me-1"></i>{{ form.category.label }}
-                            </label>
-                            {{ form.category }}
-                            {% if form.category.errors %}
-                                <div class="text-danger mt-1">
-                                    <i class="bi bi-exclamation-triangle me-1"></i>
-                                    {{ form.category.errors.0 }}
+
+                        <!-- Project Overview Section -->
+                        <div class="card mb-4">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0">
+                                    <i class="bi bi-bullseye me-2"></i>Project Overview
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-4">
+                                    <label for="{{ form.purpose.id_for_label }}" class="form-label fw-bold">
+                                        <i class="bi bi-target me-1"></i>{{ form.purpose.label }}
+                                    </label>
+                                    {{ form.purpose }}
+                                    {% if form.purpose.errors %}
+                                        <div class="text-danger mt-1">
+                                            <i class="bi bi-exclamation-triangle me-1"></i>
+                                            {{ form.purpose.errors.0 }}
+                                        </div>
+                                    {% endif %}
+                                    <div class="form-text">{{ form.purpose.help_text }}</div>
                                 </div>
-                            {% endif %}
-                            <div class="form-text">
-                                <div class="row mt-2">
-                                    <div class="col-md-4">
-                                        <small class="text-success">
-                                            <i class="bi bi-lightning-fill me-1"></i>
-                                            <strong>Current:</strong> Active projects
-                                        </small>
+
+                                <div class="mb-4">
+                                    <label for="{{ form.success_criteria.id_for_label }}" class="form-label fw-bold">
+                                        <i class="bi bi-check-circle me-1"></i>{{ form.success_criteria.label }}
+                                    </label>
+                                    {{ form.success_criteria }}
+                                    {% if form.success_criteria.errors %}
+                                        <div class="text-danger mt-1">
+                                            <i class="bi bi-exclamation-triangle me-1"></i>
+                                            {{ form.success_criteria.errors.0 }}
+                                        </div>
+                                    {% endif %}
+                                    <div class="form-text">{{ form.success_criteria.help_text }}</div>
+                                </div>
+
+                                <div class="mb-0">
+                                    <label for="{{ form.description.id_for_label }}" class="form-label fw-bold">
+                                        <i class="bi bi-file-text me-1"></i>{{ form.description.label }}
+                                    </label>
+                                    {{ form.description }}
+                                    {% if form.description.errors %}
+                                        <div class="text-danger mt-1">
+                                            <i class="bi bi-exclamation-triangle me-1"></i>
+                                            {{ form.description.errors.0 }}
+                                        </div>
+                                    {% endif %}
+                                    <div class="form-text">{{ form.description.help_text }}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Key Considerations Section -->
+                        <div class="card mb-4">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0">
+                                    <i class="bi bi-exclamation-triangle me-2"></i>Key Considerations
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-4">
+                                            <label for="{{ form.stakeholders.id_for_label }}" class="form-label fw-bold">
+                                                <i class="bi bi-people me-1"></i>{{ form.stakeholders.label }}
+                                            </label>
+                                            {{ form.stakeholders }}
+                                            {% if form.stakeholders.errors %}
+                                                <div class="text-danger mt-1">
+                                                    <i class="bi bi-exclamation-triangle me-1"></i>
+                                                    {{ form.stakeholders.errors.0 }}
+                                                </div>
+                                            {% endif %}
+                                            <div class="form-text">{{ form.stakeholders.help_text }}</div>
+                                        </div>
                                     </div>
-                                    <div class="col-md-4">
-                                        <small class="text-warning">
-                                            <i class="bi bi-pause-circle me-1"></i>
-                                            <strong>Backburner:</strong> On hold
-                                        </small>
+                                    
+                                    <div class="col-md-6">
+                                        <div class="mb-4">
+                                            <label for="{{ form.constraints.id_for_label }}" class="form-label fw-bold">
+                                                <i class="bi bi-shield me-1"></i>{{ form.constraints.label }}
+                                            </label>
+                                            {{ form.constraints }}
+                                            {% if form.constraints.errors %}
+                                                <div class="text-danger mt-1">
+                                                    <i class="bi bi-exclamation-triangle me-1"></i>
+                                                    {{ form.constraints.errors.0 }}
+                                                </div>
+                                            {% endif %}
+                                            <div class="form-text">{{ form.constraints.help_text }}</div>
+                                        </div>
                                     </div>
-                                    <div class="col-md-4">
-                                        <small class="text-secondary">
-                                            <i class="bi bi-clock me-1"></i>
-                                            <strong>Someday:</strong> Future ideas
-                                        </small>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-4">
+                                            <label for="{{ form.risks.id_for_label }}" class="form-label fw-bold">
+                                                <i class="bi bi-exclamation-diamond me-1"></i>{{ form.risks.label }}
+                                            </label>
+                                            {{ form.risks }}
+                                            {% if form.risks.errors %}
+                                                <div class="text-danger mt-1">
+                                                    <i class="bi bi-exclamation-triangle me-1"></i>
+                                                    {{ form.risks.errors.0 }}
+                                                </div>
+                                            {% endif %}
+                                            <div class="form-text">{{ form.risks.help_text }}</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-6">
+                                        <div class="mb-0">
+                                            <label for="{{ form.dependencies.id_for_label }}" class="form-label fw-bold">
+                                                <i class="bi bi-link me-1"></i>{{ form.dependencies.label }}
+                                            </label>
+                                            {{ form.dependencies }}
+                                            {% if form.dependencies.errors %}
+                                                <div class="text-danger mt-1">
+                                                    <i class="bi bi-exclamation-triangle me-1"></i>
+                                                    {{ form.dependencies.errors.0 }}
+                                                </div>
+                                            {% endif %}
+                                            <div class="form-text">{{ form.dependencies.help_text }}</div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        
-                        <div class="mb-4">
-                            <label for="{{ form.description.id_for_label }}" class="form-label fw-bold">
-                                <i class="bi bi-file-text me-1"></i>{{ form.description.label }}
-                            </label>
-                            {{ form.description }}
-                            {% if form.description.errors %}
-                                <div class="text-danger mt-1">
-                                    <i class="bi bi-exclamation-triangle me-1"></i>
-                                    {{ form.description.errors.0 }}
+
+                        <!-- Resources Section -->
+                        <div class="card mb-4">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0">
+                                    <i class="bi bi-tools me-2"></i>Resources
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-4">
+                                            <label for="{{ form.tools_needed.id_for_label }}" class="form-label fw-bold">
+                                                <i class="bi bi-wrench me-1"></i>{{ form.tools_needed.label }}
+                                            </label>
+                                            {{ form.tools_needed }}
+                                            {% if form.tools_needed.errors %}
+                                                <div class="text-danger mt-1">
+                                                    <i class="bi bi-exclamation-triangle me-1"></i>
+                                                    {{ form.tools_needed.errors.0 }}
+                                                </div>
+                                            {% endif %}
+                                            <div class="form-text">{{ form.tools_needed.help_text }}</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-6">
+                                        <div class="mb-4">
+                                            <label for="{{ form.people_needed.id_for_label }}" class="form-label fw-bold">
+                                                <i class="bi bi-person-plus me-1"></i>{{ form.people_needed.label }}
+                                            </label>
+                                            {{ form.people_needed }}
+                                            {% if form.people_needed.errors %}
+                                                <div class="text-danger mt-1">
+                                                    <i class="bi bi-exclamation-triangle me-1"></i>
+                                                    {{ form.people_needed.errors.0 }}
+                                                </div>
+                                            {% endif %}
+                                            <div class="form-text">{{ form.people_needed.help_text }}</div>
+                                        </div>
+                                    </div>
                                 </div>
-                            {% endif %}
-                            <div class="form-text">{{ form.description.help_text }}</div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-4">
+                                            <label for="{{ form.budget.id_for_label }}" class="form-label fw-bold">
+                                                <i class="bi bi-currency-dollar me-1"></i>{{ form.budget.label }}
+                                            </label>
+                                            {{ form.budget }}
+                                            {% if form.budget.errors %}
+                                                <div class="text-danger mt-1">
+                                                    <i class="bi bi-exclamation-triangle me-1"></i>
+                                                    {{ form.budget.errors.0 }}
+                                                </div>
+                                            {% endif %}
+                                            <div class="form-text">{{ form.budget.help_text }}</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-6">
+                                        <div class="mb-0">
+                                            <label for="{{ form.knowledge_training.id_for_label }}" class="form-label fw-bold">
+                                                <i class="bi bi-book me-1"></i>{{ form.knowledge_training.label }}
+                                            </label>
+                                            {{ form.knowledge_training }}
+                                            {% if form.knowledge_training.errors %}
+                                                <div class="text-danger mt-1">
+                                                    <i class="bi bi-exclamation-triangle me-1"></i>
+                                                    {{ form.knowledge_training.errors.0 }}
+                                                </div>
+                                            {% endif %}
+                                            <div class="form-text">{{ form.knowledge_training.help_text }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tracking & Review Section -->
+                        <div class="card mb-4">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0">
+                                    <i class="bi bi-graph-up me-2"></i>Tracking & Review
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-4">
+                                    <label for="{{ form.progress_checkpoints.id_for_label }}" class="form-label fw-bold">
+                                        <i class="bi bi-check2-square me-1"></i>{{ form.progress_checkpoints.label }}
+                                    </label>
+                                    {{ form.progress_checkpoints }}
+                                    {% if form.progress_checkpoints.errors %}
+                                        <div class="text-danger mt-1">
+                                            <i class="bi bi-exclamation-triangle me-1"></i>
+                                            {{ form.progress_checkpoints.errors.0 }}
+                                        </div>
+                                    {% endif %}
+                                    <div class="form-text">{{ form.progress_checkpoints.help_text }}</div>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label for="{{ form.adjustments_flexibility.id_for_label }}" class="form-label fw-bold">
+                                        <i class="bi bi-arrow-left-right me-1"></i>{{ form.adjustments_flexibility.label }}
+                                    </label>
+                                    {{ form.adjustments_flexibility }}
+                                    {% if form.adjustments_flexibility.errors %}
+                                        <div class="text-danger mt-1">
+                                            <i class="bi bi-exclamation-triangle me-1"></i>
+                                            {{ form.adjustments_flexibility.errors.0 }}
+                                        </div>
+                                    {% endif %}
+                                    <div class="form-text">{{ form.adjustments_flexibility.help_text }}</div>
+                                </div>
+
+                                <div class="mb-0">
+                                    <label for="{{ form.final_review_learnings.id_for_label }}" class="form-label fw-bold">
+                                        <i class="bi bi-lightbulb me-1"></i>{{ form.final_review_learnings.label }}
+                                    </label>
+                                    {{ form.final_review_learnings }}
+                                    {% if form.final_review_learnings.errors %}
+                                        <div class="text-danger mt-1">
+                                            <i class="bi bi-exclamation-triangle me-1"></i>
+                                            {{ form.final_review_learnings.errors.0 }}
+                                        </div>
+                                    {% endif %}
+                                    <div class="form-text">{{ form.final_review_learnings.help_text }}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Project Plan Section -->
+                        <div class="card mb-4">
+                            <div class="card-header bg-light">
+                                <h5 class="mb-0">
+                                    <i class="bi bi-clipboard-check me-2"></i>Project Plan
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-0">
+                                    <label for="{{ form.plan.id_for_label }}" class="form-label fw-bold">
+                                        <i class="bi bi-list-check me-1"></i>{{ form.plan.label }}
+                                    </label>
+                                    {{ form.plan }}
+                                    {% if form.plan.errors %}
+                                        <div class="text-danger mt-1">
+                                            <i class="bi bi-exclamation-triangle me-1"></i>
+                                            {{ form.plan.errors.0 }}
+                                        </div>
+                                    {% endif %}
+                                    <div class="form-text">{{ form.plan.help_text }}</div>
+                                </div>
+                            </div>
                         </div>
 
                         <!-- Project metadata -->

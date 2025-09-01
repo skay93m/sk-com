@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/projects.css' %}">
+{% endblock %}
+
+{% block title %}Delete Task - {{ project.title }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="{% url 'home' %}" class="text-decoration-none">
+                    <i class="bi bi-house-fill"></i> Home
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{% url 'projects:project_list' %}" class="text-decoration-none">
+                    <i class="bi bi-folder"></i> Projects
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{% url 'projects:project_detail' project.pk %}" class="text-decoration-none">
+                    {{ project.title|truncatechars:30 }}
+                </a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">Delete Task</li>
+        </ol>
+    </nav>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-danger text-white">
+                    <h2 class="h4 mb-0">
+                        <i class="bi bi-trash me-2"></i>Delete Task
+                    </h2>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        <strong>Warning:</strong> This action cannot be undone.
+                    </div>
+
+                    <div class="task-details mb-4">
+                        <h5>{{ task.title }}</h5>
+                        {% if task.description %}
+                            <p class="text-muted">{{ task.description }}</p>
+                        {% endif %}
+                        {% if task.milestone %}
+                            <p><i class="bi bi-flag me-1"></i>Milestone: {{ task.milestone.title }}</p>
+                        {% endif %}
+                        <p><i class="bi bi-exclamation-circle me-1"></i>Priority: 
+                            <span class="priority-{{ task.priority }}">{{ task.get_priority_display }}</span>
+                        </p>
+                        <p><i class="bi bi-check-circle me-1"></i>Status: {{ task.get_status_display }}</p>
+                        {% if task.deadline %}
+                            <p><i class="bi bi-calendar me-1"></i>Deadline: {{ task.deadline }}</p>
+                        {% endif %}
+                    </div>
+
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="d-flex gap-3 justify-content-end">
+                            <a href="{% url 'projects:project_detail' project.pk %}" class="btn btn-outline-secondary">
+                                <i class="bi bi-x-circle me-2"></i>Cancel
+                            </a>
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-trash me-2"></i>Delete Task
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

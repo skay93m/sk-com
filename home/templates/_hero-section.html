@@ -3,17 +3,17 @@
     <div class="container">
         <div class="row align-items-center min-vh-75">
             <div class="col-lg-8">
-                <h1 class="display-4 fw-bold mb-3">{{ header }}</h1>
-                <p class="lead mb-4">{{ tagline }}</p>
+                <h1 class="display-4 fw-bold mb-3 text-primary">{{ header }}</h1>
+                <p class="lead mb-4 text-primary" style="opacity: 0.8;">{{ tagline }}</p>
                 <div class="d-flex gap-3 flex-wrap">
-                    <a href="{% url 'cv:cv_main' %}" class="btn btn-outline-dark btn-lg">
-                        <i class="bi bi-file-earmark-person"></i> View CV
+                    <a href="{% url 'cv:cv_main' %}" class="hero-btn">
+                        <i class="bi bi-file-earmark-person me-2"></i> View CV
                     </a>
-                    <a href="{% url 'projects:project_home' %}" class="btn btn-outline-dark btn-lg">
-                        <i class="bi bi-folder"></i> Projects
+                    <a href="{% url 'projects:project_list' %}" class="hero-btn">
+                        <i class="bi bi-folder me-2"></i> Projects
                     </a>
-                    <a href="{% url 'writing:writing_list' %}" class="btn btn-outline-dark btn-lg">
-                        <i class="bi bi-pen"></i> Writing
+                    <a href="{% url 'writing:writing_list' %}" class="hero-btn">
+                        <i class="bi bi-pen me-2"></i> Writing
                     </a>
                 </div>
             </div>
