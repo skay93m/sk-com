@@ -18,4 +18,7 @@ RUN uv sync --frozen
 
 COPY . .
 
+# Collect static files during build
+RUN uv run python manage.py collectstatic --noinput
+
 CMD uv run gunicorn sk.wsgi:application --bind 0.0.0.0:${PORT:-8000}
