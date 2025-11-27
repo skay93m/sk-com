@@ -15,7 +15,6 @@ try:
     from dotenv import load_dotenv
     load_dotenv()
 except ImportError:
-    # dotenv not available in production, which is fine
     pass
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -28,8 +27,6 @@ SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
 DEBUG = os.environ.get("DEBUG", "False") == "True"
 
 ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "").split(",")
-
-# Filter out empty strings from environment variable parsing
 ALLOWED_HOSTS = [host for host in ALLOWED_HOSTS if host.strip()]
 
 # Application definition
@@ -41,13 +38,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'bootstrap5',
-    # 'sk.apps.SkConfig',
     'portfolio',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    # 'whitenoise.middleware.WhiteNoiseMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -55,11 +51,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-
-# Add security middleware for production
-if not DEBUG:
-    # Add additional security middleware in production
-    pass  # SecurityMiddleware is already included
 
 ROOT_URLCONF = 'sk.urls'
 
@@ -82,27 +73,17 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'sk.wsgi.application'
 
-
 # Database
-# https://docs.djangoproject.com/en/5.2/ref/settings/#databases
-
-# Database configuration with PostgreSQL for both development and production
 def get_database_config():
     """
-    Returns PostgreSQL database configuration for both development and production.
-    Priority order:
-    1. DATABASE_URL (production environments like Render, Heroku)
-    2. Manual PostgreSQL configuration with environment variables
-    3. Default PostgreSQL settings for development
+    Returns PostgreSQL database configuration.
+    Priority: DATABASE_URL (Render) → Manual env vars → Defaults
     """
-    
-    # First try DATABASE_URL (for production environments)
     database_url = os.environ.get("DATABASE_URL")
     if database_url:
         import dj_database_url
         return {'default': dj_database_url.parse(database_url)}
     
-    # PostgreSQL configuration (for both dev and production)
     return {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
@@ -119,163 +100,59 @@ def get_database_config():
 
 DATABASES = get_database_config()
 
-# Add connection timeout and retry logic for PostgreSQL
-if DATABASES['default']['ENGINE'] == 'django.db.backends.postgresql':
-    DATABASES['default'].setdefault('OPTIONS', {})
-    DATABASES['default']['OPTIONS'].update({
-        'connect_timeout': 10,
-        # Remove the problematic default_transaction_isolation setting
-    })
-
 # Internationalization
-# https://docs.djangoproject.com/en/5.2/topics/i18n/
-
 LANGUAGE_CODE = 'en-gb'
-
 TIME_ZONE = 'Europe/London'
-
 USE_I18N = True
-
 USE_TZ = True
 
-# British date/time formatting
-USE_L10N = True
 DATE_FORMAT = 'd/m/Y'
 TIME_FORMAT = 'H:i'
 DATETIME_FORMAT = 'd/m/Y H:i'
 SHORT_DATE_FORMAT = 'd/m/Y'
 SHORT_DATETIME_FORMAT = 'd/m/Y H:i'
 
-# Django Messages Configuration
-# Map Django message tags to Bootstrap alert classes
-from django.contrib.messages import constants as messages
-MESSAGE_TAGS = {
-    messages.DEBUG: 'info',
-    messages.INFO: 'info',
-    messages.SUCCESS: 'success',
-    messages.WARNING: 'warning',
-    messages.ERROR: 'danger',
-}
-
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.2/howto/static-files/
-
+# Static files
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    # Global styles first (highest priority)
     os.path.join(BASE_DIR, 'sk', 'static'),
-    # App-specific static files
     os.path.join(BASE_DIR, 'portfolio', 'static'),
 ]
-
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-# Whitenoise configuration for static files
-# Use CompressedStaticFilesStorage instead of CompressedManifestStaticFilesStorage 
-# to avoid manifest entry issues in production
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
-
-# WhiteNoise settings for better performance
 WHITENOISE_USE_FINDERS = os.environ.get("WHITENOISE_USE_FINDERS", "True") == "True"
 WHITENOISE_AUTOREFRESH = os.environ.get("WHITENOISE_AUTOREFRESH", "True") == "True"
 
 # Default primary key field type
-# https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
-
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# HTTPS/SSL Configuration
-# Force HTTPS in production
+# Security
 SECURE_SSL_REDIRECT = os.environ.get("SECURE_SSL_REDIRECT", "False") == "True"
-
-# HSTS (HTTP Strict Transport Security) settings
 SECURE_HSTS_SECONDS = int(os.environ.get("SECURE_HSTS_SECONDS", "0"))
 SECURE_HSTS_INCLUDE_SUBDOMAINS = os.environ.get("SECURE_HSTS_INCLUDE_SUBDOMAINS", "False") == "True"
 SECURE_HSTS_PRELOAD = os.environ.get("SECURE_HSTS_PRELOAD", "False") == "True"
 
-# Secure cookies
 SESSION_COOKIE_SECURE = os.environ.get("SESSION_COOKIE_SECURE", "False") == "True"
 CSRF_COOKIE_SECURE = os.environ.get("CSRF_COOKIE_SECURE", "False") == "True"
 
-# Additional security settings for production
 if not DEBUG and not TESTING:
-    # Force secure settings in production if not explicitly set
     SECURE_SSL_REDIRECT = SECURE_SSL_REDIRECT or True
-    SECURE_HSTS_SECONDS = SECURE_HSTS_SECONDS or 31536000  # 1 year
+    SECURE_HSTS_SECONDS = SECURE_HSTS_SECONDS or 31536000
     SECURE_HSTS_INCLUDE_SUBDOMAINS = SECURE_HSTS_INCLUDE_SUBDOMAINS or True
     SECURE_HSTS_PRELOAD = SECURE_HSTS_PRELOAD or True
     SESSION_COOKIE_SECURE = SESSION_COOKIE_SECURE or True
     CSRF_COOKIE_SECURE = CSRF_COOKIE_SECURE or True
-    
-    # Additional production security
     SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
     SECURE_CROSS_ORIGIN_OPENER_POLICY = 'same-origin'
 
-# Secure proxy headers (important for deployment platforms like Render, Heroku, etc.)
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-
-# Content security settings
 SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_BROWSER_XSS_FILTER = True
 X_FRAME_OPTIONS = 'DENY'
 
-# CSRF Settings
-CSRF_TRUSTED_ORIGINS = []
-
-# Production domains - Update these with your actual domains
-if not DEBUG:
-    CSRF_TRUSTED_ORIGINS.extend([
-        'https://syafiqkay.com',
-        'https://www.syafiqkay.com',
-        # Add your actual production domains here
-    ])
-else:
-    # Development domains
-    CSRF_TRUSTED_ORIGINS.extend([
-        'http://localhost:8000',
-        'http://127.0.0.1:8000',
-        'http://0.0.0.0:8000',
-        'https://localhost:8000',
-        'https://127.0.0.1:8000',
-    ])
-
-# Add environment-specific domains from ALLOWED_HOSTS
-for host in ALLOWED_HOSTS:
-    if host and '*' not in host and host not in ['localhost', '127.0.0.1', '0.0.0.0']:
-        # Add both HTTP and HTTPS for each host
-        if DEBUG:
-            CSRF_TRUSTED_ORIGINS.extend([
-                f'http://{host}',
-                f'https://{host}',
-            ])
-        else:
-            # Production - only HTTPS
-            CSRF_TRUSTED_ORIGINS.append(f'https://{host}')
-
-# Handle wildcard domains (for development environments like Codespaces, Gitpod)
-if DEBUG:
-    for host in ALLOWED_HOSTS:
-        if '*' in host:
-            if '*.gitpod.io' in host:
-                CSRF_TRUSTED_ORIGINS.extend([
-                    'https://*.gitpod.io',
-                    'http://*.gitpod.io',
-                ])
-            if '*.github.dev' in host:
-                CSRF_TRUSTED_ORIGINS.extend([
-                    'https://*.github.dev',
-                    'http://*.github.dev',
-                ])
-            if '*.codespaces.githubusercontent.com' in host:
-                CSRF_TRUSTED_ORIGINS.extend([
-                    'https://*.codespaces.githubusercontent.com',
-                ])
-
-# Login/Logout URLs
-LOGIN_URL = '/admin/login/'
-LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = '/'
-
-# Security Settings
-BLOCK_SUSPICIOUS_REQUESTS = True  # Block requests matching suspicious patterns
+# CSRF
+CSRF_TRUSTED_ORIGINS = [
+    'https://syafiqkay.com',
+    'https://www.syafiqkay.com',
+]
