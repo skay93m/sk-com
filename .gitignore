@@ -15,10 +15,6 @@ __pycache__/
 .env
 .env*
 
-# Django migrations
-**/migrations/*
-!**/migrations/__init__.py
-
 # Media/static files
 static/
 media/
