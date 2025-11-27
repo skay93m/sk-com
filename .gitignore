@@ -23,9 +23,6 @@ media/
 # OS files
 .DS_Store
 
-# Lock files
-uv.lock
-
 # Python virtual environments
 venv/
 .venv/
