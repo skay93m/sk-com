@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- Unifying Statement -->
+<section class="mb-3 text-center">
+    <h1 class="mb-4">Welcome to My Personal Website</h1>
+
+    <p class="lead mx-auto fw-bold">
+        Most people default into careers. I did too. Now I'm testing whether I should have explored first.
+    </p>
+
+    <p class="mx-auto mt-4">
+        At 18, I chose pharmacy because it felt like the "right" credential after medical school rejection. For 15 years, I stayed—good income, respectable career, but something was missing. I never asked: does this actually suit me? Or are there other work contexts where my strengths shine brighter?
+    </p>
+
+    <p class="mx-auto mt-3">
+        This site is what I wish younger me had done before deciding anything: systematic exploration. I'm testing four working identities—pharmacy, law, cybersecurity, and actuary—through real action, not abstract planning. Each identity has an experiment plan (aim, hypothesis, methods) and a live feed showing progress, results, and adjustments.
+    </p>
+
+    <p class="mx-auto mt-3">
+        My current CV lives on LinkedIn. Longer writing goes on Substack. Here, you see the actual work: what I'm building, learning, and deciding whether to pursue further. This is evidence-based career testing. No credentials chasing. Just deliberate exploration.
+    </p>
+</section>
+
+<!-- Working Identities Grid -->
+<section class="row g-4 mb-3">
+    
+    {% for identity in identities %}
+    <div class="col-md-6 col-lg-3">
+        <div class="card h-100 identity-card">
+            <div class="card-header">
+                <h5>{{ identity.get_identity_display }}</h5>
+            </div>
+            <div class="card-body">
+                <h6 class="small">Status</h6>
+                <p class="small">{{ identity.status_text }}</p>
+                <h6 class="small">Latest Entry</h6>
+                <p class="small">{{ identity.latest_entry_text }}</p>
+                <h6 class="small">Next</h6>
+                <p class="small">{{ identity.next_action_text }}</p>
+                <p class="small"><a href="{% url 'portfolio:identity-detail' identity.identity %}">View experiment →</a></p>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+</section>
+
+{% endblock %}
