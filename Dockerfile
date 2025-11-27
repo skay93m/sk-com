@@ -13,9 +13,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends $BUILD_DEPS \
 
 WORKDIR /app
 
-COPY requirements.txt ./
-COPY . .
+COPY pyproject.toml uv.lock ./
+RUN uv sync --frozen
 
-RUN uv sync
+COPY . .
 
 CMD uv run gunicorn sk.wsgi:application --bind 0.0.0.0:${PORT:-8000}
