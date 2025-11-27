@@ -114,10 +114,7 @@ SHORT_DATETIME_FORMAT = 'd/m/Y H:i'
 
 # Static files
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'sk', 'static'),
-    os.path.join(BASE_DIR, 'portfolio', 'static'),
-]
+STATICFILES_DIRS = []
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'

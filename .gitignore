@@ -17,6 +17,7 @@ __pycache__/
 
 # Media/static files
 static/
+staticfiles/
 media/
 
 # OS files
@@ -27,6 +28,7 @@ uv.lock
 
 # Python virtual environments
 venv/
+.venv/
 ENV/
 
 # Coverage reports
