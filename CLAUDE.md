@@ -211,15 +211,19 @@ This project strictly adheres to two fundamental principles:
 ```python
 # BAD - Repeated logic
 def get_pharmacy_latest():
-    return IdentityFeed.objects.filter(working_identity__identity='pharmacy').first()
+    return IdentityFeed.objects.filter(working_identity__identity='pharmacy').latest('date')
 
 def get_law_latest():
-    return IdentityFeed.objects.filter(working_identity__identity='law').first()
+    return IdentityFeed.objects.filter(working_identity__identity='law').latest('date')
 
-# GOOD - DRY principle
+# GOOD - DRY principle (actual implementation in WorkingIdentity model)
 class WorkingIdentity(models.Model):
     def latest_entry(self):
-        return self.feed_entries.first()
+        """Fetch most recent feed entry for this identity"""
+        try:
+            return self.feed_entries.latest('date')
+        except self.feed_entries.model.DoesNotExist:
+            return None
 ```
 
 #### 2. Clean Code
@@ -240,12 +244,11 @@ class WorkingIdentity(models.Model):
 def p():
     return IdentityFeed.objects.filter(wi__i='p').order_by('-d')[:1]
 
-# GOOD - Clean code
+# GOOD - Clean code (as implemented in the WorkingIdentity.latest_entry() method)
 def get_latest_pharmacy_update():
     """Return the most recent feed entry for the pharmacy identity."""
-    return IdentityFeed.objects.filter(
-        working_identity__identity='pharmacy'
-    ).order_by('-date').first()
+    pharmacy = WorkingIdentity.objects.filter(identity='pharmacy').first()
+    return pharmacy.latest_entry() if pharmacy else None
 ```
 
 **Code Review Checklist:**

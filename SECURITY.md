@@ -4,6 +4,8 @@
 **Assessment Date:** 2025-11-28
 **Status:** ✅ APPROVED FOR PUBLIC RELEASE
 
+> **⚠️ POINT-IN-TIME ASSESSMENT NOTE:** This security assessment is valid as of the date shown above. Security posture may change with code updates, dependency upgrades, or configuration changes. Regular reviews are recommended, especially before major feature additions or dependency version bumps. See [Next Review Schedule](#next-review-schedule) section for refresh guidance.
+
 ---
 
 ## Executive Summary
@@ -289,17 +291,24 @@ The codebase contains only information already publicly available on LinkedIn an
 
 **Status: ✅ GOOD**
 
-**Core Dependencies** (see `pyproject.toml`):
-- Django ≥4.0.0 - Latest version with security patches
+**Core Dependencies** (as of assessment date, see `pyproject.toml`):
+- Django ≥4.0.0 - Actively maintained with security patches
 - Gunicorn ≥20.1.0 - Production-ready WSGI server
 - psycopg2-binary ≥2.9.0 - PostgreSQL adapter
 - WhiteNoise ≥6.0.0 - Static file serving
 - All dependencies actively maintained
 
+**Important:** These version constraints allow for updates. Actual installed versions may be newer.
+
 **Recommendation:** ⚠️ Regularly update dependencies for security patches:
 ```bash
-uv sync --upgrade  # Run periodically
+uv sync --upgrade  # Run periodically to get latest patches
 ```
+
+**When to Update:**
+- Monthly: Check for available security patches
+- Immediately: If critical security vulnerabilities are announced
+- Before deployment: Always run tests after updating
 
 ---
 
@@ -459,6 +468,24 @@ Enable GitHub security features:
 
 ---
 
+## Next Review Schedule
+
+**Recommended Review Triggers:**
+- [ ] Before implementing user authentication features
+- [ ] Before adding file upload functionality
+- [ ] Before connecting third-party integrations or APIs
+- [ ] Before major architectural changes
+- [ ] If any critical CVE affects core dependencies (Django, Gunicorn, psycopg2)
+- [ ] Annually as a general best practice
+
+**To Update This Assessment:**
+1. Note the current date
+2. Run through the assessment checklist sections (Secrets, Database, Django Config, etc.)
+3. Check for any new dependency vulnerabilities
+4. Update the assessment date and status
+
+---
+
 ## Conclusion
 
 ### Security Status: ✅ APPROVED FOR PUBLIC RELEASE
@@ -477,5 +504,5 @@ Optional enhancements listed above would further improve security posture but ar
 ---
 
 **Assessment Date:** 2025-11-28
-**Next Review:** Before major architectural changes or user authentication features
 **Assessment Method:** Manual code review and security audit
+**For Updates:** See [Next Review Schedule](#next-review-schedule) section above
