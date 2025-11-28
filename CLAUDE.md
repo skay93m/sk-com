@@ -193,6 +193,69 @@ Represents progress updates for each identity.
 
 ## Code Conventions
 
+### Core Coding Principles
+
+This project strictly adheres to two fundamental principles:
+
+#### 1. DRY (Don't Repeat Yourself)
+**Definition:** Every piece of knowledge should have a single, unambiguous representation in the system.
+
+**Application:**
+- **No duplicate code** - Extract repeated logic into functions/methods/classes
+- **Single source of truth** - Configuration in one place (settings.py, environment variables)
+- **Reusable components** - Template inheritance (base.html → child templates)
+- **Helper methods** - Model methods like `latest_entry()` instead of repeated queries
+- **Django abstractions** - Use Django's built-in features instead of reinventing
+
+**Examples:**
+```python
+# BAD - Repeated logic
+def get_pharmacy_latest():
+    return IdentityFeed.objects.filter(working_identity__identity='pharmacy').first()
+
+def get_law_latest():
+    return IdentityFeed.objects.filter(working_identity__identity='law').first()
+
+# GOOD - DRY principle
+class WorkingIdentity(models.Model):
+    def latest_entry(self):
+        return self.feed_entries.first()
+```
+
+#### 2. Clean Code
+**Definition:** Code that is easy to read, understand, and maintain.
+
+**Principles:**
+- **Meaningful names** - Variables, functions, classes should explain their purpose
+- **Small functions** - Each function does one thing well
+- **Clear intent** - Code reads like well-written prose
+- **No magic numbers** - Use named constants or settings
+- **Proper formatting** - Consistent indentation, spacing, line length
+- **Comments when needed** - Explain why, not what
+- **Error handling** - Graceful degradation and clear error messages
+
+**Examples:**
+```python
+# BAD - Unclear, not clean
+def p():
+    return IdentityFeed.objects.filter(wi__i='p').order_by('-d')[:1]
+
+# GOOD - Clean code
+def get_latest_pharmacy_update():
+    """Return the most recent feed entry for the pharmacy identity."""
+    return IdentityFeed.objects.filter(
+        working_identity__identity='pharmacy'
+    ).order_by('-date').first()
+```
+
+**Code Review Checklist:**
+- [ ] Does this violate DRY? Can it be extracted/reused?
+- [ ] Is the code self-explanatory? Can I understand it in 30 seconds?
+- [ ] Are names descriptive and meaningful?
+- [ ] Is the function/method doing only one thing?
+- [ ] Could a junior developer understand this code?
+- [ ] Is this the simplest solution that works?
+
 ### Django Best Practices
 - **App Organization:** Single 'portfolio' app for main functionality
 - **Template Naming:** Lowercase filenames (e.g., `portfolio.html`, not `Portfolio.html`)
@@ -288,6 +351,91 @@ uv run gunicorn sk.wsgi:application --bind 0.0.0.0:$PORT
 
 ## Git Workflow
 
+### Git Flow Model (Simplified)
+
+This project uses a **simplified Git Flow** workflow without the git-flow package. We use standard git commands to maintain clean branch management.
+
+#### Branch Structure
+
+**Main Branches:**
+- `main` - Production-ready code, always deployable
+- `develop` - Integration branch for features (optional for this small project)
+
+**Supporting Branches:**
+- `feature/*` - New features or enhancements
+- `hotfix/*` - Urgent production fixes
+- `claude/*` - AI assistant work branches
+
+#### Workflow Commands
+
+**Starting a New Feature:**
+```bash
+# Create and switch to feature branch from main
+git checkout main
+git pull origin main
+git checkout -b feature/feature-name
+
+# Do your work, commit changes
+git add .
+git commit -m "feat: add new feature"
+
+# Push feature branch
+git push -u origin feature/feature-name
+
+# When ready, merge to main (or create PR)
+git checkout main
+git merge feature/feature-name
+git push origin main
+
+# Delete feature branch after merge
+git branch -d feature/feature-name
+git push origin --delete feature/feature-name
+```
+
+**Hotfix Workflow:**
+```bash
+# Create hotfix branch from main
+git checkout main
+git checkout -b hotfix/fix-name
+
+# Fix the issue and commit
+git add .
+git commit -m "fix: resolve critical issue"
+
+# Merge back to main
+git checkout main
+git merge hotfix/fix-name
+git push origin main
+
+# Delete hotfix branch
+git branch -d hotfix/fix-name
+git push origin --delete hotfix/fix-name
+```
+
+**AI Assistant Branches:**
+```bash
+# Claude Code creates branches automatically
+# Pattern: claude/<description>-<session-id>
+# These follow the same merge workflow as feature branches
+```
+
+#### Branch Naming Conventions
+
+- `feature/user-authentication` - New features
+- `feature/add-contact-form` - Feature additions
+- `hotfix/fix-login-bug` - Critical fixes
+- `hotfix/security-patch` - Security updates
+- `claude/<description>-<session-id>` - AI assistant work
+
+#### Best Practices
+
+1. **Keep commits atomic** - One logical change per commit
+2. **Pull before push** - Always pull latest changes before pushing
+3. **Delete merged branches** - Clean up after merging
+4. **Never force push to main** - Protect the main branch
+5. **Test before merging** - Ensure all tests pass before merge
+6. **Use meaningful branch names** - Describe what the branch does
+
 ### Conventional Commits
 - **Tool:** Commitizen 4.8.3+
 - **Format:** `<type>: <description>`
@@ -295,7 +443,8 @@ uv run gunicorn sk.wsgi:application --bind 0.0.0.0:$PORT
 - **Version Tags:** `v$version`
 
 ### Branch Naming
-- Feature branches: `claude/<description>-<session-id>`
+- Feature branches: `feature/<description>` or `claude/<description>-<session-id>`
+- Hotfix branches: `hotfix/<description>`
 - Always develop on designated branch
 - Push with: `git push -u origin <branch-name>`
 
@@ -415,12 +564,29 @@ IdentityFeed.objects.create(
 )
 ```
 
+## Security & Privacy
+
+**Status:** ✅ APPROVED FOR PUBLIC RELEASE
+
+This repository has undergone comprehensive security and privacy assessment. See `SECURITY.md` for full details.
+
+**Key Security Features:**
+- No hardcoded secrets or credentials
+- All sensitive configuration via environment variables
+- Django security best practices implemented
+- Strong HTTPS/HSTS/CSRF protection in production
+- Comprehensive .gitignore preventing accidental secret commits
+- Only publicly available information in codebase
+
+**Security Contact:** Report vulnerabilities via GitHub Issues or LinkedIn
+
 ## External Resources
 
 - **LinkedIn CV:** https://www.linkedin.com/in/syafiqkay
 - **Blog:** https://syafiqsspace.substack.com/
 - **Live Site:** https://syafiqkay.com
 - **Admin:** https://syafiqkay.com/admin/
+- **Security Policy:** SECURITY.md
 
 ## Project Philosophy
 
@@ -439,3 +605,5 @@ When making changes, preserve this minimalist philosophy. Only add complexity wh
 **Codebase Version:** 4.0.0
 **Python Version:** 3.13
 **Django Version:** 5.2.4
+**Git Workflow:** Simplified Git Flow
+**Coding Principles:** DRY & Clean Code
