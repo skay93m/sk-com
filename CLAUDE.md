@@ -568,17 +568,11 @@ IdentityFeed.objects.create(
 
 **Status:** ✅ APPROVED FOR PUBLIC RELEASE
 
-This repository has undergone comprehensive security and privacy assessment. See `SECURITY.md` for full details.
+This repository has undergone comprehensive security and privacy assessment. All sensitive configuration is managed via environment variables, Django security best practices are implemented, and only publicly available information is included in the codebase.
 
-**Key Security Features:**
-- No hardcoded secrets or credentials
-- All sensitive configuration via environment variables
-- Django security best practices implemented
-- Strong HTTPS/HSTS/CSRF protection in production
-- Comprehensive .gitignore preventing accidental secret commits
-- Only publicly available information in codebase
+**For complete security details, see:** [`SECURITY.md`](SECURITY.md)
 
-**Security Contact:** Report vulnerabilities via GitHub Issues or LinkedIn
+**Security Contact:** See SECURITY.md for vulnerability reporting procedures.
 
 ## External Resources
 
@@ -586,7 +580,6 @@ This repository has undergone comprehensive security and privacy assessment. See
 - **Blog:** https://syafiqsspace.substack.com/
 - **Live Site:** https://syafiqkay.com
 - **Admin:** https://syafiqkay.com/admin/
-- **Security Policy:** SECURITY.md
 
 ## Project Philosophy
 
