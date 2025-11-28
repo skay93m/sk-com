@@ -4,7 +4,7 @@
 **Assessment Date:** 2025-11-28
 **Status:** ✅ APPROVED FOR PUBLIC RELEASE
 
-> **⚠️ POINT-IN-TIME ASSESSMENT NOTE:** This security assessment is valid as of the date shown above. Security posture may change with code updates, dependency upgrades, or configuration changes. Regular reviews are recommended, especially before major feature additions or dependency version bumps. See [Next Review](#next-review) section for refresh guidance.
+> **⚠️ POINT-IN-TIME ASSESSMENT NOTE:** This security assessment is valid as of the date shown above. Security posture may change with code updates, dependency upgrades, or configuration changes. Regular reviews are recommended, especially before major feature additions or dependency version bumps. See [Next Review Schedule](#next-review-schedule) section for refresh guidance.
 
 ---
 
