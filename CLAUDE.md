@@ -220,7 +220,10 @@ def get_law_latest():
 class WorkingIdentity(models.Model):
     def latest_entry(self):
         """Fetch most recent feed entry for this identity"""
-        return self.feed_entries.latest('date') if self.feed_entries.exists() else None
+        try:
+            return self.feed_entries.latest('date')
+        except self.feed_entries.model.DoesNotExist:
+            return None
 ```
 
 #### 2. Clean Code
@@ -244,8 +247,8 @@ def p():
 # GOOD - Clean code (as implemented in the WorkingIdentity.latest_entry() method)
 def get_latest_pharmacy_update():
     """Return the most recent feed entry for the pharmacy identity."""
-    pharmacy = WorkingIdentity.objects.get(identity='pharmacy')
-    return pharmacy.latest_entry()
+    pharmacy = WorkingIdentity.objects.filter(identity='pharmacy').first()
+    return pharmacy.latest_entry() if pharmacy else None
 ```
 
 **Code Review Checklist:**
