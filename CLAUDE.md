@@ -18,8 +18,9 @@
 
 ### Frontend
 - **Template Engine:** Django Templates
-- **CSS:** Custom minimal CSS (`static/style.css`, ~100 lines)
-- **No Bootstrap, no JavaScript, no external static assets**
+- **CSS:** Bootstrap 5.3.3 via jsDelivr CDN (with SRI hash) + minimal inline styles in `base.html` for social icons and CV entry layout
+- **No JavaScript, no local Bootstrap file**
+- `static/style.css` exists but is empty — Bootstrap handles all layout and typography
 
 ### Key Dependencies
 ```
@@ -88,18 +89,20 @@ Post body in markdown.
 
 ### How Posts Are Served
 
-- `core/posts.py` reads `.md` files at request time — no build step needed
+- `core/posts.py` reads `.md` files once and caches them in memory — no build step needed
 - `get_all_posts()` returns all valid posts sorted by date descending
-- `get_post_by_slug(slug)` returns a single post or `None`
+- `get_post_by_slug(slug)` looks up from the same cache — no double parsing
 - Missing `content/posts/` directory returns `[]`, never raises
 - Individual post URLs: `/writings/<slug>/`
 
 ### Post Metadata Rules
 
-- `title`, `date`, `slug` are required in frontmatter — files missing any are silently skipped
-- `date` must be `YYYY-MM-DD` format
+- `title`, `date`, `slug`, `type` are all required — files missing any field are silently skipped
+- `type` must be `blog` or `article` — any other value causes the file to be silently skipped
+- `date` must be `YYYY-MM-DD` format; YAML date objects and ISO strings are both accepted and normalised to a `date` at parse time
 - `slug` must contain only `[a-zA-Z0-9_-]` (Django's slug URL converter)
 - Filename doesn't matter — slug in frontmatter is the canonical URL
+- Posts are cached in memory after first load — restart the server to pick up new posts in development
 
 ## URL Structure
 
@@ -183,10 +186,10 @@ uv run gunicorn syafiqkay.wsgi:application --bind 0.0.0.0:$PORT
 - **Minimal by design** — do not add complexity that isn't needed
 
 ### Styling
-- All CSS in `static/style.css` — no inline styles, no Bootstrap
-- Single-column layout, max-width 680px
-- Georgia/serif for body, system-ui for nav/dates
-- Monochromatic (black/white/grey)
+
+- Bootstrap 5.3.3 CDN — use Bootstrap utility classes in templates
+- Minimal inline `<style>` block in `base.html` for social icon colours/sizes and CV entry layout
+- `static/style.css` is intentionally empty — do not add custom CSS
 
 ### File Naming
 - Python files: lowercase with underscores
