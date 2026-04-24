@@ -22,6 +22,7 @@ DEBUG = os.environ.get("DEBUG", "False") == "True"
 
 ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "").split(",")
 ALLOWED_HOSTS = [host for host in ALLOWED_HOSTS if host.strip()]
+ALLOWED_HOSTS += [".onrender.com"]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -122,4 +123,5 @@ X_FRAME_OPTIONS = 'DENY'
 CSRF_TRUSTED_ORIGINS = [
     'https://syafiqkay.com',
     'https://www.syafiqkay.com',
+    'https://*.onrender.com',
 ]
