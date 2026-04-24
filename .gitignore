@@ -16,7 +16,6 @@ __pycache__/
 .env*
 
 # Media/static files
-static/
 staticfiles/
 media/
 

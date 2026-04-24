@@ -21,4 +21,4 @@ COPY . .
 # Collect static files during build
 RUN DJANGO_SECRET_KEY=build-only-key uv run python manage.py collectstatic --noinput
 
-CMD uv run gunicorn sk.wsgi:application --bind 0.0.0.0:${PORT:-8000}
+CMD uv run gunicorn syafiqkay.wsgi:application --bind 0.0.0.0:${PORT:-8000}

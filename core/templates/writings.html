@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Writings — Syafiq Kay{% endblock %}
+{% block content %}
+<h1 class="fw-normal mb-4">Writings</h1>
+{% if posts %}
+  <ul class="list-unstyled">
+    {% for post in posts %}
+      <li class="d-flex gap-4 py-1">
+        <span class="text-muted small" style="min-width: 7rem; white-space: nowrap;">{{ post.date|date:"d M Y" }}</span>
+        <a href="{% url 'core:post-detail' post.slug %}" class="text-dark text-decoration-none">{{ post.title }}</a>
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p class="text-muted">No posts yet.</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,330 @@
+{% extends "base.html" %}
+{% block title %}CV — Syafiq Kay{% endblock %}
+{% block content %}
+<h1 class="fw-normal mb-1">Syafiq Kay <small class="text-muted fs-6 fw-normal">MPharm GDL MRCPharm</small></h1>
+
+<section class="mb-4">
+  <p class="text-muted fs-5">{{ bio.tagline }}</p>
+  {% for paragraph in bio.paragraphs %}
+    <p>{{ paragraph }}</p>
+  {% endfor %}
+</section>
+
+<section>
+  <h2 class="text-uppercase small text-muted fw-normal mt-4 mb-3">Credentials</h2>
+  <ol class="list-group list-group-numbered">
+    <li class="list-group-item d-flex justify-content-between align-items-start">
+      <div class="ms-2 me-auto">
+        <div class="fw-bold">IFoA CS1 — Actuarial Statistics</div>
+        Institute and Faculty of Actuaries · Sat April 2026, results pending; CM1 next
+      </div>
+      <span class="badge bg-primary rounded-pill ms-2">ongoing</span>
+    </li>
+    <li class="list-group-item d-flex justify-content-between align-items-start">
+      <div class="ms-2 me-auto">
+        <div class="fw-bold"><a href="https://learn.microsoft.com/en-us/users/syafiq-6230/credentials/8f4c6e983b4b4fe9" class="text-dark">AZ-900: Microsoft Azure Fundamentals</a></div>
+        Microsoft
+      </div>
+      <span class="badge bg-secondary rounded-pill ms-2">2025</span>
+    </li>
+    <li class="list-group-item d-flex justify-content-between align-items-start">
+      <div class="ms-2 me-auto">
+        <div class="fw-bold"><a href="https://learn.microsoft.com/en-us/users/syafiq-6230/credentials/a2783201a6bbca4e" class="text-dark">SC-900: Microsoft Security, Compliance and Identity Fundamentals</a></div>
+        Microsoft
+      </div>
+      <span class="badge bg-secondary rounded-pill ms-2">2025</span>
+    </li>
+    <li class="list-group-item d-flex justify-content-between align-items-start">
+      <div class="ms-2 me-auto">
+        <div class="fw-bold"><a href="https://credentials.corporatefinanceinstitute.com/90fa7ccf-6d65-4f4f-9a77-5f87a582463c#acc.y4ZAdQXP" class="text-dark">Financial Modeling &amp; Valuation Analyst (FMVA)</a></div>
+        Corporate Finance Institute
+      </div>
+      <span class="badge bg-secondary rounded-pill ms-2">2020</span>
+    </li>
+    <li class="list-group-item d-flex justify-content-between align-items-start">
+      <div class="ms-2 me-auto">
+        <div class="fw-bold">Member of the Royal College of Pharmacy (MRCPharm)</div>
+        Royal College of Pharmacy
+      </div>
+      <span class="badge bg-secondary rounded-pill ms-2">2019</span>
+    </li>
+    <li class="list-group-item d-flex justify-content-between align-items-start">
+      <div class="ms-2 me-auto">
+        <div class="fw-bold">GPhC Registered Pharmacist</div>
+        General Pharmaceutical Council · Registration no. 2223051
+      </div>
+      <span class="badge bg-secondary rounded-pill ms-2">2019</span>
+    </li>
+  </ol>
+</section>
+
+<section>
+  <h2 class="text-uppercase small text-muted fw-normal mt-4 mb-3">Experience</h2>
+  <ol class="list-group list-group-numbered">
+    <li class="list-group-item d-flex justify-content-between align-items-start">
+      <div class="ms-2 me-auto">
+        <div class="fw-bold">Pharmacist — Hospital Outpatient</div>
+        Boots UK
+        <ul class="mt-2 mb-0">
+          <li>Delivering hospital outpatient pharmacy services.</li>
+        </ul>
+      </div>
+      <span class="badge bg-primary rounded-pill ms-2">2026–</span>
+    </li>
+    <li class="list-group-item d-flex justify-content-between align-items-start">
+      <div class="ms-2 me-auto">
+        <div class="fw-bold">Pharmacist — Community</div>
+        Boots UK
+        <ul class="mt-2 mb-0">
+          <li>Led full pharmacy operations at Boots Piccadilly Circus: vaccinations (flu, shingles, chickenpox, travel, pneumonia), NHS Pharmacy First clinical pathway, minor illness, urgent supply, contraception service and One You Stop Smoking services.</li>
+          <li>Managed and trained dispensers and pharmacy technicians; handled complex clinical queries escalated from the team.</li>
+          <li>Administered adrenaline to a member of the public experiencing anaphylaxis outside the pharmacy; monitored until handover to paramedics.</li>
+          <li>Built working relationships with local GP surgeries, private clinics, and substance dependency treatment clinics.</li>
+        </ul>
+      </div>
+      <span class="badge bg-secondary rounded-pill ms-2">2019–2026</span>
+    </li>
+    <li class="list-group-item d-flex justify-content-between align-items-start">
+      <div class="ms-2 me-auto">
+        <div class="fw-bold">Locum Pharmacist</div>
+        Self-employed
+        <ul class="mt-2 mb-0">
+          <li>Providing locum cover across community and other pharmacy settings across England.</li>
+          <li>Adapted rapidly to different dispensing systems, team structures, and SOPs across multiple employers.</li>
+          <li>Maintained full clinical and legal responsibility as the responsible pharmacist at each site.</li>
+        </ul>
+      </div>
+      <span class="badge bg-secondary rounded-pill ms-2">2021–2025</span>
+    </li>
+    <li class="list-group-item d-flex justify-content-between align-items-start">
+      <div class="ms-2 me-auto">
+        <div class="fw-bold">Pharmacist — Clinical, Mental Health</div>
+        South London and Maudsley NHS Foundation Trust
+        <ul class="mt-2 mb-0">
+          <li>Delivered clinical pharmacy services to a psychiatric intensive care unit and forensic rehabilitation units, optimising treatment plans for patients with complex mental health conditions including psychosis, depression, and comorbid ADHD.</li>
+          <li>Conducted in-depth medication history reviews through case notes review, patient interview, collateral history taking, and interviewing other related professionals.</li>
+        </ul>
+      </div>
+      <span class="badge bg-secondary rounded-pill ms-2">2023–2024</span>
+    </li>
+    <li class="list-group-item d-flex justify-content-between align-items-start">
+      <div class="ms-2 me-auto">
+        <div class="fw-bold">Multidisciplinary Advocate</div>
+        Rethink Mental Illness
+        <ul class="mt-2 mb-0">
+          <li>Acted as Relevant Person's Representative (RPR), Care Act Advocate, and Independent Mental Capacity Advocate (IMCA).</li>
+          <li>Supported individuals subject to Deprivation of Liberty Safeguards (DoLS); represented clients at Court of Protection proceedings.</li>
+          <li>Provided non-instructed advocacy using rights-based and watching brief models for clients who lacked capacity.</li>
+        </ul>
+      </div>
+      <span class="badge bg-secondary rounded-pill ms-2">2022–2023</span>
+    </li>
+    <li class="list-group-item d-flex justify-content-between align-items-start">
+      <div class="ms-2 me-auto">
+        <div class="fw-bold">Scientist</div>
+        Femtogenix
+        <ul class="mt-2 mb-0">
+          <li>Developed methods to evaluate the efficacy of Femtogenix patent estates, in collaboration with Prof. David Thurston (Chief Scientific Officer), King's College London.</li>
+          <li>Enrolled as a part-time pharmaceutical research student at King's College London as part of the role.</li>
+          <li>Contributed to published research on ADC payloads, including pyrrolobenzodiazepine-based and tubulin-targeting compounds.</li>
+        </ul>
+      </div>
+      <span class="badge bg-secondary rounded-pill ms-2">2018–2019</span>
+    </li>
+    <li class="list-group-item d-flex justify-content-between align-items-start">
+      <div class="ms-2 me-auto">
+        <div class="fw-bold">Operations Administrator</div>
+        Femtogenix
+        <ul class="mt-2 mb-0">
+          <li>Managed all company administration: accounts, board meetings, supplier relationships, invoice reconciliation.</li>
+          <li>Maintained the chemical database and compiled clinical trials intelligence across the antibody-drug conjugate (ADC) market.</li>
+          <li>Supported IP and regulatory documentation; liaised with external legal and scientific advisors on behalf of the company.</li>
+        </ul>
+      </div>
+      <span class="badge bg-secondary rounded-pill ms-2">2017–2020</span>
+    </li>
+    <li class="list-group-item d-flex justify-content-between align-items-start">
+      <div class="ms-2 me-auto">
+        <div class="fw-bold">Pre-registration Pharmacist</div>
+        Crystal Pharmacy
+        <ul class="mt-2 mb-0">
+          <li>Completed GPhC pre-registration training; dispensing, OTC advice, patient referrals, and methadone dispensing.</li>
+          <li>Appointed Privacy Officer for NHS Summary Care Record compliance during the same period.</li>
+          <li>Developed clinical knowledge and patient counselling skills across a high-volume community pharmacy setting.</li>
+        </ul>
+      </div>
+      <span class="badge bg-secondary rounded-pill ms-2">2016–2017</span>
+    </li>
+    <li class="list-group-item d-flex justify-content-between align-items-start">
+      <div class="ms-2 me-auto">
+        <div class="fw-bold">Student Researcher</div>
+        King's College London
+        <ul class="mt-2 mb-0">
+          <li>With Dr David Barlow: developed a computational method for predicting amino acid sequences forming protein hydrophobic cores; taught myself programming to accelerate data collection. Work self-published on ResearchGate.</li>
+          <li>With Dr Paul Jackson: modelled binding of anti-cancer ADC payloads to DNA. This work led to a job offer at Femtogenix post-qualification.</li>
+          <li>Gained early experience in independent scientific research, literature review, and presenting findings to academic supervisors.</li>
+        </ul>
+      </div>
+      <span class="badge bg-secondary rounded-pill ms-2">2014–2015</span>
+    </li>
+  </ol>
+</section>
+
+<section>
+  <h2 class="text-uppercase small text-muted fw-normal mt-4 mb-3">Education</h2>
+  <ol class="list-group list-group-numbered">
+    <li class="list-group-item d-flex justify-content-between align-items-start">
+      <div class="ms-2 me-auto">
+        <div class="fw-bold">PgCert, Pharmacist Independent Prescribing</div>
+        King's College London
+      </div>
+      <span class="badge bg-primary rounded-pill ms-2">2025–2027</span>
+    </li>
+    <li class="list-group-item d-flex justify-content-between align-items-start">
+      <div class="ms-2 me-auto">
+        <div class="fw-bold">MSc, Mental Health Ethics and Law</div>
+        King's College London
+      </div>
+      <span class="badge bg-primary rounded-pill ms-2">2023–2027</span>
+    </li>
+    <li class="list-group-item d-flex justify-content-between align-items-start">
+      <div class="ms-2 me-auto">
+        <div class="fw-bold">Graduate Diploma in Law</div>
+        The University of Law
+      </div>
+      <span class="badge bg-secondary rounded-pill ms-2">2020–2023</span>
+    </li>
+    <li class="list-group-item d-flex justify-content-between align-items-start">
+      <div class="ms-2 me-auto">
+        <div class="fw-bold">MPharm (Master of Pharmacy)</div>
+        King's College London
+      </div>
+      <span class="badge bg-secondary rounded-pill ms-2">2012–2016</span>
+    </li>
+  </ol>
+</section>
+
+<section>
+  <h2 class="text-uppercase small text-muted fw-normal mt-4 mb-3">Publications</h2>
+  <ol class="list-group list-group-numbered">
+    <li class="list-group-item d-flex justify-content-between align-items-start">
+      <div class="ms-2 me-auto">
+        <div class="fw-bold">Colchicine-, Vinblastine-, Taxol- and Eribulin-based Payloads for Antibody–Drug Conjugates (ADCs)</div>
+        Velani A, Kay S, Albone EF, Thurston DE · Book chapter in <em>RSC Drug Discovery</em> · <a href="https://doi.org/10.1039/9781788012898-00117" class="text-dark">DOI: 10.1039/9781788012898-00117</a>
+      </div>
+      <span class="badge bg-secondary rounded-pill ms-2">2019</span>
+    </li>
+    <li class="list-group-item d-flex justify-content-between align-items-start">
+      <div class="ms-2 me-auto">
+        <div class="fw-bold">Use of pyrrolobenzodiazepines and related covalent-binding DNA-interactive molecules as ADC payloads: Is mechanism related to systemic toxicity?</div>
+        Jackson PJM, Kay S, Pysz I, Thurston DE · <em>Drug Discovery Today: Technologies</em> · <a href="https://doi.org/10.1016/j.ddtec.2018.10.004" class="text-dark">DOI: 10.1016/j.ddtec.2018.10.004</a>
+      </div>
+      <span class="badge bg-secondary rounded-pill ms-2">2018</span>
+    </li>
+    <li class="list-group-item d-flex justify-content-between align-items-start">
+      <div class="ms-2 me-auto">
+        <div class="fw-bold">Development of the Method for Amino Acid Sequence Based Predictions of Residues Comprising Protein's Hydrophobic Core</div>
+        Kay S, Barlow DJ · <a href="https://doi.org/10.13140/RG.2.2.21010.45760" class="text-dark">DOI: 10.13140/RG.2.2.21010.45760</a>
+      </div>
+      <span class="badge bg-secondary rounded-pill ms-2">2016</span>
+    </li>
+  </ol>
+</section>
+
+<section>
+  <h2 class="text-uppercase small text-muted fw-normal mt-4 mb-3">Recognition</h2>
+  <ol class="list-group list-group-numbered">
+    <li class="list-group-item d-flex justify-content-between align-items-start">
+      <div class="ms-2 me-auto">
+        <div class="fw-bold">Quarterfinalist &amp; semi-finalist — Commercial Awareness Competition</div>
+        Aspiring Solicitors
+      </div>
+      <span class="badge bg-secondary rounded-pill ms-2">2017–2018</span>
+    </li>
+    <li class="list-group-item d-flex justify-content-between align-items-start">
+      <div class="ms-2 me-auto">
+        <div class="fw-bold">Ones to Watch List</div>
+        Aspiring Solicitors
+      </div>
+      <span class="badge bg-secondary rounded-pill ms-2">2017</span>
+    </li>
+    <li class="list-group-item d-flex justify-content-between align-items-start">
+      <div class="ms-2 me-auto">
+        <div class="fw-bold">National Scholarships</div>
+      </div>
+      <span class="badge bg-secondary rounded-pill ms-2">2010</span>
+    </li>
+  </ol>
+</section>
+
+<section>
+  <h2 class="text-uppercase small text-muted fw-normal mt-4 mb-3">Languages</h2>
+  <ol class="list-group list-group-numbered">
+    <li class="list-group-item d-flex justify-content-between align-items-start">
+      <div class="ms-2 me-auto">
+        <div class="fw-bold">Malay</div>
+        Native
+      </div>
+    </li>
+    <li class="list-group-item d-flex justify-content-between align-items-start">
+      <div class="ms-2 me-auto">
+        <div class="fw-bold">English</div>
+        Fluent
+      </div>
+    </li>
+    <li class="list-group-item d-flex justify-content-between align-items-start">
+      <div class="ms-2 me-auto">
+        <div class="fw-bold">Arabic</div>
+        Basic · actively learning
+      </div>
+    </li>
+    <li class="list-group-item d-flex justify-content-between align-items-start">
+      <div class="ms-2 me-auto">
+        <div class="fw-bold">Mandarin Chinese</div>
+        Basic · actively learning
+      </div>
+    </li>
+    <li class="list-group-item d-flex justify-content-between align-items-start">
+      <div class="ms-2 me-auto">
+        <div class="fw-bold">Japanese</div>
+        Basic · actively learning
+      </div>
+    </li>
+  </ol>
+</section>
+
+<section>
+  <h2 class="text-uppercase small text-muted fw-normal mt-4 mb-3">Active experiments</h2>
+  <p class="text-muted small">Structured career exploration. Each experiment has a defined aim, hypothesis, and method — run in parallel with clinical practice.</p>
+  <ol class="list-group list-group-numbered">
+    <li class="list-group-item d-flex justify-content-between align-items-start">
+      <div class="ms-2 me-auto">
+        <div class="fw-bold">Actuarial science</div>
+        Testing whether my quantitative background and clinical data experience translate to actuarial work. IFoA CS1 sat April 2026, results pending. Exploring actuarial trainee route.
+      </div>
+      <span class="badge bg-primary rounded-pill ms-2">2025–</span>
+    </li>
+    <li class="list-group-item d-flex justify-content-between align-items-start">
+      <div class="ms-2 me-auto">
+        <div class="fw-bold">Cybersecurity</div>
+        Testing fit via hands-on SOC lab work (ELK stack, Cowrie honeypot) and Network+ certification track. Focus on healthcare security contexts.
+      </div>
+      <span class="badge bg-primary rounded-pill ms-2">2025–</span>
+    </li>
+    <li class="list-group-item d-flex justify-content-between align-items-start">
+      <div class="ms-2 me-auto">
+        <div class="fw-bold">Clinical pharmacy specialising in mental health</div>
+        Building deeper expertise in psychopharmacology, mental health law, and medicines optimisation within psychiatric settings — drawing on experience at SLaM and ongoing MSc study in Mental Health Ethics and Law.
+      </div>
+      <span class="badge bg-primary rounded-pill ms-2">2023–</span>
+    </li>
+    <li class="list-group-item d-flex justify-content-between align-items-start">
+      <div class="ms-2 me-auto">
+        <div class="fw-bold">Law</div>
+        Completed GDL. Currently weighing the bar route against the utility of legal knowledge already gained through advocacy and clinical pharmacy practice.
+      </div>
+      <span class="badge bg-primary rounded-pill ms-2">2020–</span>
+    </li>
+  </ol>
+</section>
+{% endblock %}
