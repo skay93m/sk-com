@@ -75,3 +75,30 @@ git push -u origin feature/pagination
 ```
 
 Rule of thumb: content changes (posts, CV) go straight to `main`. Code changes (templates, views, settings) go via a feature branch and pull request.
+
+---
+
+## Projects page (future work)
+
+A dedicated section for active experiments, structured as a lab notebook. Each experiment would have a defined aim, hypothesis, method, and running log of observations — mirroring the scientific method applied to career exploration. This is distinct from the CV's active experiments section: the CV shows the summary, the projects page shows the working notes.
+
+Feature branch: `feature/projects`
+
+---
+
+## Tools page (future work)
+
+A collection of small, self-contained clinical and professional tools accessible from any browser. Each tool lives at `/tools/<tool-name>/` and is built as a Django view with a minimal form and output — no external dependencies, no accounts required.
+
+**Planned tools:**
+
+- **Emergency contraception consultation aid**
+ — takes last menstrual period date, average cycle length, and next expected period; estimates ovulation window; visualises the menstrual cycle with EHC options and their effectiveness windows explained in plain language. Designed to support patient consultations at the counter.
+
+When building a new tool:
+- Add the view to `core/views.py`
+- Add the URL to `core/urls.py` under `tools/<tool-name>/`
+- Add the template to `core/templates/tools/`
+- Any JavaScript needed for visualisation should be minimal and inline — no npm, no build step
+
+Feature branch: `feature/tools`
