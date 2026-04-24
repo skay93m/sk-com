@@ -25,4 +25,4 @@ type: blog
 
 ---
 
-*My original idea drafted with AI assistance. Inspired from Che Det writing style. Edited and approved by Syafiq Kay.*
+*My original idea drafted with AI assistance. Inspired by Che Det writing style. Edited and approved by Syafiq Kay.*
