@@ -11,6 +11,7 @@ from django.conf import settings
 FRONTMATTER_RE = re.compile(r'^---\s*\n(.*?)\n---\s*\n', re.DOTALL)
 
 _cache: Optional[list[dict]] = None
+_projects_cache: Optional[dict] = None  # keyed by slug
 
 
 def _normalise_date(value) -> Optional[date]:
@@ -41,7 +42,7 @@ def _parse_lab_file(path: Path) -> Optional[dict]:
     except yaml.YAMLError:
         return None
 
-    if not all(k in meta for k in ('title', 'date', 'slug', 'type')):
+    if not all(k in meta for k in ('title', 'date', 'slug', 'type', 'project')):
         return None
 
     if str(meta['type']).lower() != 'lab':
@@ -57,11 +58,29 @@ def _parse_lab_file(path: Path) -> Optional[dict]:
         'date': parsed_date,
         'slug': str(meta['slug']),
         'type': 'lab',
+        'project': str(meta['project']),
         'body_html': body_html,
         'tools': list(meta.get('tools') or []),
         'objectives': list(meta.get('objectives') or []),
         'skills': list(meta.get('skills') or []),
     }
+
+
+def _load_projects() -> dict:
+    global _projects_cache
+    if _projects_cache is not None:
+        return _projects_cache
+    path = settings.CONTENT_DIR / 'labs' / 'projects.yaml'
+    if not path.exists():
+        _projects_cache = {}
+        return _projects_cache
+    try:
+        data = yaml.safe_load(path.read_text(encoding='utf-8')) or []
+    except (OSError, yaml.YAMLError):
+        _projects_cache = {}
+        return _projects_cache
+    _projects_cache = {p['slug']: p for p in data if 'slug' in p and 'name' in p}
+    return _projects_cache
 
 
 def _load_labs() -> list[dict]:
@@ -84,3 +103,19 @@ def get_all_labs() -> list[dict]:
 
 def get_lab_by_slug(slug: str) -> Optional[dict]:
     return next((l for l in _load_labs() if l['slug'] == slug), None)
+
+
+def get_labs_grouped_by_project() -> list[dict]:
+    projects = _load_projects()
+    labs = [l for l in _load_labs() if l['project'] in projects]
+
+    grouped: dict = {}
+    for lab in labs:
+        slug = lab['project']
+        if slug not in grouped:
+            grouped[slug] = {**projects[slug], 'labs': [], 'latest_date': None}
+        grouped[slug]['labs'].append(lab)
+        if grouped[slug]['latest_date'] is None or lab['date'] > grouped[slug]['latest_date']:
+            grouped[slug]['latest_date'] = lab['date']
+
+    return sorted(grouped.values(), key=lambda p: p['latest_date'], reverse=True)
