@@ -12,6 +12,10 @@ The user will either:
 
 If it's a file path, read it first. If it's pasted content, treat it as the file body.
 
+If the user provides both a file path and pasted markdown in the same message, stop and
+ask which one to use — do not guess. Proceeding with the wrong source could publish
+stale content.
+
 ## Step 1 — Parse and validate frontmatter
 
 The file must begin with a YAML frontmatter block (`---` ... `---`).
@@ -43,7 +47,9 @@ Required fields:
 - `objectives` — list of learning objectives
 - `skills` — list of skills demonstrated (shown as badges on /labs/)
 
-Known project slugs (read `content/labs/projects.yaml` for the authoritative list):
+Always read `content/labs/projects.yaml` for the authoritative list of valid project slugs.
+The list below is illustrative only and will go out of date as projects are added:
+
 - `comptia-network-plus`
 - `comptia-security-plus`
 - `actuarial-statistics`
