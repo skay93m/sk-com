@@ -4,12 +4,13 @@
 
 **Project Name:** syafiqkay.com (version 4.0.0)
 **Purpose:** Personal index site for Syafiq Kay — content-first, identity-forward. Single place pointing to posts, LinkedIn, and future outputs.
-**Live Site:** https://syafiqkay.com
+**Live Site:** [https://syafiqkay.com](https://syafiqkay.com)
 **Type:** Django web application. No database for content — posts are markdown files in the repo.
 
 ## Technology Stack
 
 ### Backend
+
 - **Python:** 3.13 (see `.python-version`)
 - **Framework:** Django 6.x
 - **WSGI Server:** Gunicorn
@@ -17,13 +18,15 @@
 - **Package Manager:** UV
 
 ### Frontend
+
 - **Template Engine:** Django Templates
 - **CSS:** Bootstrap 5.3.3 via jsDelivr CDN (with SRI hash) + minimal inline styles in `base.html` for social icons and CV entry layout
 - **No JavaScript, no local Bootstrap file**
 - `static/style.css` exists but is empty — Bootstrap handles all layout and typography
 
 ### Key Dependencies
-```
+
+```text
 django>=5.2.4
 markdown>=3.10.2
 pyyaml (via commitizen)
@@ -102,7 +105,8 @@ The CV is a Django template, not a markdown file. Edit `core/templates/cv.html` 
 
 ### Post Metadata Rules
 
-- `title`, `date`, `slug`, `type` are all required — files missing any field are silently skipped
+- `title`, `date`, `slug`, `type`, `author` are all required — files missing any field are silently skipped
+- `author` must be `Syafiq Kay` — used in `<meta name="author">` and `<meta name="citation_author">` for citation tools
 - `type` must be `blog` or `article` — any other value causes the file to be silently skipped (labs use `type: lab` and live in `content/labs/`, not `content/posts/`)
 - `date` must be `YYYY-MM-DD` format; YAML date objects and ISO strings are both accepted and normalised to a `date` at parse time
 - `slug` must contain only `[a-zA-Z0-9_-]` (Django's slug URL converter)
@@ -119,7 +123,8 @@ The CV is a Django template, not a markdown file. Edit `core/templates/cv.html` 
 
 ### Lab Metadata Rules
 
-- `title`, `date`, `slug`, `type`, `project` are all required — any missing field silently skips the file
+- `title`, `date`, `slug`, `type`, `project`, `author` are all required — any missing field silently skips the file
+- `author` must be `Syafiq Kay` — used in `<meta name="author">` and `<meta name="citation_author">` for citation tools
 - `type` must be exactly `lab`
 - `project` must match a slug defined in `content/labs/projects.yaml` — see that file for the current list
 - `tools`, `objectives`, `skills` are optional lists; `skills` values appear as badges on `/labs/`
@@ -134,6 +139,7 @@ date: 2026-05-16
 slug: vlan-segmentation-cisco
 type: lab
 project: comptia-network-plus
+author: Syafiq Kay
 tools:
   - Cisco Packet Tracer
   - Cisco IOS CLI
@@ -218,11 +224,13 @@ Key settings:
 - **Domains:** [sk-website.onrender.com](https://sk-website.onrender.com), [syafiqkay.com](https://syafiqkay.com), [www.syafiqkay.com](https://www.syafiqkay.com)
 
 ### Build Process
+
 1. `pip install uv && uv sync`
 2. `uv run python manage.py migrate`
 3. `uv run python manage.py collectstatic --noinput`
 
 ### Start Command
+
 ```bash
 uv run gunicorn syafiqkay.wsgi:application --bind 0.0.0.0:$PORT
 ```
@@ -242,12 +250,14 @@ uv run gunicorn syafiqkay.wsgi:application --bind 0.0.0.0:$PORT
 - `static/style.css` is intentionally empty — do not add custom CSS
 
 ### File Naming
+
 - Python files: lowercase with underscores
 - Templates: lowercase with underscores
 
 ## Important Notes for AI Assistants
 
 ### Critical Do's
+
 1. **Read files before editing**
 2. **Use `uv run` for all Python commands**
 3. **Use lowercase template names**
@@ -338,6 +348,7 @@ or `git rebase origin/main` on your feature branch. This is normal; feature bran
 diverge and get reconciled at merge time.
 
 ### Conventional Commits
+
 Format: `<type>: <description>`
 Types: feat, fix, docs, style, refactor, test, chore
 

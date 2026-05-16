@@ -11,6 +11,8 @@ from django.conf import settings
 FRONTMATTER_RE = re.compile(r'^---\s*\n(.*?)\n---\s*\n', re.DOTALL)
 
 VALID_TYPES = {'blog', 'article'}
+REQUIRED_AUTHOR = 'Syafiq Kay'
+POST_REQUIRED_FIELDS = ('title', 'date', 'slug', 'type', 'author')
 
 _cache: Optional[list[dict]] = None
 
@@ -43,10 +45,13 @@ def _parse_post_file(path: Path) -> Optional[dict]:
     except yaml.YAMLError:
         return None
 
-    if not all(k in meta for k in ('title', 'date', 'slug', 'type')):
+    if not all(k in meta for k in POST_REQUIRED_FIELDS):
         return None
 
     if str(meta['type']).lower() not in VALID_TYPES:
+        return None
+
+    if str(meta['author']) != REQUIRED_AUTHOR:
         return None
 
     parsed_date = _normalise_date(meta['date'])
@@ -59,6 +64,7 @@ def _parse_post_file(path: Path) -> Optional[dict]:
         'date': parsed_date,
         'slug': str(meta['slug']),
         'type': str(meta['type']).lower(),
+        'author': str(meta['author']),
         'body_html': body_html,
     }
 

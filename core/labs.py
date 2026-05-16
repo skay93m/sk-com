@@ -10,6 +10,9 @@ from django.conf import settings
 
 FRONTMATTER_RE = re.compile(r'^---\s*\n(.*?)\n---\s*\n', re.DOTALL)
 
+REQUIRED_AUTHOR = 'Syafiq Kay'
+LAB_REQUIRED_FIELDS = ('title', 'date', 'slug', 'type', 'project', 'author')
+
 _cache: Optional[list[dict]] = None
 _projects_cache: Optional[dict] = None  # keyed by slug
 
@@ -42,10 +45,13 @@ def _parse_lab_file(path: Path) -> Optional[dict]:
     except yaml.YAMLError:
         return None
 
-    if not all(k in meta for k in ('title', 'date', 'slug', 'type', 'project')):
+    if not all(k in meta for k in LAB_REQUIRED_FIELDS):
         return None
 
     if str(meta['type']).lower() != 'lab':
+        return None
+
+    if str(meta['author']) != REQUIRED_AUTHOR:
         return None
 
     parsed_date = _normalise_date(meta['date'])
@@ -59,6 +65,7 @@ def _parse_lab_file(path: Path) -> Optional[dict]:
         'slug': str(meta['slug']),
         'type': 'lab',
         'project': str(meta['project']),
+        'author': str(meta['author']),
         'body_html': body_html,
         'tools': list(meta.get('tools') or []),
         'objectives': list(meta.get('objectives') or []),

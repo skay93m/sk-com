@@ -1,5 +1,11 @@
 {% extends "base.html" %}
 {% block title %}{{ post.title }} — Syafiq Kay{% endblock %}
+{% block meta %}
+<meta name="author" content="{{ post.author }}">
+<meta name="citation_author" content="{{ post.author }}">
+<meta name="citation_title" content="{{ post.title }}">
+<meta name="citation_date" content="{{ post.date|date:'Y/m/d' }}">
+{% endblock %}
 {% block content %}
 <article>
   <header class="mb-4">
