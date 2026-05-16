@@ -10,7 +10,7 @@ from datetime import date
 
 import pytest
 
-from core.posts import _parse_post_file, get_all_posts, get_post_by_slug
+from core.posts import POST_REQUIRED_FIELDS, _parse_post_file, get_all_posts, get_post_by_slug
 
 
 # ---------------------------------------------------------------------------
@@ -57,7 +57,7 @@ def test_valid_post_is_parsed(tmp_path):
 
 # Concept: boundary condition — what happens when a required field is absent?
 # Each missing field is its own test so failures are easy to diagnose.
-@pytest.mark.parametrize("missing_field", ["title", "date", "slug", "type", "author"])
+@pytest.mark.parametrize("missing_field", POST_REQUIRED_FIELDS)
 def test_post_missing_required_field_returns_none(tmp_path, missing_field):
     lines = [
         "---",
@@ -74,6 +74,13 @@ def test_post_missing_required_field_returns_none(tmp_path, missing_field):
     lines = [l for l in lines if not l.startswith(missing_field + ":")]
     path = make_post_file(tmp_path, "\n".join(lines))
 
+    assert _parse_post_file(path) is None
+
+
+# Concept: value validation — author must be exactly "Syafiq Kay"; any other value is rejected.
+def test_post_wrong_author_returns_none(tmp_path):
+    content = VALID_POST.replace("author: Syafiq Kay", "author: Someone Else")
+    path = make_post_file(tmp_path, content)
     assert _parse_post_file(path) is None
 
 

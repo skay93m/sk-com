@@ -10,6 +10,7 @@ import pytest
 import yaml
 
 from core.labs import (
+    LAB_REQUIRED_FIELDS,
     _parse_lab_file,
     get_all_labs,
     get_lab_by_slug,
@@ -107,7 +108,7 @@ def test_valid_lab_without_optional_fields_is_parsed(tmp_path):
 
 
 # Concept: boundary condition — every required field, including project, must be present.
-@pytest.mark.parametrize("missing_field", ["title", "date", "slug", "type", "project", "author"])
+@pytest.mark.parametrize("missing_field", LAB_REQUIRED_FIELDS)
 def test_lab_missing_required_field_returns_none(tmp_path, missing_field):
     lines = [
         "---",
@@ -124,6 +125,13 @@ def test_lab_missing_required_field_returns_none(tmp_path, missing_field):
     lines = [l for l in lines if not l.startswith(missing_field + ":")]
     path = make_lab_file(tmp_path, "\n".join(lines))
 
+    assert _parse_lab_file(path) is None
+
+
+# Concept: value validation — author must be exactly "Syafiq Kay"; any other value is rejected.
+def test_lab_wrong_author_returns_none(tmp_path):
+    content = VALID_LAB.replace("author: Syafiq Kay", "author: Someone Else")
+    path = make_lab_file(tmp_path, content)
     assert _parse_lab_file(path) is None
 
 
