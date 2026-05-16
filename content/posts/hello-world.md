@@ -3,6 +3,7 @@ title: Hello World
 date: 2026-04-24
 slug: hello-world
 type: blog
+author: Syafiq Kay
 ---
 
 1. I have a website. I have had several versions of it. None of them lasted very long.
