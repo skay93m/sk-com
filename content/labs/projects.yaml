@@ -11,8 +11,8 @@
     Labs covering security fundamentals, threat analysis, and
     defensive techniques studied for CompTIA Security+.
 
-- slug: actuarial-statistics
-  name: Actuarial & Statistics
+- slug: actuarial-science
+  name: Actuarial Science
   description: >
     Data science and statistics projects applied to actuarial
     problems. Mortality modelling, probability, and R/Python
