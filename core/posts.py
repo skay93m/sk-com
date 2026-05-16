@@ -43,7 +43,7 @@ def _parse_post_file(path: Path) -> Optional[dict]:
     except yaml.YAMLError:
         return None
 
-    if not all(k in meta for k in ('title', 'date', 'slug', 'type')):
+    if not all(k in meta for k in ('title', 'date', 'slug', 'type', 'author')):
         return None
 
     if str(meta['type']).lower() not in VALID_TYPES:
@@ -59,6 +59,7 @@ def _parse_post_file(path: Path) -> Optional[dict]:
         'date': parsed_date,
         'slug': str(meta['slug']),
         'type': str(meta['type']).lower(),
+        'author': str(meta['author']),
         'body_html': body_html,
     }
 

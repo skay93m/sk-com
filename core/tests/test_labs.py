@@ -41,6 +41,7 @@ date: 2026-05-16
 slug: vlan-segmentation
 type: lab
 project: comptia-network-plus
+author: Syafiq Kay
 tools:
   - Cisco Packet Tracer
   - Cisco IOS CLI
@@ -64,6 +65,7 @@ date: 2026-05-16
 slug: minimal-lab
 type: lab
 project: comptia-network-plus
+author: Syafiq Kay
 ---
 
 Body.
@@ -84,6 +86,7 @@ def test_valid_lab_with_metadata_is_parsed(tmp_path):
     assert result["slug"] == "vlan-segmentation"
     assert result["type"] == "lab"
     assert result["project"] == "comptia-network-plus"
+    assert result["author"] == "Syafiq Kay"
     assert result["date"] == date(2026, 5, 16)
     assert result["tools"] == ["Cisco Packet Tracer", "Cisco IOS CLI"]
     assert result["objectives"] == ["Configure VLANs 10 and 20", "Verify inter-VLAN isolation"]
@@ -104,7 +107,7 @@ def test_valid_lab_without_optional_fields_is_parsed(tmp_path):
 
 
 # Concept: boundary condition — every required field, including project, must be present.
-@pytest.mark.parametrize("missing_field", ["title", "date", "slug", "type", "project"])
+@pytest.mark.parametrize("missing_field", ["title", "date", "slug", "type", "project", "author"])
 def test_lab_missing_required_field_returns_none(tmp_path, missing_field):
     lines = [
         "---",
@@ -113,6 +116,7 @@ def test_lab_missing_required_field_returns_none(tmp_path, missing_field):
         "slug: vlan-segmentation",
         "type: lab",
         "project: comptia-network-plus",
+        "author: Syafiq Kay",
         "---",
         "",
         "Body.",
@@ -163,6 +167,7 @@ date: {date_str}
 slug: {slug}
 type: lab
 project: {project}
+author: Syafiq Kay
 ---
 
 Body.

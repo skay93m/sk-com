@@ -7,6 +7,7 @@ the user does that themselves after reviewing the branch.
 ## Inputs
 
 The user will either:
+
 - Paste the markdown content directly, or
 - Provide a file path to an existing draft
 
@@ -24,25 +25,30 @@ Extract the frontmatter and check the `type` field to determine what is being pu
 ### Posts (`type: blog` or `type: article`)
 
 Required fields:
-| Field  | Rule |
-|--------|------|
-| `title` | Any non-empty string |
-| `date`  | `YYYY-MM-DD` |
-| `slug`  | Only `[a-zA-Z0-9_-]` — this becomes the URL |
-| `type`  | Must be `blog` or `article` (not `lab`, `draft`, `note`, etc.) |
+
+| Field    | Rule                                                            |
+|----------|-----------------------------------------------------------------|
+| `title`  | Any non-empty string                                            |
+| `date`   | `YYYY-MM-DD`                                                    |
+| `slug`   | Only `[a-zA-Z0-9_-]` — this becomes the URL                    |
+| `type`   | Must be `blog` or `article` (not `lab`, `draft`, `note`, etc.) |
+| `author` | Must be `Syafiq Kay` — used in citation meta tags              |
 
 ### Labs (`type: lab`)
 
 Required fields:
-| Field     | Rule |
-|-----------|------|
-| `title`   | Any non-empty string |
-| `date`    | `YYYY-MM-DD` |
-| `slug`    | Only `[a-zA-Z0-9_-]` |
-| `type`    | Must be `lab` |
+
+| Field     | Rule                                               |
+|-----------|----------------------------------------------------|
+| `title`   | Any non-empty string                               |
+| `date`    | `YYYY-MM-DD`                                       |
+| `slug`    | Only `[a-zA-Z0-9_-]`                              |
+| `type`    | Must be `lab`                                      |
 | `project` | Must match a slug in `content/labs/projects.yaml` |
+| `author`  | Must be `Syafiq Kay` — used in citation meta tags |
 
 **Optional lab fields** (include if present, ignore if absent):
+
 - `tools` — list of tool names used
 - `objectives` — list of learning objectives
 - `skills` — list of skills demonstrated (shown as badges on /labs/)
@@ -87,10 +93,10 @@ Do not branch from the currently checked-out branch — always branch from `orig
 
 ## Step 4 — Write the file
 
-| Type | Destination |
-|------|-------------|
+| Type | Destination               |
+|------|---------------------------|
 | Post | `content/posts/<slug>.md` |
-| Lab  | `content/labs/<slug>.md` |
+| Lab  | `content/labs/<slug>.md`  |
 
 Write the content exactly as provided. Do not alter the frontmatter or body.
 
@@ -105,6 +111,7 @@ git push -u origin post/<slug>             # or lab/<slug>
 Use the `title` value from frontmatter in the commit message.
 
 Do NOT:
+
 - Stage anything other than the single content file
 - Push to main
 - Create a pull request
@@ -113,6 +120,7 @@ Do NOT:
 ## Step 6 — Report back
 
 Tell the user:
+
 - Branch name (e.g. `post/hello-world`)
 - File written (e.g. `content/posts/hello-world.md`)
 - The URL it will appear at once merged (e.g. `/writings/hello-world/` or `/labs/hello-world/`)
@@ -129,6 +137,7 @@ A file that violates them will be silently skipped — it will not appear on the
 - **Labs directory:** `content/labs/` — served at `/labs/<slug>/`
 - **Allowed post types:** `blog`, `article` — `draft`, `note`, `lab`, or anything else is skipped
 - **Lab type:** must be exactly `lab`
+- **Author:** required on all posts and labs; must be `Syafiq Kay`
 - **Lab project:** must match a slug in `content/labs/projects.yaml` — unknown slugs are excluded from `/labs/` grouping
 - **Date:** parsed as `date` object; strings and YAML dates both accepted; invalid dates silently skip the file
 - **Slug:** used as-is in the URL; Django's slug URL converter requires `[a-zA-Z0-9_-]`

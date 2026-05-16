@@ -42,7 +42,7 @@ def _parse_lab_file(path: Path) -> Optional[dict]:
     except yaml.YAMLError:
         return None
 
-    if not all(k in meta for k in ('title', 'date', 'slug', 'type', 'project')):
+    if not all(k in meta for k in ('title', 'date', 'slug', 'type', 'project', 'author')):
         return None
 
     if str(meta['type']).lower() != 'lab':
@@ -59,6 +59,7 @@ def _parse_lab_file(path: Path) -> Optional[dict]:
         'slug': str(meta['slug']),
         'type': 'lab',
         'project': str(meta['project']),
+        'author': str(meta['author']),
         'body_html': body_html,
         'tools': list(meta.get('tools') or []),
         'objectives': list(meta.get('objectives') or []),
