@@ -50,7 +50,7 @@ sk-com/
 │   ├── wsgi.py
 │   └── asgi.py
 ├── core/                   # Single Django app
-│   ├── views.py            # HomeView, WritingsView, PostDetailView, CVView, ContactView, RobotsTxtView
+│   ├── views.py            # HomeView, WritingsView, PostDetailView, CVView, LabsView, LabDetailView, RobotsTxtView
 │   ├── urls.py             # App-level URL routing
 │   ├── posts.py            # Markdown post loader utility
 │   ├── apps.py
