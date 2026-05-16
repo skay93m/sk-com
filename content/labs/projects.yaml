@@ -1,0 +1,26 @@
+- slug: comptia-network-plus
+  name: CompTIA Network+
+  description: >
+    Hands-on labs built while studying for CompTIA Network+.
+    Covers subnetting, VLANs, routing protocols, and network
+    troubleshooting using Cisco Packet Tracer.
+
+- slug: comptia-security-plus
+  name: CompTIA Security+
+  description: >
+    Labs covering security fundamentals, threat analysis, and
+    defensive techniques studied for CompTIA Security+.
+
+- slug: actuarial-statistics
+  name: Actuarial & Statistics
+  description: >
+    Data science and statistics projects applied to actuarial
+    problems. Mortality modelling, probability, and R/Python
+    worked examples.
+
+- slug: clinical-pharmacy
+  name: Clinical Pharmacy
+  description: >
+    Applied clinical cases and prescribing exercises from
+    independent prescriber training and mental health pharmacy
+    practice.

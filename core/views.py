@@ -5,6 +5,7 @@ from django.views.generic import TemplateView, View
 from django.conf import settings
 
 from .posts import get_all_posts, get_post_by_slug
+from .labs import get_all_labs, get_lab_by_slug, get_labs_grouped_by_project
 
 
 class HomeView(TemplateView):
@@ -39,6 +40,27 @@ class PostDetailView(TemplateView):
 
 class CVView(TemplateView):
     template_name = 'cv.html'
+
+
+class LabsView(TemplateView):
+    template_name = 'labs.html'
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx['projects'] = get_labs_grouped_by_project()
+        return ctx
+
+
+class LabDetailView(TemplateView):
+    template_name = 'lab.html'
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        lab = get_lab_by_slug(self.kwargs['slug'])
+        if lab is None:
+            raise Http404
+        ctx['lab'] = lab
+        return ctx
 
 
 @method_decorator(cache_control(max_age=86400), name='dispatch')

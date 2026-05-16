@@ -16,7 +16,11 @@ except ImportError:
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
+SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY") or (
+    "test-only-not-for-production" if TESTING else None
+)
+if not SECRET_KEY:
+    raise KeyError("DJANGO_SECRET_KEY environment variable is required")
 
 DEBUG = os.environ.get("DEBUG", "False") == "True"
 
