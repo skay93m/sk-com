@@ -5,7 +5,7 @@ slug: controlled-drugs-indelible-ink
 type: blog
 ---
 
-1. The short answer is that the law said so. Section 15 of the Misuse of Drugs Regulations 2001.
+1. The short answer is section 15 of the Misuse of Drugs Regulations 2001.
 
 2. However, this should not be the case. Technology has advanced to the point that makes this law obsolete. We are now using digital prescriptions for all medicines but controlled drug. It solved many problems and make healthcare more accessible.
 
