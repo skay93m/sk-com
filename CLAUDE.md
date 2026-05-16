@@ -72,25 +72,25 @@ sk-com/
 └── staticfiles/            # collectstatic output (gitignored)
 ```
 
-## Post System
+## Content System
 
-### Adding a Post
+### Publishing new content
 
-1. Create a `.md` file in `content/posts/`
-2. Add YAML frontmatter at the top:
+Use the `/publish` command — pass a file path or paste the markdown directly. It validates frontmatter, creates the correct branch (`post/<slug>` or `lab/<slug>`), writes the file, commits, and pushes. You then review and merge the PR yourself.
 
-```markdown
----
-title: Your Post Title
-date: 2026-04-24
-slug: your-post-slug
-type: blog
----
-
-Post body in markdown.
+```text
+/publish path/to/draft.md
 ```
 
-1. Commit and push — Render auto-deploys.
+See `.claude/commands/publish.md` for full field rules and validation behaviour.
+
+### Editing existing content
+
+Open the `.md` file in `content/posts/` or `content/labs/`, make your edits, then commit on a feature branch and open a PR. **Do not change the `slug`** — it is the URL and changing it breaks existing links.
+
+### CV updates
+
+The CV is a Django template, not a markdown file. Edit `core/templates/cv.html` directly. For the bio paragraph (shown on homepage and CV), edit `core/context_processors.py`.
 
 ### How Posts Are Served
 
@@ -108,6 +108,48 @@ Post body in markdown.
 - `slug` must contain only `[a-zA-Z0-9_-]` (Django's slug URL converter)
 - Filename doesn't matter — slug in frontmatter is the canonical URL
 - Posts are cached in memory after first load — restart the server to pick up new posts in development
+
+### How Labs Are Served
+
+- `core/labs.py` reads `.md` files from `content/labs/` and caches them in memory
+- `get_labs_grouped_by_project()` groups labs by their `project` slug, sorted by most recent lab per project
+- Project metadata (name, description) comes from `content/labs/projects.yaml`
+- Labs whose `project` slug is not in `projects.yaml` are excluded from `/labs/` — they are silently skipped at grouping time
+- Individual lab URLs: `/labs/<slug>/`
+
+### Lab Metadata Rules
+
+- `title`, `date`, `slug`, `type`, `project` are all required — any missing field silently skips the file
+- `type` must be exactly `lab`
+- `project` must match a slug defined in `content/labs/projects.yaml` — see that file for the current list
+- `tools`, `objectives`, `skills` are optional lists; `skills` values appear as badges on `/labs/`
+- **Do not change `slug` after publishing** — it is the URL
+
+### Lab frontmatter example
+
+```markdown
+---
+title: VLAN Segmentation on a Cisco Switch
+date: 2026-05-16
+slug: vlan-segmentation-cisco
+type: lab
+project: comptia-network-plus
+tools:
+  - Cisco Packet Tracer
+  - Cisco IOS CLI
+objectives:
+  - Configure VLANs 10, 20, 30 on a 2960 switch
+skills:
+  - VLANs
+  - Cisco IOS
+---
+```
+
+### Lab static assets
+
+Topology images and downloadable files (e.g. `.pkt`) live in `static/labs/<slug>/`.
+Reference them in the lab body as `/static/labs/<slug>/topology.png`. Create the folder
+manually alongside the lab file — the `/publish` command does not create it.
 
 ## URL Structure
 
@@ -128,7 +170,7 @@ All views are in `core/views.py`. All class-based (`TemplateView` or `View`).
 
 - `HomeView` / `WritingsView` — pass `get_all_posts()` as context
 - `PostDetailView` — calls `get_post_by_slug(slug)`, raises `Http404` if not found
-- `LabsView` — passes `get_all_labs()` as context
+- `LabsView` — passes `get_labs_grouped_by_project()` as `projects` context
 - `LabDetailView` — calls `get_lab_by_slug(slug)`, raises `Http404` if not found
 - `CVView` — bare TemplateView, no extra context
 - `RobotsTxtView` — reads `robots.txt` from `BASE_DIR`, falls back to hardcoded default
@@ -222,11 +264,30 @@ uv run gunicorn syafiqkay.wsgi:application --bind 0.0.0.0:$PORT
 
 ### When Making Changes
 
-1. **Adding a post:** create `.md` file in `content/posts/` with frontmatter (`title`, `date`, `slug`, `type: blog|article`)
-2. **Adding a lab:** create `.md` file in `content/labs/` with frontmatter (`title`, `date`, `slug`, `type: lab`) — optional: `tools`, `objectives`, `skills`
-3. **Changing layout structure:** edit `core/templates/base.html`
-4. **Adding a new page/route:** add view in `core/views.py`, URL in `core/urls.py`, template in `core/templates/`
-5. **Changing post/lab rendering:** edit `core/posts.py` (`_parse_post_file`) or `core/labs.py` (`_parse_lab_file`)
+1. **Adding a post or lab:** use the `/publish` command — pass a file path or paste the markdown content directly:
+
+   ```text
+   /publish <path-to-draft.md>
+   ```
+
+   or
+
+   ```text
+   /publish
+   ---
+   title: My Post
+   ...
+   ---
+   Body here.
+   ```
+
+   The command validates frontmatter, creates the correct branch, writes the file, and pushes. See `.claude/commands/publish.md` for full rules.
+2. **Editing an existing post or lab:** edit the `.md` file directly, commit on a feature branch, open a PR. Do not change the `slug`.
+3. **Updating the CV:** edit `core/templates/cv.html`; for the bio paragraph edit `core/context_processors.py`
+4. **Changing layout structure:** edit `core/templates/base.html`
+5. **Adding a new page/route:** add view in `core/views.py`, URL in `core/urls.py`, template in `core/templates/`
+6. **Changing post/lab rendering:** edit `core/posts.py` (`_parse_post_file`) or `core/labs.py` (`_parse_lab_file`)
+7. **Adding a new project category for labs:** add an entry to `content/labs/projects.yaml`
 
 ## Environment Variables
 
@@ -279,6 +340,17 @@ diverge and get reconciled at merge time.
 ### Conventional Commits
 Format: `<type>: <description>`
 Types: feat, fix, docs, style, refactor, test, chore
+
+## Future Work (Backlog)
+
+These are planned features. Do not implement unless explicitly asked.
+
+- **CV content from file** — refactor `cv.html` so each section is driven by `content/config/cv.yaml` rather than hardcoded HTML
+- **Bio from file** — `content/config/bio.yaml` replaces hardcoded bio in `core/context_processors.py`
+- **Dedicated project page** — `/labs/project/<slug>/` with full project description and all its labs
+- **Pagination** — for the writings list once it grows long enough; feature branch `feature/pagination`
+- **Projects page** — `/projects/` as a lab notebook: each experiment with aim, hypothesis, method, and running observations. Distinct from CV; feature branch `feature/projects`
+- **Tools page** — `/tools/<tool-name>/` for small self-contained clinical/professional tools (Django view + minimal form, no npm, no external JS). First planned tool: emergency contraception consultation aid. Feature branch `feature/tools`
 
 ---
 
