@@ -247,12 +247,34 @@ uv run gunicorn syafiqkay.wsgi:application --bind 0.0.0.0:$PORT
 
 ## Git Workflow
 
-Simplified Git Flow — same as before:
+Simplified Git Flow:
 
-- `main` — production-ready
+- `main` — production-ready; **Render deploys immediately on every push to main**
 - `feature/*` — new features
 - `hotfix/*` — urgent fixes
 - `claude/*` — AI assistant work
+- `post/<slug>` — individual blog post or article (used by `/publish` command)
+- `lab/<slug>` — individual lab write-up (used by `/publish` command)
+
+### CRITICAL: Never push directly to main
+
+Every change to main must go through a GitHub pull request — no exceptions.
+Pushing directly to main triggers an immediate production deploy with no review gate.
+
+**Correct workflow:**
+
+1. Work on a feature branch
+2. `git push -u origin feature/<name>`
+3. Create a PR on GitHub (`gh pr create` or via web)
+4. Review the diff on GitHub before merging
+5. Merge via GitHub web UI — this is what triggers the Render deploy
+6. Locally: `git checkout main && git pull` to sync
+7. Branch next feature from the updated main: `git checkout -b feature/<next> origin/main`
+
+**If main advances while your PR branch is behind:** GitHub shows an "Update branch"
+button on the PR — click it to merge latest main in. Locally: `git merge origin/main`
+or `git rebase origin/main` on your feature branch. This is normal; feature branches
+diverge and get reconciled at merge time.
 
 ### Conventional Commits
 Format: `<type>: <description>`
