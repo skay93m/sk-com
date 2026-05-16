@@ -31,6 +31,7 @@ gunicorn
 whitenoise
 python-dotenv
 pytest
+pytest-django
 commitizen
 ```
 
@@ -55,16 +56,19 @@ sk-com/
 │   ├── posts.py            # Markdown post loader utility
 │   ├── apps.py
 │   └── templates/
-│       ├── base.html       # Base template (nav, footer, CSS link)
-│       ├── index.html      # Homepage (bio + post list)
+│       ├── base.html       # Base template (nav, footer, Bootstrap CDN)
+│       ├── index.html      # Homepage (bio + post list + social links)
 │       ├── writings.html   # Full post archive
 │       ├── post.html       # Individual post
-│       ├── cv.html         # CV page (placeholder)
-│       └── contact.html    # Contact page (mailto link)
+│       ├── cv.html         # CV page
+│       ├── labs.html       # Lab listing
+│       └── lab.html        # Individual lab
 ├── content/
-│   └── posts/              # Markdown posts (.md files with YAML frontmatter)
+│   ├── posts/              # Markdown posts (.md files with YAML frontmatter)
+│   └── labs/               # Markdown lab write-ups (Network+, tools, experiments)
 ├── static/
-│   └── style.css           # All site CSS (~100 lines)
+│   ├── style.css           # Intentionally empty — Bootstrap 5.3.3 CDN handles all styling
+│   └── labs/               # Lab topology images and downloadable assets (e.g. .pkt files)
 └── staticfiles/            # collectstatic output (gitignored)
 ```
 
@@ -80,6 +84,7 @@ sk-com/
 title: Your Post Title
 date: 2026-04-24
 slug: your-post-slug
+type: blog
 ---
 
 Post body in markdown.
@@ -98,7 +103,7 @@ Post body in markdown.
 ### Post Metadata Rules
 
 - `title`, `date`, `slug`, `type` are all required — files missing any field are silently skipped
-- `type` must be `blog` or `article` — any other value causes the file to be silently skipped
+- `type` must be `blog` or `article` — any other value causes the file to be silently skipped (labs use `type: lab` and live in `content/labs/`, not `content/posts/`)
 - `date` must be `YYYY-MM-DD` format; YAML date objects and ISO strings are both accepted and normalised to a `date` at parse time
 - `slug` must contain only `[a-zA-Z0-9_-]` (Django's slug URL converter)
 - Filename doesn't matter — slug in frontmatter is the canonical URL
@@ -108,11 +113,12 @@ Post body in markdown.
 
 | Route | View | Purpose |
 | --- | --- | --- |
-| `/` | HomeView | Bio + post list |
+| `/` | HomeView | Bio + post list + social links |
 | `/writings/` | WritingsView | Full post archive |
 | `/writings/<slug>/` | PostDetailView | Individual post |
 | `/cv/` | CVView | CV page |
-| `/contact/` | ContactView | mailto link |
+| `/labs/` | LabsView | Lab write-up listing |
+| `/labs/<slug>/` | LabDetailView | Individual lab |
 | `/admin/` | Django admin | Admin interface |
 | `/robots.txt` | RobotsTxtView | Search robots |
 
@@ -122,7 +128,9 @@ All views are in `core/views.py`. All class-based (`TemplateView` or `View`).
 
 - `HomeView` / `WritingsView` — pass `get_all_posts()` as context
 - `PostDetailView` — calls `get_post_by_slug(slug)`, raises `Http404` if not found
-- `CVView`, `ContactView` — bare TemplateView, no extra context
+- `LabsView` — passes `get_all_labs()` as context
+- `LabDetailView` — calls `get_lab_by_slug(slug)`, raises `Http404` if not found
+- `CVView` — bare TemplateView, no extra context
 - `RobotsTxtView` — reads `robots.txt` from `BASE_DIR`, falls back to hardcoded default
 
 ## Development Workflows
@@ -214,11 +222,11 @@ uv run gunicorn syafiqkay.wsgi:application --bind 0.0.0.0:$PORT
 
 ### When Making Changes
 
-1. **Adding a post:** create `.md` file in `content/posts/` with frontmatter
-2. **Changing site design:** edit `static/style.css` only
+1. **Adding a post:** create `.md` file in `content/posts/` with frontmatter (`title`, `date`, `slug`, `type: blog|article`)
+2. **Adding a lab:** create `.md` file in `content/labs/` with frontmatter (`title`, `date`, `slug`, `type: lab`) — optional: `tools`, `objectives`, `skills`
 3. **Changing layout structure:** edit `core/templates/base.html`
 4. **Adding a new page/route:** add view in `core/views.py`, URL in `core/urls.py`, template in `core/templates/`
-5. **Changing post rendering:** edit `core/posts.py` (`_parse_post_file`)
+5. **Changing post/lab rendering:** edit `core/posts.py` (`_parse_post_file`) or `core/labs.py` (`_parse_lab_file`)
 
 ## Environment Variables
 
@@ -252,7 +260,7 @@ Types: feat, fix, docs, style, refactor, test, chore
 
 ---
 
-**Last Updated:** 2026-04-24
+**Last Updated:** 2026-05-16
 **Architecture:** Django + Markdown files, no content DB
 **Python Version:** 3.13
 **Django Version:** 6.x

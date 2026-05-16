@@ -63,6 +63,60 @@ For bio text (the paragraph that appears on both the homepage and CV), edit `cor
 
 ---
 
+## New lab
+
+Labs are network/security write-ups published at `/labs/<slug>/`. They follow the same publish-by-push workflow as posts but live in a separate directory and support additional metadata fields.
+
+1. Export your topology diagram from Cisco Packet Tracer: **File → Export → As Image**
+2. Save the image to `static/labs/<your-slug>/topology.png` (create the folder if needed)
+3. Optionally save the `.pkt` file to `static/labs/<your-slug>/lab.pkt` for recruiters to download
+4. Create a `.md` file in `content/labs/`:
+
+```markdown
+---
+title: VLAN Segmentation on a Cisco Switch
+date: 2026-05-16
+slug: vlan-segmentation-cisco
+type: lab
+tools:
+  - Cisco Packet Tracer
+  - Cisco IOS CLI
+objectives:
+  - Configure VLANs 10, 20, 30 on a 2960 switch
+  - Verify inter-VLAN isolation
+skills:
+  - VLANs
+  - Cisco IOS
+  - Network segmentation
+---
+
+## Topology
+
+![Network topology](/static/labs/vlan-segmentation-cisco/topology.png)
+
+## Overview
+
+Write your explanation here in markdown.
+```
+
+**Field rules:**
+- `title`, `date`, `slug`, `type: lab` are all **required** — any missing field silently skips the file
+- `tools`, `objectives`, `skills` are **optional** lists — omit any you don't need
+- `slug` must be `[a-zA-Z0-9_-]` only and matches the folder name under `static/labs/`
+- Do **not** change `slug` after publishing — it will break the URL
+
+5. Commit and push:
+
+```bash
+git add content/labs/your-filename.md static/labs/your-slug/
+git commit -m "feat: add lab — Your Lab Title"
+git push
+```
+
+Render redeploys automatically. Lab is live in 2–3 minutes at `/labs/<slug>/`.
+
+---
+
 ## Pagination (future work)
 
 When the post list grows long enough to need pagination, this is a **feature branch** — it touches views, templates, and URL structure.

@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}{{ lab.title }} — Labs — Syafiq Kay{% endblock %}
+{% block content %}
+<article>
+  <header class="mb-4">
+    <h1 class="fw-normal">{{ lab.title }}</h1>
+    <time class="text-muted small" datetime="{{ lab.date|date:'Y-m-d' }}">{{ lab.date|date:"d F Y" }}</time>
+
+    {% if lab.skills %}
+      <div class="mt-2">
+        {% for skill in lab.skills %}
+          <span class="badge text-bg-light border me-1 fw-normal">{{ skill }}</span>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </header>
+
+  {% if lab.objectives or lab.tools %}
+    <div class="row g-4 mb-4">
+      {% if lab.objectives %}
+        <div class="col-sm-7">
+          <h2 class="h6 text-uppercase text-muted fw-normal mb-2">Objectives</h2>
+          <ul class="mb-0 ps-3">
+            {% for obj in lab.objectives %}
+              <li>{{ obj }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
+      {% if lab.tools %}
+        <div class="col-sm-5">
+          <h2 class="h6 text-uppercase text-muted fw-normal mb-2">Tools</h2>
+          <ul class="mb-0 ps-3">
+            {% for tool in lab.tools %}
+              <li>{{ tool }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+      {% endif %}
+    </div>
+  {% endif %}
+
+  <div>
+    {{ lab.body_html|safe }}
+  </div>
+</article>
+<p class="mt-4"><a href="{% url 'core:labs' %}" class="text-muted text-decoration-none">← All labs</a></p>
+{% endblock %}
