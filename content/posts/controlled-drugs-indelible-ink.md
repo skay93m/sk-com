@@ -3,6 +3,7 @@ title: Why Controlled Drug Prescriptions Still Require Hardcopy Signed in Indeli
 date: 2026-05-16
 slug: controlled-drugs-indelible-ink
 type: blog
+author: Syafiq Kay
 ---
 
 1. The short answer is section 15 of the Misuse of Drugs Regulations 2001.
