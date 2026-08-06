@@ -90,7 +90,7 @@ sk-com/
 
 ### Publishing new content
 
-Use the `/publish` command — pass a file path or paste the markdown directly. It validates frontmatter, creates the correct branch (`post/<slug>` or `lab/<slug>`), writes the file, commits, and pushes. You then review and merge the PR yourself.
+Use the `/publish` command — pass a file path or paste the markdown directly. It validates frontmatter, creates a `publish/<slug>` branch, writes the file, commits, and pushes. You then review and merge the PR yourself.
 
 ```text
 /publish path/to/draft.md
@@ -384,8 +384,9 @@ documented here first.
   dependencies, documentation, tooling. Conventional Commits' `chore:` type,
   promoted to a branch prefix
 - `claude/*` — AI assistant work not covered by a more specific prefix
-- `post/<slug>` — one blog post or article, written to `content/posts/<slug>.md`
-- `lab/<slug>` — one lab write-up, written to `content/labs/<slug>.md`
+- `publish/<slug>` — one piece of content, a blog post, article, or lab write-up,
+  written to `content/posts/<slug>.md` or `content/labs/<slug>.md` depending on its
+  `type`
 
 **`chore/*` vs `claude/*`:** when the change fits `chore/*` on its own merits, meaning
 config, dependencies, documentation or tooling, use `chore/*` regardless of who or
@@ -394,12 +395,14 @@ of the other prefixes, not a marker of authorship layered on top of them. An
 AI-assisted dependency bump is `chore/*`. Prefixes describe the kind of change, not
 who made it.
 
-`post/<slug>` and `lab/<slug>` are not standard Git Flow. They're a
-content-as-branch convention layered on top: the `/publish` command
-(`.claude/commands/publish.md`) creates one of these, writes a single markdown
-file, commits and pushes, and the branch name doubles as the content's slug. Every
-other prefix carries code or config changes and has no fixed relationship to the
-branch name beyond the prefix itself.
+`publish/<slug>` is not standard Git Flow. It's a content-as-branch convention
+layered on top: the `/publish` command (`.claude/commands/publish.md`) creates one
+of these, writes a single markdown file, commits and pushes, and the branch name
+doubles as the content's slug. Posts and labs share the prefix rather than having
+one each, since the slug alone is enough to identify the branch and a shared
+prefix means the conflict check in `/publish` also catches a post and a lab
+colliding on the same slug. Every other prefix carries code or config changes and
+has no fixed relationship to the branch name beyond the prefix itself.
 
 ### CRITICAL: Never push directly to main
 

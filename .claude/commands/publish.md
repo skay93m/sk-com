@@ -77,16 +77,16 @@ Before creating the branch:
 
 1. Read `content/posts/` or `content/labs/` and confirm no file already uses this slug.
    If a file exists, tell the user and stop — do not overwrite.
-2. Run `git branch --list post/<slug>` or `git branch --list lab/<slug>` (both local and
-   remote via `git ls-remote --heads origin`). If the branch already exists, tell the
-   user and stop.
+2. Run `git branch --list publish/<slug>` (both local and remote via
+   `git ls-remote --heads origin`). If the branch already exists, tell the user and
+   stop. Posts and labs share the same `publish/` prefix, so this also catches a post
+   and a lab colliding on the same slug.
 
 ## Step 3 — Create the branch from main
 
 ```bash
 git fetch origin main
-git checkout -b post/<slug> origin/main    # for posts
-git checkout -b lab/<slug> origin/main     # for labs
+git checkout -b publish/<slug> origin/main
 ```
 
 Do not branch from the currently checked-out branch — always branch from `origin/main`.
@@ -105,7 +105,7 @@ Write the content exactly as provided. Do not alter the frontmatter or body.
 ```bash
 git add content/posts/<slug>.md        # or content/labs/<slug>.md
 git commit -m "feat: add post — <title>"   # or "feat: add lab — <title>"
-git push -u origin post/<slug>             # or lab/<slug>
+git push -u origin publish/<slug>
 ```
 
 Use the `title` value from frontmatter in the commit message.
@@ -121,7 +121,7 @@ Do NOT:
 
 Tell the user:
 
-- Branch name (e.g. `post/hello-world`)
+- Branch name (e.g. `publish/hello-world`)
 - File written (e.g. `content/posts/hello-world.md`)
 - The URL it will appear at once merged (e.g. `/writings/hello-world/` or `/labs/hello-world/`)
 - How to create the PR when ready: `gh pr create` or via GitHub web
