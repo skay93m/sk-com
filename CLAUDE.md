@@ -226,14 +226,18 @@ Key settings:
 - **Domains:** [syafiqkay.com](https://syafiqkay.com), [www.syafiqkay.com](https://www.syafiqkay.com), and the Render URL [syafiq-kay-1.onrender.com](https://syafiq-kay-1.onrender.com). The former Render URL `sk-website.onrender.com` is also kept in `ALLOWED_HOSTS`
 - **Note:** `settings.py` line 29 appends `.onrender.com` to `ALLOWED_HOSTS` unconditionally, so every `.onrender.com` host is accepted whether listed or not. The explicit entries are documentation rather than access control
 
-### Known deployment drift
+### Deployment drift found 2026-08-06
 
-Recorded 2026-08-06, not yet resolved. Do not assume these are fixed.
+**Resolved the same day:**
 
-- A **Render PostgreSQL instance is provisioned and billed** and its `DATABASE_URL` is set on the service, but `settings.py` hardcodes SQLite and never reads it. It is connected to nothing
-- A **1 GB persistent disk is mounted at `/ssd`** and nothing writes to it. It also prevents zero-downtime deploys
-- `DJANGO_SECRET_KEY` on the live service is a `django-insecure-` development key, not a generated one
-- A **`GITHUB_TOKEN` personal access token is set on the web service** and no application code reads it
+- A stale `DATABASE_URL` pointed at a PostgreSQL instance that `settings.py` never read. The instance was deleted and the environment variable removed. An earlier note in this file claimed the instance was "provisioned and billed"; that was wrong, it was already gone from the workspace
+- `DJANGO_SECRET_KEY` on the live service was a `django-insecure-` development key. Rotated to a 50-character CSPRNG value via the Render API. **It takes effect only on the next deploy**, since a running container keeps the environment it started with
+- A `GITHUB_TOKEN` personal access token was set on the web service and read by no application code. The token was revoked at GitHub and the environment variable deleted
+
+**Still outstanding:**
+
+- A **1 GB persistent disk is mounted at `/ssd`** and nothing writes to it, since SQLite lives at `BASE_DIR` inside the container. It costs money and it prevents zero-downtime deploys, so every deploy takes a short outage
+- The `develop` branch exists on the remote, sits 39 commits behind `main` and 0 ahead, and is not part of the workflow described below. Either delete it or document it
 
 ### Build Process
 
