@@ -244,10 +244,7 @@ Key settings:
 - A stale `DATABASE_URL` pointed at a PostgreSQL instance that `settings.py` never read. The instance was deleted and the environment variable removed. An earlier note in this file claimed the instance was "provisioned and billed"; that was wrong, it was already gone from the workspace
 - `DJANGO_SECRET_KEY` on the live service was a `django-insecure-` development key. Rotated to a 50-character CSPRNG value via the Render API. **It takes effect only on the next deploy**, since a running container keeps the environment it started with
 - A `GITHUB_TOKEN` personal access token was set on the web service and read by no application code. The token was revoked at GitHub and the environment variable deleted
-
-**Still outstanding:**
-
-- A **1 GB persistent disk is mounted at `/ssd`** and nothing writes to it, since SQLite lives at `BASE_DIR` inside the container. It costs money and it prevents zero-downtime deploys, so every deploy takes a short outage
+- A **1 GB persistent disk was mounted at `/ssd`** and nothing wrote to it, since SQLite lives at `BASE_DIR` inside the container. Confirmed empty via `render ssh` and deleted via the API. This also removed the reason every deploy took a short outage: a mounted persistent disk disqualifies a Render service from zero-downtime deploys
 
 ### Build Process
 
