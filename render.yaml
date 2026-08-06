@@ -1,17 +1,25 @@
+# NOT CURRENTLY SYNCED AS A RENDER BLUEPRINT.
+# The live service is managed from the Render dashboard, and its environment
+# differs from this file. Editing this file does not change the running service.
+# It is kept as an accurate description of the deployment and as the basis for
+# adopting Blueprint management later. Verify against the dashboard before
+# assuming anything here is in effect.
 services:
   - type: web
-    name: sk-website
-    env: python
+    name: syafiqkay.com
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    region: frankfurt
     plan: starter
-    buildCommand: "pip install uv && uv sync && uv run python manage.py migrate && uv run python manage.py collectstatic --noinput"
-    startCommand: "uv run gunicorn syafiqkay.wsgi:application --bind 0.0.0.0:$PORT"
+    branch: main
     envVars:
       - key: DJANGO_SECRET_KEY
         generateValue: true
       - key: DEBUG
         value: "False"
       - key: ALLOWED_HOSTS
-        value: "sk-website.onrender.com,syafiqkay.com,www.syafiqkay.com"
+        value: "sk-website.onrender.com,syafiq-kay-1.onrender.com,syafiqkay.com,www.syafiqkay.com"
       - key: SECURE_SSL_REDIRECT
         value: "True"
       - key: SECURE_HSTS_SECONDS
