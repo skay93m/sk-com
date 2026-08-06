@@ -371,9 +371,10 @@ This is an architectural constraint, not a preference. A tool that posts to the 
 
 A simplified [Git Flow](https://nvie.com/posts/a-successful-git-branching-model/):
 one permanent branch, everything else short-lived and prefixed by purpose. There is
-no permanent `develop` branch, unlike the original model — a stale one existed on the
-remote until 2026-08-06 and was deleted, since it sat 39 commits behind `main`, 0
-ahead, and was not part of this workflow.
+no permanent `develop` branch, unlike the original model — a stale one was deleted
+once it fell behind `main` and stopped matching this workflow. If a `develop` branch
+ever reappears, treat it the same way unless a specific reason to revive it is
+documented here first.
 
 - `main` — the only permanent branch, always production-ready. **Render deploys
   immediately on every push**
@@ -381,11 +382,17 @@ ahead, and was not part of this workflow.
 - `hotfix/*` — urgent fixes
 - `chore/*` — everything else that isn't a feature, fix, or content: config,
   dependencies, documentation, tooling. Conventional Commits' `chore:` type,
-  promoted to a branch prefix. Used for the 2026-08-06 realignment work
-  ([PR #22](https://github.com/skay93m/sk-com/pull/22))
+  promoted to a branch prefix
 - `claude/*` — AI assistant work not covered by a more specific prefix
 - `post/<slug>` — one blog post or article, written to `content/posts/<slug>.md`
 - `lab/<slug>` — one lab write-up, written to `content/labs/<slug>.md`
+
+**`chore/*` vs `claude/*`:** when the change fits `chore/*` on its own merits, meaning
+config, dependencies, documentation or tooling, use `chore/*` regardless of who or
+what produced it. `claude/*` is for AI assistant work that doesn't otherwise fit one
+of the other prefixes, not a marker of authorship layered on top of them. An
+AI-assisted dependency bump is `chore/*`. Prefixes describe the kind of change, not
+who made it.
 
 `post/<slug>` and `lab/<slug>` are not standard Git Flow. They're a
 content-as-branch convention layered on top: the `/publish` command
