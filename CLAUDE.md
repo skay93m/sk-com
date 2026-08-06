@@ -26,17 +26,28 @@
 
 ### Key Dependencies
 
+Runtime, in `[project.dependencies]`:
+
 ```text
 django>=5.2.4
+gunicorn>=20.1.0
 markdown>=3.10.2
-pyyaml (via commitizen)
-gunicorn
-whitenoise
-python-dotenv
-pytest
-pytest-django
-commitizen
+python-dotenv>=1.0.0
+pyyaml>=6.0.0
+whitenoise>=6.0.0
 ```
+
+Development only, in `[dependency-groups] dev`, excluded from the image by
+`uv sync --frozen --no-dev`:
+
+```text
+pytest>=8.4.1
+pytest-django>=4.11.1
+```
+
+`pyyaml` is a direct dependency. It is imported by `core/posts.py`, `core/labs.py`
+and the tests, and it previously arrived only as a transitive dependency of
+commitizen, so removing commitizen without declaring it would have broken imports.
 
 ## Directory Structure
 

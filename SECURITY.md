@@ -73,8 +73,11 @@ to the server is a defect regardless of whether it works.
 
 ## Dependencies
 
-Declared in `pyproject.toml`, pinned in `uv.lock`: Django, Gunicorn, WhiteNoise,
-Markdown, python-dotenv, pytest, pytest-django, commitizen.
+Declared in `pyproject.toml`, pinned in `uv.lock`. Runtime: Django, Gunicorn,
+WhiteNoise, Markdown, python-dotenv, PyYAML. Development only, and excluded from the
+production image: pytest, pytest-django.
+
+Ten packages reach production. Keeping the runtime surface this small is deliberate.
 
 ```bash
 uv sync --upgrade   # periodically, then run the tests
