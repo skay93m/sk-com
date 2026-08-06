@@ -2,8 +2,8 @@
 
 ## Project Overview
 
-**Project Name:** syafiqkay.com (version 4.0.0)
-**Purpose:** Personal index site for Syafiq Kay — content-first, identity-forward. Single place pointing to posts, LinkedIn, and future outputs.
+**Project Name:** syafiqkay.com
+**Purpose:** Personal site for Syafiq Kay. Content-first and identity-forward, positioned on the braided intersection of clinical practice, law and technical work. It exists to make that combination legible and to host evidence of ongoing work, not to serve as a brochure. Governing intent lives in `pm/Website Redesign` in the Musubi vault; this file governs implementation.
 **Live Site:** [https://syafiqkay.com](https://syafiqkay.com)
 **Type:** Django web application. No database for content — posts are markdown files in the repo.
 
@@ -14,15 +14,15 @@
 - **Python:** 3.13 (see `.python-version`)
 - **Framework:** Django 6.x
 - **WSGI Server:** Gunicorn
-- **Database:** SQLite (local dev + production) — for Django auth/admin only, no app data
+- **Database:** SQLite, Django auth and admin only, no app data. Scheduled for removal along with the admin, since the app defines no models
 - **Package Manager:** UV
 
 ### Frontend
 
 - **Template Engine:** Django Templates
-- **CSS:** Bootstrap 5.3.3 via jsDelivr CDN (with SRI hash) + minimal inline styles in `base.html` for social icons and CV entry layout
-- **No JavaScript, no local Bootstrap file**
-- `static/style.css` exists but is empty — Bootstrap handles all layout and typography
+- **CSS:** one hand-written stylesheet at `static/style.css`. No CSS framework, no CDN, no npm, no build step
+- **JavaScript:** none site-wide. Vanilla JS only inside a `/tools/` page that needs it, never a framework
+- **Current state:** Bootstrap 5.3.3 via CDN is still wired into `base.html` and `static/style.css` is still empty. Removing Bootstrap and writing the stylesheet is Phase 1 of the redesign and has not happened yet. Do not add new Bootstrap usage in the meantime
 
 ### Key Dependencies
 
@@ -70,7 +70,7 @@ sk-com/
 │   ├── posts/              # Markdown posts (.md files with YAML frontmatter)
 │   └── labs/               # Markdown lab write-ups (Network+, tools, experiments)
 ├── static/
-│   ├── style.css           # Intentionally empty — Bootstrap 5.3.3 CDN handles all styling
+│   ├── style.css           # The site's only stylesheet (currently still empty, see Phase 1)
 │   └── labs/               # Lab topology images and downloadable assets (e.g. .pkt files)
 └── staticfiles/            # collectstatic output (gitignored)
 ```
@@ -218,22 +218,55 @@ Key settings:
 
 ### Platform
 
-- **Host:** Render.com
-- **Config:** `render.yaml`
-- **Database:** SQLite (ephemeral per deploy — admin users reset on redeploy)
-- **Domains:** [sk-website.onrender.com](https://sk-website.onrender.com), [syafiqkay.com](https://syafiqkay.com), [www.syafiqkay.com](https://www.syafiqkay.com)
+- **Host:** Render.com, Frankfurt region
+- **Service:** web service named `syafiqkay.com` (`srv-d1jhn92li9vc73894ek0`), **Docker runtime**, starter plan, auto-deploys on push to `main`, pull request previews enabled
+- **Build and run:** entirely from `Dockerfile`. There is no Render build or start command
+- **Config:** `render.yaml` is **not** synced as a Blueprint. The dashboard is authoritative. Editing `render.yaml` does not change the running service
+- **Database:** SQLite at `BASE_DIR / db.sqlite3`, Django auth and admin only. Ephemeral, since it is inside the container and not on the mounted disk
+- **Domains:** [syafiqkay.com](https://syafiqkay.com), [www.syafiqkay.com](https://www.syafiqkay.com), and the Render URL [syafiq-kay-1.onrender.com](https://syafiq-kay-1.onrender.com). `ALLOWED_HOSTS` need not list any `.onrender.com` host, because `settings.py` appends `.onrender.com` unconditionally
+
+### Known deployment drift
+
+Recorded 2026-08-06, not yet resolved. Do not assume these are fixed.
+
+- A **Render PostgreSQL instance is provisioned and billed** and its `DATABASE_URL` is set on the service, but `settings.py` hardcodes SQLite and never reads it. It is connected to nothing
+- A **1 GB persistent disk is mounted at `/ssd`** and nothing writes to it. It also prevents zero-downtime deploys
+- `DJANGO_SECRET_KEY` on the live service is a `django-insecure-` development key, not a generated one
+- A **`GITHUB_TOKEN` personal access token is set on the web service** and no application code reads it
 
 ### Build Process
 
-1. `pip install uv && uv sync`
-2. `uv run python manage.py migrate`
-3. `uv run python manage.py collectstatic --noinput`
+Defined in `Dockerfile`. `collectstatic` runs at image build time. There is no `migrate` step in the image.
 
-### Start Command
+## Publication Policy
 
-```bash
-uv run gunicorn syafiqkay.wsgi:application --bind 0.0.0.0:$PORT
-```
+Mirrored from `areas/Website` in the Musubi vault, which is the authoritative copy.
+**Deny by default.** Content clears every rule below or it does not go on the site.
+
+1. **Nothing about Boots as an employer.** No grievance material, no workplace disputes, no colleagues, no internal process.
+2. **No patient cases, including anonymised ones.** Clinical writing operates at the level of published evidence, guidance and law, never practice anecdote.
+3. **No finances.**
+4. **Pharmacy appears as expertise and analysis**, never as reportage of working life.
+5. **Tools receive no user data at the server.** See below.
+6. **Vault-derived content reaches the site only through a reviewed pull request diff**, never a live query from the running app.
+
+If you are unsure whether something clears these, stop and ask. Do not publish and await correction.
+
+### Tools are client-side only
+
+`/tools/` pages exist to be used on a hotdesking work computer, which means clinical
+detail will be typed into them. If any of that reaches the server it creates a patient
+data flow into a personal website with no lawful basis, no retention policy and no
+controller relationship.
+
+- Server sends HTML, CSS and vanilla JavaScript. All computation happens in the browser
+- No form POST, no `fetch`, no XHR, no WebSocket back to the origin
+- No analytics, no cookies, no `localStorage` or `sessionStorage` for anything clinical
+- No login. A tool that holds no data needs no gate, and typing credentials on a shared machine is its own risk
+- Every tool page carries a visible statement that nothing entered leaves the device and nothing is stored
+- Every tool page has a clear button and print-friendly styling
+
+This is an architectural constraint, not a preference. A tool that posts to the server is wrong even if it works.
 
 ## Code Conventions
 
@@ -245,9 +278,10 @@ uv run gunicorn syafiqkay.wsgi:application --bind 0.0.0.0:$PORT
 
 ### Styling
 
-- Bootstrap 5.3.3 CDN — use Bootstrap utility classes in templates
-- Minimal inline `<style>` block in `base.html` for social icon colours/sizes and CV entry layout
-- `static/style.css` is intentionally empty — do not add custom CSS
+- All styling lives in `static/style.css`. Write plain CSS there
+- Target aesthetic: sharp academic notebook. Minimal single-column layout, serif-ish type, identity-forward and content-first
+- No CSS framework, no CDN, no inline `<style>` blocks in templates
+- Print styles matter for `/tools/` pages, since work output often ends up on paper
 
 ### File Naming
 
@@ -266,8 +300,8 @@ uv run gunicorn syafiqkay.wsgi:application --bind 0.0.0.0:$PORT
 
 ### Critical Don'ts
 
-1. **Don't add a database** — SQLite is only for auth/admin, never for content
-2. **Don't add Bootstrap or external CSS/JS**
+1. **Don't add a database** — content lives in markdown files. The remaining SQLite config serves only Django auth/admin and is scheduled for removal
+2. **Don't add a CSS or JS framework, a CDN, or an npm build step** — plain CSS in `static/style.css`, vanilla JS only where a tool needs it
 3. **Don't add models** — content lives in markdown files
 4. **Don't hardcode secrets**
 5. **Don't use pip directly** — use UV
@@ -361,11 +395,11 @@ These are planned features. Do not implement unless explicitly asked.
 - **Dedicated project page** — `/labs/project/<slug>/` with full project description and all its labs
 - **Pagination** — for the writings list once it grows long enough; feature branch `feature/pagination`
 - **Projects page** — `/projects/` as a lab notebook: each experiment with aim, hypothesis, method, and running observations. Distinct from CV; feature branch `feature/projects`
-- **Tools page** — `/tools/<tool-name>/` for small self-contained clinical/professional tools (Django view + minimal form, no npm, no external JS). First planned tool: emergency contraception consultation aid. Feature branch `feature/tools`
+- **Tools page** — `/tools/<tool-name>/` for small self-contained clinical/professional tools. **Client-side only**, see the Publication Policy above. First planned tool: emergency contraception consultation aid. Feature branch `feature/tools`
+- **Remove SQLite and the Django admin** — the app defines no models, so the database, `django.contrib.admin` and the `migrate` build step serve nothing while adding build time and exposing `/admin/`
+- **Drop Bootstrap** — replace the CDN and the inline `<style>` block with `static/style.css`
 
----
-
-**Last Updated:** 2026-05-16
+**Last Updated:** 2026-08-06
 **Architecture:** Django + Markdown files, no content DB
 **Python Version:** 3.13
 **Django Version:** 6.x
