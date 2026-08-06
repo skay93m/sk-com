@@ -85,7 +85,6 @@ uv sync --upgrade   # periodically, then run the tests
 
 ## Known outstanding items
 
-- A 1 GB persistent disk is mounted at `/ssd` and unused. It forces downtime on every deploy
 - Bootstrap is loaded from a third-party CDN. Removing it eliminates that dependency
 - `/admin/` and SQLite are still present despite serving nothing
 - The container runs as root. Adding a non-root user would be defence in depth

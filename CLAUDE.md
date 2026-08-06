@@ -90,7 +90,7 @@ sk-com/
 
 ### Publishing new content
 
-Use the `/publish` command — pass a file path or paste the markdown directly. It validates frontmatter, creates the correct branch (`post/<slug>` or `lab/<slug>`), writes the file, commits, and pushes. You then review and merge the PR yourself.
+Use the `/publish` command — pass a file path or paste the markdown directly. It validates frontmatter, creates a `publish/<slug>` branch, writes the file, commits, and pushes. You then review and merge the PR yourself.
 
 ```text
 /publish path/to/draft.md
@@ -244,11 +244,7 @@ Key settings:
 - A stale `DATABASE_URL` pointed at a PostgreSQL instance that `settings.py` never read. The instance was deleted and the environment variable removed. An earlier note in this file claimed the instance was "provisioned and billed"; that was wrong, it was already gone from the workspace
 - `DJANGO_SECRET_KEY` on the live service was a `django-insecure-` development key. Rotated to a 50-character CSPRNG value via the Render API. **It takes effect only on the next deploy**, since a running container keeps the environment it started with
 - A `GITHUB_TOKEN` personal access token was set on the web service and read by no application code. The token was revoked at GitHub and the environment variable deleted
-
-**Still outstanding:**
-
-- A **1 GB persistent disk is mounted at `/ssd`** and nothing writes to it, since SQLite lives at `BASE_DIR` inside the container. It costs money and it prevents zero-downtime deploys, so every deploy takes a short outage
-- The `develop` branch exists on the remote, sits 39 commits behind `main` and 0 ahead, and is not part of the workflow described below. Either delete it or document it
+- A **1 GB persistent disk was mounted at `/ssd`** and nothing wrote to it, since SQLite lives at `BASE_DIR` inside the container. Confirmed empty via `render ssh` and deleted via the API. This also removed the reason every deploy took a short outage: a mounted persistent disk disqualifies a Render service from zero-downtime deploys
 
 ### Build Process
 
@@ -368,14 +364,42 @@ This is an architectural constraint, not a preference. A tool that posts to the 
 
 ## Git Workflow
 
-Simplified Git Flow:
+### Branching model
 
-- `main` — production-ready; **Render deploys immediately on every push to main**
-- `feature/*` — new features
+A simplified [Git Flow](https://nvie.com/posts/a-successful-git-branching-model/):
+one permanent branch, everything else short-lived and prefixed by purpose. There is
+no permanent `develop` branch, unlike the original model — a stale one was deleted
+once it fell behind `main` and stopped matching this workflow. If a `develop` branch
+ever reappears, treat it the same way unless a specific reason to revive it is
+documented here first.
+
+- `main` — the only permanent branch, always production-ready. **Render deploys
+  immediately on every push**
+- `feature/*` — new, non-urgent work
 - `hotfix/*` — urgent fixes
-- `claude/*` — AI assistant work
-- `post/<slug>` — individual blog post or article (used by `/publish` command)
-- `lab/<slug>` — individual lab write-up (used by `/publish` command)
+- `chore/*` — everything else that isn't a feature, fix, or content: config,
+  dependencies, documentation, tooling. Conventional Commits' `chore:` type,
+  promoted to a branch prefix
+- `claude/*` — AI assistant work not covered by a more specific prefix
+- `publish/<slug>` — one piece of content, a blog post, article, or lab write-up,
+  written to `content/posts/<slug>.md` or `content/labs/<slug>.md` depending on its
+  `type`
+
+**`chore/*` vs `claude/*`:** when the change fits `chore/*` on its own merits, meaning
+config, dependencies, documentation or tooling, use `chore/*` regardless of who or
+what produced it. `claude/*` is for AI assistant work that doesn't otherwise fit one
+of the other prefixes, not a marker of authorship layered on top of them. An
+AI-assisted dependency bump is `chore/*`. Prefixes describe the kind of change, not
+who made it.
+
+`publish/<slug>` is not standard Git Flow. It's a content-as-branch convention
+layered on top: the `/publish` command (`.claude/commands/publish.md`) creates one
+of these, writes a single markdown file, commits and pushes, and the branch name
+doubles as the content's slug. Posts and labs share the prefix rather than having
+one each, since the slug alone is enough to identify the branch and a shared
+prefix means the conflict check in `/publish` also catches a post and a lab
+colliding on the same slug. Every other prefix carries code or config changes and
+has no fixed relationship to the branch name beyond the prefix itself.
 
 ### CRITICAL: Never push directly to main
 
