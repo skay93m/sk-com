@@ -18,10 +18,8 @@ services:
         generateValue: true
       - key: DEBUG
         value: "False"
-      # settings.py appends ".onrender.com" unconditionally, so the
-      # syafiq-kay-1.onrender.com host does not need listing here.
       - key: ALLOWED_HOSTS
-        value: "syafiqkay.com,www.syafiqkay.com"
+        value: "sk-website.onrender.com,syafiq-kay-1.onrender.com,syafiqkay.com,www.syafiqkay.com"
       - key: SECURE_SSL_REDIRECT
         value: "True"
       - key: SECURE_HSTS_SECONDS

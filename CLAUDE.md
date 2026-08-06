@@ -223,7 +223,8 @@ Key settings:
 - **Build and run:** entirely from `Dockerfile`. There is no Render build or start command
 - **Config:** `render.yaml` is **not** synced as a Blueprint. The dashboard is authoritative. Editing `render.yaml` does not change the running service
 - **Database:** SQLite at `BASE_DIR / db.sqlite3`, Django auth and admin only. Ephemeral, since it is inside the container and not on the mounted disk
-- **Domains:** [syafiqkay.com](https://syafiqkay.com), [www.syafiqkay.com](https://www.syafiqkay.com), and the Render URL [syafiq-kay-1.onrender.com](https://syafiq-kay-1.onrender.com). `ALLOWED_HOSTS` need not list any `.onrender.com` host, because `settings.py` appends `.onrender.com` unconditionally
+- **Domains:** [syafiqkay.com](https://syafiqkay.com), [www.syafiqkay.com](https://www.syafiqkay.com), and the Render URL [syafiq-kay-1.onrender.com](https://syafiq-kay-1.onrender.com). The former Render URL `sk-website.onrender.com` is also kept in `ALLOWED_HOSTS`
+- **Note:** `settings.py` line 29 appends `.onrender.com` to `ALLOWED_HOSTS` unconditionally, so every `.onrender.com` host is accepted whether listed or not. The explicit entries are documentation rather than access control
 
 ### Known deployment drift
 
