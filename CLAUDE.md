@@ -248,7 +248,6 @@ Key settings:
 **Still outstanding:**
 
 - A **1 GB persistent disk is mounted at `/ssd`** and nothing writes to it, since SQLite lives at `BASE_DIR` inside the container. It costs money and it prevents zero-downtime deploys, so every deploy takes a short outage
-- The `develop` branch exists on the remote, sits 39 commits behind `main` and 0 ahead, and is not part of the workflow described below. Either delete it or document it
 
 ### Build Process
 
@@ -368,14 +367,32 @@ This is an architectural constraint, not a preference. A tool that posts to the 
 
 ## Git Workflow
 
-Simplified Git Flow:
+### Branching model
 
-- `main` — production-ready; **Render deploys immediately on every push to main**
-- `feature/*` — new features
+A simplified [Git Flow](https://nvie.com/posts/a-successful-git-branching-model/):
+one permanent branch, everything else short-lived and prefixed by purpose. There is
+no permanent `develop` branch, unlike the original model — a stale one existed on the
+remote until 2026-08-06 and was deleted, since it sat 39 commits behind `main`, 0
+ahead, and was not part of this workflow.
+
+- `main` — the only permanent branch, always production-ready. **Render deploys
+  immediately on every push**
+- `feature/*` — new, non-urgent work
 - `hotfix/*` — urgent fixes
-- `claude/*` — AI assistant work
-- `post/<slug>` — individual blog post or article (used by `/publish` command)
-- `lab/<slug>` — individual lab write-up (used by `/publish` command)
+- `chore/*` — everything else that isn't a feature, fix, or content: config,
+  dependencies, documentation, tooling. Conventional Commits' `chore:` type,
+  promoted to a branch prefix. Used for the 2026-08-06 realignment work
+  ([PR #22](https://github.com/skay93m/sk-com/pull/22))
+- `claude/*` — AI assistant work not covered by a more specific prefix
+- `post/<slug>` — one blog post or article, written to `content/posts/<slug>.md`
+- `lab/<slug>` — one lab write-up, written to `content/labs/<slug>.md`
+
+`post/<slug>` and `lab/<slug>` are not standard Git Flow. They're a
+content-as-branch convention layered on top: the `/publish` command
+(`.claude/commands/publish.md`) creates one of these, writes a single markdown
+file, commits and pushes, and the branch name doubles as the content's slug. Every
+other prefix carries code or config changes and has no fixed relationship to the
+branch name beyond the prefix itself.
 
 ### CRITICAL: Never push directly to main
 
