@@ -153,6 +153,15 @@ def test_lab_type_validation(tmp_path, post_type, should_parse):
         assert result is None
 
 
+# Concept: robustness — a header block that parses to nothing (or to a scalar) is
+# malformed content. It must be skipped, never crash every page that lists labs.
+@pytest.mark.parametrize("header", ["", "just a string", "- a\n- list"])
+def test_lab_with_non_mapping_frontmatter_returns_none(tmp_path, header):
+    path = make_lab_file(tmp_path, f"---\n{header}\n---\n\nBody.\n")
+
+    assert _parse_lab_file(path) is None
+
+
 # ---------------------------------------------------------------------------
 # get_labs_grouped_by_project — integration using settings fixture
 #

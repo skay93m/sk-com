@@ -45,6 +45,9 @@ def _parse_post_file(path: Path) -> Optional[dict]:
     except yaml.YAMLError:
         return None
 
+    if not isinstance(meta, dict):
+        return None
+
     if not all(k in meta for k in POST_REQUIRED_FIELDS):
         return None
 
