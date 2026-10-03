@@ -60,7 +60,7 @@ Note that `ALLOWED_HOSTS` has `.onrender.com` appended unconditionally at
 
 ## Privacy
 
-The site is governed by the **Publication Policy in `CLAUDE.md`**, which is deny by
+The site is governed by the **Publication Policy in `AGENTS.md`**, which is deny by
 default and forbids employer material, patient cases including anonymised ones,
 financial detail, and reportage of working life.
 
