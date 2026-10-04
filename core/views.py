@@ -14,6 +14,7 @@ class HomeView(TemplateView):
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         ctx['posts'] = get_all_posts()[:5]
+        ctx['labs'] = get_all_labs()[:5]
         return ctx
 
 
@@ -76,8 +77,11 @@ class RobotsTxtView(View):
 
         if not content:
             content = (
-                "User-agent: *\n"
-                "Disallow: /admin/\n"
-                "Crawl-delay: 1\n"
+                "User-agent: *
+"
+                "Disallow: /admin/
+"
+                "Crawl-delay: 1
+"
             )
         return HttpResponse(content, content_type='text/plain')
