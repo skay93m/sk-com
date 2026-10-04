@@ -91,7 +91,7 @@ A tool that sends data to the server is a defect even if it works. First planned
 ## Code conventions
 
 - DRY, small functions, meaningful names. Remove before adding
-- Plain CSS in `static/style.css`. No framework, no CDN, no inline `<style>`, no npm, no build step
+- Plain CSS in `static/style.css`. No framework or CDN usage beyond the existing Bootstrap 5.3.3 exception; do not expand it. No inline `<style>`, no npm, no build step
 - No JavaScript site-wide. Vanilla JS only inside a tool page that needs it
 - Aesthetic: sharp academic notebook. Single column, serif-ish type
 - Palette: tomato `#ff4f40`, lavender grey `#a4a8d1`, powder blue `#a4bfeb`, cool steel `#8cabbe`, space indigo `#34344a`
@@ -139,6 +139,7 @@ Decided: stay on Django. Astro with Starlight is not adopted. Revisit only if se
 ## Git
 
 - Never push to `main`. Render deploys every commit to it. Every change goes through a pull request
+- Keep at most one pull request open at a time. Render prepares a deployment for each open PR, so finish, merge, or close the active PR before opening another
 - Branches: `feature/*`, `hotfix/*`, `chore/*` (config, dependencies, docs, tooling), `claude/*` (AI work that fits nothing else), `publish/<slug>` (one piece of content)
 - Prefix describes the kind of change, not who made it
 - Conventional Commits: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`
