@@ -117,16 +117,77 @@ Decided: stay on Django. Astro with Starlight is not adopted. Revisit only if se
 
 ## Roadmap (do only when asked)
 
-1. Look and homepage: stylesheet, drop Bootstrap, new base layout and home page
-2. Writing and Labs: docs-style sidebar (Labs grouped by project, Writing by year), description and read time on articles
-3. CV: trim to conventional sections, add Download PDF, move the working identity tests to Labs or About
-4. About page
-5. Cleanup: remove SQLite, admin and the migrate step, add a Content Security Policy
-6. `/now/`, curated and separate from any private dashboard
-7. CV and bio as data: `content/config/cv.yaml`, `bio.yaml`
-8. Evidence backfill: labs and posts
-9. CV and `/now/` sync: a weekly export opens a PR, and the diff is the privacy gate. Pages show the real last-sync date
-10. `/tools/`
+The site is a public record of how Syafiq thinks and what he has done across pharmacy, law and technical work. It should help employers, peers and Syafiq himself see how those strands connect over time.
+
+It is not primarily a blog, portfolio or CV. It is a low-maintenance personal digital garden and professional laboratory, using documentation-style clarity without becoming literal product documentation.
+
+### 1. Establish the foundation
+
+- Keep Django and the existing Markdown-to-Git-to-Render publishing flow.
+- Define the information architecture, navigation hierarchy, content model and visual system.
+- Preserve published URLs and existing content.
+- Replace Bootstrap with the hand-written stylesheet.
+- Create the new base layout and homepage.
+- Open with the problems-between-disciplines idea.
+- Route visitors clearly to Writing and Labs.
+- Show credibility through linked evidence and the CV rather than broad claims.
+
+### 2. Make Writing and Labs first-class
+
+- Add the docs-inspired sidebar to Writing and Labs.
+- Group Writing by year.
+- Group Labs by project.
+- Add article descriptions and read times.
+- Treat Writing as what Syafiq is thinking about.
+- Treat Labs as active experiments and a public research notebook.
+- Keep the navigation useful without making the site look like a documentation product.
+
+### 3. Rework the professional record
+
+- Keep the CV clean and conventional:
+  - Experience
+  - Education
+  - Projects
+  - Publications
+  - Skills
+  - Professional registrations
+- Add a Download PDF action.
+- Move working identity tests and exploratory material into Labs or About.
+- Add the About page to explain how the disciplines and sections fit together.
+
+### 4. Strengthen the content and publishing model
+
+- Define the folder and metadata model for Writing, Labs, CV and About.
+- Backfill the strongest existing evidence into Labs and Writing.
+- Keep publication review privacy-first, especially for practice-related material.
+- Ensure the site does not require frequent maintenance.
+- Keep the wiki as a separate source of knowledge and decisions; do not introduce runtime coupling between the wiki and the public site.
+
+### 5. Harden the application
+
+- Remove unused SQLite, admin and migration machinery once the public site no longer needs them.
+- Add a Content Security Policy.
+- Keep CI, deployment checks and pull-request review as release gates.
+- Continue using one pull request per roadmap block.
+- Never push directly to `main`, since every commit deploys to Render.
+
+### 6. Add carefully bounded extensions
+
+Only after the core site is coherent:
+
+- Add `/now/` as a curated, separately maintained page.
+- Consider CV and bio data files if they reduce duplication rather than add upkeep.
+- Design a reviewed CV/`/now/` export-to-PR workflow if it genuinely saves time.
+- Add `/tools/` only as client-side, privacy-safe tools with no clinical data leaving the device.
+
+### Delivery order
+
+1. Foundation, stylesheet and homepage
+2. Writing and Labs navigation and metadata
+3. CV and About
+4. Content backfill and publishing model
+5. Application cleanup and CSP
+6. `/now/`, data files, sync workflow and tools as justified
 
 ## Principles
 
