@@ -93,7 +93,9 @@ a:hover {
 
 .home-intro {
   max-width: 48rem;
-  padding-bottom: 4rem;
+  border-left: 4px solid var(--tomato);
+  padding: 1.5rem 1.5rem 4rem;
+  background: linear-gradient(110deg, rgba(164, 191, 235, 0.2), transparent 70%);
 }
 
 .eyebrow {
@@ -282,6 +284,10 @@ p {
 
   .page-content {
     padding-block: 3rem 4rem;
+  }
+
+  .home-intro {
+    padding: 1rem 1rem 3rem;
   }
 
   h1 {
