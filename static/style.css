@@ -93,12 +93,14 @@ a:hover {
 
 .home-intro {
   position: relative;
-  max-width: 48rem;
+  max-width: 58rem;
+  margin-inline: auto;
   overflow: hidden;
-  border-left: 4px solid var(--tomato);
-  padding: 1.5rem 1.5rem 4rem;
+  border-block: 1px solid var(--cool-steel);
+  padding: 3rem 2rem 4rem;
+  text-align: center;
   background:
-    linear-gradient(110deg, rgba(223, 234, 246, 0.75), transparent 68%),
+    linear-gradient(180deg, rgba(223, 234, 246, 0.78), transparent 70%),
     var(--paper);
 }
 
@@ -118,6 +120,19 @@ a:hover {
 .home-intro > * {
   position: relative;
   z-index: 1;
+}
+
+.home-intro .eyebrow {
+  justify-content: center;
+}
+
+.home-intro p {
+  margin-inline: auto;
+}
+
+.home-intro .home-actions,
+.home-intro .social-links {
+  justify-content: center;
 }
 
 .eyebrow {
@@ -212,8 +227,20 @@ p {
 
 .home-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: minmax(0, 1.35fr) minmax(16rem, 0.8fr);
+  gap: 2rem;
+  align-items: start;
+}
+
+.home-section-writing {
+  padding-right: 1rem;
+}
+
+.home-section-labs {
+  border: 1px solid var(--line);
+  border-top: 3px solid var(--tomato);
+  padding: 1.25rem;
+  background: rgba(255, 255, 255, 0.42);
 }
 
 .home-section {
@@ -333,7 +360,11 @@ p {
   }
 
   .home-intro {
-    padding: 1rem 1rem 3rem;
+    padding: 2rem 1rem 3rem;
+  }
+
+  .home-section-writing {
+    padding-right: 0;
   }
 
   h1 {
