@@ -43,7 +43,10 @@
 <div class="home-grid home-grid-story">
   <section class="home-section home-section-writing" data-label="Primary thread">
     <div class="section-heading">
-      <p class="eyebrow">Writing</p>
+      <p class="eyebrow">
+        <svg class="icon icon-small" aria-hidden="true" viewBox="0 0 24 24"><path d="m4 17 1.2-4.8L16.8.6a2.1 2.1 0 0 1 3 3L8.2 15.2 4 17Zm9.7-13.4 3.7 3.7M4 21h16"/></svg>
+        <span>Writing</span>
+      </p>
       <a href="{% url 'core:writings' %}">View all</a>
     </div>
     <p class="section-intro">Ideas, arguments and things I am trying to understand.</p>
@@ -63,7 +66,10 @@
 
   <section class="home-section home-section-labs" data-label="Experimental">
     <div class="section-heading">
-      <p class="eyebrow">Labs</p>
+      <p class="eyebrow">
+        <svg class="icon icon-small" aria-hidden="true" viewBox="0 0 24 24"><path d="M9 3h6M10 3v6l-5.5 9.5A2 2 0 0 0 6.2 21h11.6a2 2 0 0 0 1.7-2.5L14 9V3M7.3 16h9.4"/></svg>
+        <span>Labs</span>
+      </p>
       <a href="{% url 'core:labs' %}">View all</a>
     </div>
     <p class="section-intro">Experiments, projects and public research notes.</p>
