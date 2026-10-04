@@ -106,9 +106,9 @@ The site is a public record of how Syafiq thinks and what he has done across pha
 
 Four sections:
 
-- Writing: what he is thinking about. Each article has a title, description, date and read time
+- Writing: what he is thinking about. Articles currently have a title and date; descriptions and read times are planned
 - Labs: what he is experimenting with, as a public research notebook
-- CV: what he has done. Clean and conventional (Experience, Education, Projects, Publications, Skills, Professional registrations) with a Download PDF
+- CV: what he has done. A clean and conventional CV (Experience, Education, Projects, Publications, Skills, Professional registrations) with a Download PDF is planned
 - About: how the strands fit together
 
 The homepage opens with a statement about problems between disciplines, then routes to Writing and Labs. Look and feel are modelled on docs.basicmemory.com (sidebar navigation, typography, colour) while keeping a bespoke identity.
