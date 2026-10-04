@@ -98,18 +98,35 @@ A tool that sends data to the server is a defect even if it works. First planned
 - Python and template filenames are lowercase with underscores
 - Do not add a database, models or secrets in code
 
-Bootstrap 5.3.3 is still loaded from a CDN in `base.html` and `static/style.css` is empty. Do not add new Bootstrap usage. Replacing it with the stylesheet is the next piece of redesign work.
+Bootstrap 5.3.3 is still loaded from a CDN in `base.html` and `static/style.css` is empty. Do not add new Bootstrap usage. Replacing it with the stylesheet is roadmap step 1.
+
+## Purpose and site plan
+
+The site is a public record of how Syafiq thinks and what he has done across pharmacy, law and technical work. It lets employers, peers and his future self see how the strands connect, and it shows the path over time.
+
+Four sections:
+
+- Writing: what he is thinking about. Articles currently have a title and date; descriptions and read times are planned
+- Labs: what he is experimenting with, as a public research notebook
+- CV: what he has done. A clean and conventional CV (Experience, Education, Projects, Publications, Skills, Professional registrations) with a Download PDF is planned
+- About: how the strands fit together
+
+The homepage opens with a statement about problems between disciplines, then routes to Writing and Labs. Look and feel are modelled on docs.basicmemory.com (sidebar navigation, typography, colour) while keeping a bespoke identity.
+
+Decided: stay on Django. Astro with Starlight is not adopted. Revisit only if search or content volume justifies it.
 
 ## Roadmap (do only when asked)
 
-1. Identity pass: write the stylesheet, drop Bootstrap, new home page, remove SQLite, admin and the migrate step
-2. `/now/`: curated, separate from any private dashboard
-3. CV and bio as data: `content/config/cv.yaml`, `bio.yaml`
-4. Evidence backfill: labs and posts
-5. CV and `/now/` sync: a weekly export opens a PR, and the diff is the privacy gate. Pages show the real last-sync date
-6. `/tools/`
-
-Open and undecided: a possible move to Astro with Starlight. Do not migrate or write code for it.
+1. Look and homepage: stylesheet, drop Bootstrap, new base layout and home page
+2. Writing and Labs: docs-style sidebar (Labs grouped by project, Writing by year), description and read time on articles
+3. CV: trim to conventional sections, add Download PDF, move the working identity tests to Labs or About
+4. About page
+5. Cleanup: remove SQLite, admin and the migrate step, add a Content Security Policy
+6. `/now/`, curated and separate from any private dashboard
+7. CV and bio as data: `content/config/cv.yaml`, `bio.yaml`
+8. Evidence backfill: labs and posts
+9. CV and `/now/` sync: a weekly export opens a PR, and the diff is the privacy gate. Pages show the real last-sync date
+10. `/tools/`
 
 ## Principles
 
