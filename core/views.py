@@ -14,6 +14,7 @@ class HomeView(TemplateView):
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         ctx['posts'] = get_all_posts()[:5]
+        ctx['labs'] = get_all_labs()[:5]
         return ctx
 
 

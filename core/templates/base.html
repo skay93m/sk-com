@@ -7,33 +7,41 @@
   <title>{% block title %}Syafiq Kay{% endblock %}</title>
   <meta name="description" content="{% block description %}{{ bio.tagline }}{% endblock %}">
   {% block meta %}{% endblock %}
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-  <style>
-    .social-links a { color: #6c757d; }
-    .social-links a:hover { color: #212529; }
-    .social-links svg { width: 1.25rem; height: 1.25rem; }
-    .cv-entry-header { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; }
-    .cv-entry-meta { white-space: nowrap; }
-  </style>
+  <link rel="stylesheet" href="{% static 'style.css' %}">
 </head>
 <body>
-  <nav class="navbar navbar-expand-sm mb-5" aria-label="Main">
-    <div class="container" style="max-width: 720px;">
-      <a class="navbar-brand fw-normal" href="{% url 'core:home' %}">Home</a>
-      <div class="navbar-nav ms-auto">
-        <a class="nav-link" href="{% url 'core:writings' %}">Writings</a>
-        <a class="nav-link" href="{% url 'core:labs' %}">Labs</a>
-        <a class="nav-link" href="{% url 'core:cv' %}">CV</a>
-      </div>
+  <header class="site-header">
+    <div class="page-frame site-header-inner">
+      <a class="site-mark" href="{% url 'core:home' %}">Syafiq Kay</a>
+      <nav class="site-nav" aria-label="Main navigation">
+        <a href="{% url 'core:home' %}"{% if request.resolver_match.url_name == 'home' %} aria-current="page"{% endif %}>
+          <svg class="icon icon-small" aria-hidden="true" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V10Z"/></svg>
+          <span>Home</span>
+        </a>
+        <a href="{% url 'core:writings' %}"{% if request.resolver_match.url_name == 'writings' or request.resolver_match.url_name == 'post-detail' %} aria-current="page"{% endif %}>
+          <svg class="icon icon-small" aria-hidden="true" viewBox="0 0 24 24"><path d="m4 17 1.2-4.8L16.8.6a2.1 2.1 0 0 1 3 3L8.2 15.2 4 17Zm9.7-13.4 3.7 3.7M4 21h16"/></svg>
+          <span>Writing</span>
+        </a>
+        <a href="{% url 'core:labs' %}"{% if request.resolver_match.url_name == 'labs' or request.resolver_match.url_name == 'lab-detail' %} aria-current="page"{% endif %}>
+          <svg class="icon icon-small" aria-hidden="true" viewBox="0 0 24 24"><path d="M9 3h6M10 3v6l-5.5 9.5A2 2 0 0 0 6.2 21h11.6a2 2 0 0 0 1.7-2.5L14 9V3M7.3 16h9.4"/></svg>
+          <span>Labs</span>
+        </a>
+        <a href="{% url 'core:cv' %}"{% if request.resolver_match.url_name == 'cv' %} aria-current="page"{% endif %}>
+          <svg class="icon icon-small" aria-hidden="true" viewBox="0 0 24 24"><path d="M7 3h10a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Zm3 0v4h4V3M8 12h8M8 16h6"/></svg>
+          <span>CV</span>
+        </a>
+      </nav>
     </div>
-  </nav>
-  <main class="container mb-5" style="max-width: 720px;">
+  </header>
+
+  <main class="page-frame page-content">
     {% block content %}{% endblock %}
   </main>
-  <footer class="mt-5 py-4">
-    <div class="container text-muted small" style="max-width: 720px;">
-      <p class="mb-1">&copy; {% now "Y" %} Syafiq Kay</p>
-      <p class="mb-0">This site is <a href="https://github.com/skay93m/sk-com" class="text-muted" target="_blank" rel="noopener">open source</a>. I build in public. I am not too proud to learn from others, and I am not too proud to be corrected. If you have something to say — good or bad — I want to hear it.</p>
+
+  <footer class="site-footer">
+    <div class="page-frame">
+      <p>&copy; {% now "Y" %} Syafiq Kay</p>
+      <p>This site is <a href="https://github.com/skay93m/sk-com" target="_blank" rel="noopener">open source</a>. I build in public, and I am always open to being corrected.</p>
     </div>
   </footer>
 </body>
