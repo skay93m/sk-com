@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Syafiq Kay{% endblock %}
 {% block content %}
-<section class="home-intro">
+<section class="home-intro home-portal">
   <p class="eyebrow">Personal site · pharmacy · law · technical work</p>
   <h1>Problems between disciplines.</h1>
   <p class="lede">I work, learn, experiment and write across healthcare, technology, law and other fields.</p>
@@ -22,7 +22,7 @@
 </section>
 
 <div class="home-grid home-grid-story">
-  <section class="home-section home-section-writing">
+  <section class="home-section home-section-writing" data-label="Primary thread">
     <div class="section-heading">
       <p class="eyebrow">Writing</p>
       <a href="{% url 'core:writings' %}">View all</a>
@@ -42,7 +42,7 @@
     {% endif %}
   </section>
 
-  <section class="home-section home-section-labs">
+  <section class="home-section home-section-labs" data-label="Experimental">
     <div class="section-heading">
       <p class="eyebrow">Labs</p>
       <a href="{% url 'core:labs' %}">View all</a>
