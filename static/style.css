@@ -73,6 +73,9 @@ a:hover {
 }
 
 .site-nav a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
   color: var(--muted);
   text-decoration: none;
 }
@@ -205,8 +208,25 @@ p {
   margin-block: 2rem 1.5rem;
 }
 
+.icon {
+  width: 1rem;
+  height: 1rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.7;
+}
+
+.icon-small {
+  width: 0.82rem;
+  height: 0.82rem;
+}
+
 .button {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
   border: 1px solid var(--space-indigo);
   border-radius: 999px;
   padding: 0.6rem 1rem;
@@ -241,6 +261,9 @@ p {
 }
 
 .social-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
   color: var(--muted);
 }
 
