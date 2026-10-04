@@ -126,6 +126,10 @@ a:hover {
   justify-content: center;
 }
 
+.home-intro h1 {
+  margin-inline: auto;
+}
+
 .home-intro p {
   margin-inline: auto;
 }
@@ -236,7 +240,7 @@ p {
   padding-right: 1rem;
 }
 
-.home-section-labs {
+.home-section.home-section-labs {
   border: 1px solid var(--line);
   border-top: 3px solid var(--tomato);
   padding: 1.25rem;
