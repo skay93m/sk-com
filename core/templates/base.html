@@ -14,10 +14,22 @@
     <div class="page-frame site-header-inner">
       <a class="site-mark" href="{% url 'core:home' %}">Syafiq Kay</a>
       <nav class="site-nav" aria-label="Main navigation">
-        <a href="{% url 'core:home' %}"{% if request.resolver_match.url_name == 'home' %} aria-current="page"{% endif %}>Home</a>
-        <a href="{% url 'core:writings' %}"{% if request.resolver_match.url_name == 'writings' or request.resolver_match.url_name == 'post-detail' %} aria-current="page"{% endif %}>Writing</a>
-        <a href="{% url 'core:labs' %}"{% if request.resolver_match.url_name == 'labs' or request.resolver_match.url_name == 'lab-detail' %} aria-current="page"{% endif %}>Labs</a>
-        <a href="{% url 'core:cv' %}"{% if request.resolver_match.url_name == 'cv' %} aria-current="page"{% endif %}>CV</a>
+        <a href="{% url 'core:home' %}"{% if request.resolver_match.url_name == 'home' %} aria-current="page"{% endif %}>
+          <svg class="icon icon-small" aria-hidden="true" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V10Z"/></svg>
+          <span>Home</span>
+        </a>
+        <a href="{% url 'core:writings' %}"{% if request.resolver_match.url_name == 'writings' or request.resolver_match.url_name == 'post-detail' %} aria-current="page"{% endif %}>
+          <svg class="icon icon-small" aria-hidden="true" viewBox="0 0 24 24"><path d="m4 17 1.2-4.8L16.8.6a2.1 2.1 0 0 1 3 3L8.2 15.2 4 17Zm9.7-13.4 3.7 3.7M4 21h16"/></svg>
+          <span>Writing</span>
+        </a>
+        <a href="{% url 'core:labs' %}"{% if request.resolver_match.url_name == 'labs' or request.resolver_match.url_name == 'lab-detail' %} aria-current="page"{% endif %}>
+          <svg class="icon icon-small" aria-hidden="true" viewBox="0 0 24 24"><path d="M9 3h6M10 3v6l-5.5 9.5A2 2 0 0 0 6.2 21h11.6a2 2 0 0 0 1.7-2.5L14 9V3M7.3 16h9.4"/></svg>
+          <span>Labs</span>
+        </a>
+        <a href="{% url 'core:cv' %}"{% if request.resolver_match.url_name == 'cv' %} aria-current="page"{% endif %}>
+          <svg class="icon icon-small" aria-hidden="true" viewBox="0 0 24 24"><path d="M7 3h10a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Zm3 0v4h4V3M8 12h8M8 16h6"/></svg>
+          <span>CV</span>
+        </a>
       </nav>
     </div>
   </header>
