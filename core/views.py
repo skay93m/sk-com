@@ -77,11 +77,8 @@ class RobotsTxtView(View):
 
         if not content:
             content = (
-                "User-agent: *
-"
-                "Disallow: /admin/
-"
-                "Crawl-delay: 1
-"
+                "User-agent: *\n"
+                "Disallow: /admin/\n"
+                "Crawl-delay: 1\n"
             )
         return HttpResponse(content, content_type='text/plain')
