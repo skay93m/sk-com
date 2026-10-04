@@ -60,13 +60,20 @@ Posts need `title`, `date` (YYYY-MM-DD), `slug`, `type` (`blog` or `article`) an
 Deny by default. Content clears every rule or it does not go on the site. If unsure, stop and ask.
 
 1. Nothing about employers: no grievances, disputes, colleagues or internal process.
-2. No patient cases, including anonymised ones. Clinical writing stays at the level of published evidence, guidance and law.
+2. Practice reflections are allowed only if they meet GPhC confidentiality standards. No real encounter is described, even de-identified. Write patterns or clearly labelled composites only. No patient may be identifiable, alone or in combination with other details, including to the patient themselves. Every post that describes practice passes this check before merge:
+   - No names, ages, dates, locations, stores or sites, or rare details
+   - No detail someone could recognise as their own encounter
+   - Specific enough to teach something, general enough to fit many encounters
+   - A pattern or composite, never a single real encounter
+   - No colleague or employer material (rule 1)
+
+   The agent reviews each such draft against this list and stops to ask if any answer is unclear. The owner decides. The agent never publishes a practice post on its own.
 3. No finances.
 4. Pharmacy appears as expertise and analysis, never as reportage of working life.
 5. Tools receive no user data at the server.
 6. Vault-derived content reaches the site only through a reviewed pull request diff, never a live query from the running app.
 
-The owner has said rule 2 is to be revised. Until he gives new wording, apply it as written.
+Sources: GPhC [In practice: guidance on confidentiality](https://assets.pharmacyregulation.org/files/2025-12/gphc-in-practice-guidance-on-confidentiality-updated-november-2025.pdf) and [Demonstrating professionalism online](https://assets.pharmacyregulation.org/files/2024-11/Demonstrating-professionalism-online-January-2024.pdf). The vault copy of this policy in `areas/Website` is authoritative and must match.
 
 ## Tools (`/tools/`)
 
