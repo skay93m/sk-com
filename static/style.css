@@ -256,7 +256,9 @@ p {
 
 .site-footer p {
   max-width: 60ch;
+  margin-inline: auto;
   margin-bottom: 0.5rem;
+  text-align: center;
 }
 
 .site-footer a {
