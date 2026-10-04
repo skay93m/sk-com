@@ -1,0 +1,28 @@
+name: CI
+
+# Render deploys main on every merge, so this is the only automated gate in front of
+# production. Keep it fast and make it a required check on main.
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      DJANGO_SECRET_KEY: ci-only-not-a-real-secret-0123456789abcdef0123456789abcdef
+      DEBUG: "False"
+      ALLOWED_HOSTS: syafiqkay.com
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version-file: .python-version
+      - run: pip install uv==0.11.32
+      - run: uv sync --frozen
+      - run: uv run pytest -q
+      - run: uv run python manage.py check --deploy --fail-level WARNING

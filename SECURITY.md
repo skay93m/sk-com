@@ -60,9 +60,10 @@ Note that `ALLOWED_HOSTS` has `.onrender.com` appended unconditionally at
 
 ## Privacy
 
-The site is governed by the **Publication Policy in `CLAUDE.md`**, which is deny by
-default and forbids employer material, patient cases including anonymised ones,
-financial detail, and reportage of working life.
+The site is governed by the **Publication Policy in `AGENTS.md`**, which is deny by
+default and forbids employer material, descriptions of real patient encounters (even
+de-identified), financial detail, and reportage of working life. Practice reflections
+are allowed only as patterns or composites that meet GPhC confidentiality standards.
 
 `/tools/` pages are **client-side only** by architectural rule. They must not POST,
 `fetch`, store or log anything. This exists because the tools are intended for use on a

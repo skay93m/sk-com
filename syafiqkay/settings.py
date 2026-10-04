@@ -95,7 +95,10 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 os.makedirs(STATIC_ROOT, exist_ok=True)
 
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedStaticFilesStorage'
+STORAGES = {
+    'default': {'BACKEND': 'django.core.files.storage.FileSystemStorage'},
+    'staticfiles': {'BACKEND': 'whitenoise.storage.CompressedStaticFilesStorage'},
+}
 WHITENOISE_USE_FINDERS = os.environ.get("WHITENOISE_USE_FINDERS", "True") == "True"
 WHITENOISE_AUTOREFRESH = os.environ.get("WHITENOISE_AUTOREFRESH", "True") == "True"
 
@@ -121,7 +124,6 @@ if not DEBUG and not TESTING:
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SECURE_CONTENT_TYPE_NOSNIFF = True
-SECURE_BROWSER_XSS_FILTER = True
 X_FRAME_OPTIONS = 'DENY'
 
 CSRF_TRUSTED_ORIGINS = [

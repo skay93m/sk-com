@@ -39,7 +39,7 @@ Posts are cached after first load, so restart the server to pick up new markdown
 
 This is a personal site and is not open to outside contributions. Content is governed by
 a deny-by-default publication policy, and interactive tools are required to be
-client-side only. Both are documented in [CLAUDE.md](CLAUDE.md), with security posture
+client-side only. Both are documented in [AGENTS.md](AGENTS.md), with security posture
 in [SECURITY.md](SECURITY.md).
 
 Never push directly to `main`. Render deploys on every commit to it.

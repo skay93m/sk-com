@@ -18,7 +18,8 @@ RUN uv sync --frozen --no-dev
 
 COPY . .
 
-# Collect static files during build
-RUN DJANGO_SECRET_KEY=build-only-key uv run python manage.py collectstatic --noinput
+# Collect static files during build. --frozen --no-dev stops `uv run` re-syncing the
+# dev dependency group (pytest etc.) into the production image.
+RUN DJANGO_SECRET_KEY=build-only-key uv run --frozen --no-dev python manage.py collectstatic --noinput
 
-CMD uv run gunicorn syafiqkay.wsgi:application --bind 0.0.0.0:${PORT:-8000}
+CMD uv run --frozen --no-dev gunicorn syafiqkay.wsgi:application --bind 0.0.0.0:${PORT:-8000}

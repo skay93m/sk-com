@@ -133,6 +133,15 @@ def test_post_without_frontmatter_returns_none(tmp_path):
     assert _parse_post_file(path) is None
 
 
+# Concept: robustness — a header block that parses to nothing (or to a scalar) is
+# malformed content. It must be skipped, never crash every page that lists posts.
+@pytest.mark.parametrize("header", ["", "just a string", "- a\n- list"])
+def test_post_with_non_mapping_frontmatter_returns_none(tmp_path, header):
+    path = make_post_file(tmp_path, f"---\n{header}\n---\n\nBody.\n")
+
+    assert _parse_post_file(path) is None
+
+
 # ---------------------------------------------------------------------------
 # get_all_posts — integration (reads from content/posts/ via Django settings)
 # ---------------------------------------------------------------------------
