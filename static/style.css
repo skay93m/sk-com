@@ -92,13 +92,38 @@ a:hover {
 }
 
 .home-intro {
+  position: relative;
   max-width: 48rem;
+  overflow: hidden;
   border-left: 4px solid var(--tomato);
   padding: 1.5rem 1.5rem 4rem;
-  background: linear-gradient(110deg, rgba(164, 191, 235, 0.2), transparent 70%);
+  background:
+    linear-gradient(110deg, rgba(223, 234, 246, 0.75), transparent 68%),
+    var(--paper);
+}
+
+.home-intro::after {
+  position: absolute;
+  top: -9rem;
+  right: -8rem;
+  width: 22rem;
+  height: 22rem;
+  border: 1px solid rgba(127, 147, 162, 0.38);
+  border-radius: 50%;
+  box-shadow: 0 0 0 1rem rgba(223, 234, 246, 0.28);
+  content: "";
+  pointer-events: none;
+}
+
+.home-intro > * {
+  position: relative;
+  z-index: 1;
 }
 
 .eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
   margin: 0 0 0.8rem;
   color: var(--tomato);
   font-family: Arial, sans-serif;
@@ -192,8 +217,29 @@ p {
 }
 
 .home-section {
-  border-top: 3px solid var(--cool-steel);
+  position: relative;
+  border-top: 1px solid var(--cool-steel);
   padding-top: 1.25rem;
+}
+
+.home-section::before,
+.eyebrow::before {
+  display: inline-block;
+  flex: 0 0 auto;
+  width: 0.45rem;
+  height: 0.45rem;
+  background: var(--tomato);
+  content: "";
+}
+
+.home-section::before {
+  position: absolute;
+  top: -0.25rem;
+  left: 0;
+}
+
+.section-heading .eyebrow::before {
+  display: none;
 }
 
 .section-heading {
