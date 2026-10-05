@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "summary",
+    "why_it_matters",
+    "user_facing_changes",
+    "internal_changes",
+    "verification",
+    "follow_ups",
+    "decision_candidates",
+    "task_candidates"
+  ],
+  "properties": {
+    "summary": { "type": "string" },
+    "why_it_matters": { "type": "string" },
+    "user_facing_changes": { "type": "array", "items": { "type": "string" } },
+    "internal_changes": { "type": "array", "items": { "type": "string" } },
+    "verification": { "type": "array", "items": { "type": "string" } },
+    "follow_ups": { "type": "array", "items": { "type": "string" } },
+    "decision_candidates": { "type": "array", "items": { "type": "string" } },
+    "task_candidates": { "type": "array", "items": { "type": "string" } }
+  }
+}
