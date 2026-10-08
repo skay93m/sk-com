@@ -56,6 +56,8 @@
           <li>
             <time datetime="{{ post.date|date:'Y-m-d' }}">{{ post.date|date:"d M Y" }}</time>
             <a href="{% url 'core:post-detail' post.slug %}">{{ post.title }}</a>
+            {% if post.description %}<p>{{ post.description }}</p>{% endif %}
+            {% if post.read_time %}<span class="content-list-reading-time">{{ post.read_time }}</span>{% endif %}
           </li>
         {% endfor %}
       </ul>

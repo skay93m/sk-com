@@ -55,6 +55,24 @@ def test_valid_post_is_parsed(tmp_path):
     assert "This is the body" in result["body_html"]
 
 
+def test_optional_writing_metadata_is_parsed(tmp_path):
+    content = VALID_POST.replace(
+        "title: Test Post",
+        "title: Test Post\ndescription: A short summary.\nread_time: 4 min read",
+    )
+    result = _parse_post_file(make_post_file(tmp_path, content))
+
+    assert result["description"] == "A short summary."
+    assert result["read_time"] == "4 min read"
+
+
+def test_optional_writing_metadata_defaults_to_none(tmp_path):
+    result = _parse_post_file(make_post_file(tmp_path, VALID_POST))
+
+    assert result["description"] is None
+    assert result["read_time"] is None
+
+
 # Concept: boundary condition — what happens when a required field is absent?
 # Each missing field is its own test so failures are easy to diagnose.
 @pytest.mark.parametrize("missing_field", POST_REQUIRED_FIELDS)

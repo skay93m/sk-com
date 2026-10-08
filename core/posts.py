@@ -64,6 +64,8 @@ def _parse_post_file(path: Path) -> Optional[dict]:
     body_html = markdown.markdown(raw[match.end():], extensions=['extra', 'nl2br'])
     return {
         'title': str(meta['title']),
+        'description': str(meta['description']) if meta.get('description') else None,
+        'read_time': str(meta['read_time']) if meta.get('read_time') else None,
         'date': parsed_date,
         'slug': str(meta['slug']),
         'type': str(meta['type']).lower(),
