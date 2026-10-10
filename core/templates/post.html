@@ -7,12 +7,17 @@
 <meta name="citation_date" content="{{ post.date|date:'Y/m/d' }}">
 {% endblock %}
 {% block content %}
-<article>
-  <header class="mb-4">
-    <h1 class="fw-normal">{{ post.title }}</h1>
-    <time class="text-muted small" datetime="{{ post.date|date:'Y-m-d' }}">{{ post.date|date:"d F Y" }}</time>
+<article class="article-notebook">
+  <header class="article-notebook-header">
+    <p class="eyebrow">Writing</p>
+    <h1>{{ post.title }}</h1>
+    <div class="article-notebook-meta">
+      <time datetime="{{ post.date|date:'Y-m-d' }}">{{ post.date|date:"d F Y" }}</time>
+      {% if post.read_time %}<span>{{ post.read_time }}</span>{% endif %}
+    </div>
+    {% if post.description %}<p class="article-notebook-dek">{{ post.description }}</p>{% endif %}
   </header>
-  <div>
+  <div class="article-notebook-body">
     {{ post.body_html|safe }}
   </div>
 </article>
