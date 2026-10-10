@@ -96,6 +96,69 @@ a:hover {
   padding-block: 4.5rem 6rem;
 }
 
+.article-notebook {
+  max-width: 48rem;
+  margin-inline: auto;
+}
+
+.article-notebook-header {
+  margin-bottom: 3rem;
+}
+
+.article-notebook-header .eyebrow {
+  margin-bottom: 0.65rem;
+}
+
+.article-notebook-meta {
+  margin-bottom: 1.25rem;
+}
+
+.article-notebook h1 {
+  max-width: none;
+  margin-bottom: 1rem;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(2.2rem, 5vw, 3.8rem);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.08;
+}
+
+.article-notebook-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  color: var(--muted);
+  font-family: Arial, sans-serif;
+  font-size: 0.82rem;
+}
+
+.article-notebook-meta span::before {
+  margin-right: 0.75rem;
+  content: "·";
+}
+
+.article-notebook-dek {
+  margin-top: 1.25rem;
+  color: var(--muted);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.2rem;
+  line-height: 1.55;
+}
+
+.article-notebook-body {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.12rem;
+  line-height: 1.85;
+}
+
+.article-notebook-body p {
+  max-width: none;
+}
+
+.article-notebook-body a {
+  text-decoration-thickness: 0.06em;
+}
+
 .home-intro {
   position: relative;
   max-width: 58rem;
@@ -282,13 +345,6 @@ p {
   padding-right: 1rem;
 }
 
-.home-section.home-section-labs {
-  border: 1px solid var(--line);
-  border-top: 3px solid var(--tomato);
-  padding: 1.25rem;
-  background: rgba(255, 255, 255, 0.42);
-}
-
 .home-section {
   position: relative;
   border-top: 1px solid var(--cool-steel);
@@ -296,13 +352,7 @@ p {
 }
 
 .home-section-writing {
-  min-height: 22rem;
   padding-right: 1rem;
-}
-
-.home-section-labs {
-  border-radius: 1.25rem;
-  box-shadow: 0 1rem 2rem rgba(17, 34, 49, 0.05);
 }
 
 .content-list li {
@@ -373,6 +423,40 @@ p {
   padding-block: 1rem;
 }
 
+.content-list-body {
+  grid-column: 2;
+}
+
+.content-list-body p {
+  margin: 0.25rem 0 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.content-list-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.content-list-meta span,
+.content-list-reading-time {
+  color: var(--muted);
+  font-family: Arial, sans-serif;
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+
+.content-list-expanded li {
+  grid-template-columns: 7rem 1fr;
+}
+
+.content-list-expanded .content-list-body > a {
+  display: block;
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
 .content-list time {
   color: var(--muted);
   font-family: Arial, sans-serif;
@@ -427,6 +511,10 @@ p {
     padding-block: 3rem 4rem;
   }
 
+  .article-notebook h1 {
+    font-size: clamp(2.2rem, 10vw, 3rem);
+  }
+
   .home-intro {
     border-radius: 1.25rem;
     margin-bottom: 2.5rem;
@@ -450,6 +538,15 @@ p {
     grid-template-columns: 5.5rem 1fr;
     gap: 0.7rem;
   }
+
+  .content-list-body {
+    grid-column: 1 / -1;
+  }
+
+  .content-list-expanded li {
+    grid-template-columns: 1fr;
+  }
+
 }
 
 
