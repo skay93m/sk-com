@@ -345,13 +345,6 @@ p {
   padding-right: 1rem;
 }
 
-.home-section.home-section-labs {
-  border: 1px solid var(--line);
-  border-top: 3px solid var(--tomato);
-  padding: 1.25rem;
-  background: rgba(255, 255, 255, 0.42);
-}
-
 .home-section {
   position: relative;
   border-top: 1px solid var(--cool-steel);
@@ -360,11 +353,6 @@ p {
 
 .home-section-writing {
   padding-right: 1rem;
-}
-
-.home-section-labs {
-  border-radius: 1.25rem;
-  box-shadow: 0 1rem 2rem rgba(17, 34, 49, 0.05);
 }
 
 .content-list li {
