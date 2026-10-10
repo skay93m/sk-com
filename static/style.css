@@ -373,8 +373,11 @@ p {
   padding-block: 1rem;
 }
 
-.content-list li p {
+.content-list-body {
   grid-column: 2;
+}
+
+.content-list-body p {
   margin: 0.25rem 0 0;
   color: var(--muted);
   font-size: 0.95rem;
@@ -398,15 +401,10 @@ p {
   grid-template-columns: 7rem 1fr;
 }
 
-.content-list-expanded li > a {
+.content-list-expanded .content-list-body > a {
   display: block;
   font-size: 1.35rem;
   font-weight: 700;
-}
-
-.content-list-expanded li p {
-  grid-column: 1 / -1;
-  margin-left: 8rem;
 }
 
 .content-list time {
@@ -487,18 +485,14 @@ p {
     gap: 0.7rem;
   }
 
-  .content-list li p {
+  .content-list-body {
     grid-column: 1 / -1;
-    margin-left: 0;
   }
 
   .content-list-expanded li {
     grid-template-columns: 1fr;
   }
 
-  .content-list-expanded li p {
-    margin-left: 0;
-  }
 }
 
 
