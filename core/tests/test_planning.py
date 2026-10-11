@@ -575,7 +575,7 @@ def test_no_absolute_external_urls_in_rendered_page(client):
     assert response.status_code == 200
     # Inside the main block, ensure no external URLs exist
     content_str = response.content.decode("utf-8")
-    main_content = content_str.split('<main class="page-frame page-content">')[1].split('</main>')[0]
+    main_content = content_str.split('<main class="planning-content-pane">')[1].split('</main>')[0]
     assert "https://" not in main_content
 
 

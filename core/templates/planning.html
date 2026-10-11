@@ -1,10 +1,15 @@
-{% extends "base.html" %}
+{% extends "planning_base.html" %}
 {% load tz %}
 
 {% block title %}SYNTHETIC Planning — Syafiq Kay{% endblock %}
 
 {% block content %}
-<div class="planning-container">
+<!-- DESKTOP-ONLY BANNER / MESSAGE (Shown below 75rem / 1200px via CSS) -->
+<div class="planning-desktop-warning" role="note">
+  <p>This page is desktop only for now.</p>
+</div>
+
+<div class="planning-spread-wrapper">
   <!-- SYNTHETIC BANNER -->
   <div class="planning-synthetic-banner" role="alert" aria-label="Synthetic data warning">
     <span class="planning-banner-tag">SYNTHETIC</span>
@@ -12,7 +17,7 @@
     <span class="planning-banner-note">Read-only fixture data. No real data or external access.</span>
   </div>
 
-  <!-- SCENARIO & STATE STATUS -->
+  <!-- COMPACT STATUS / STATE BOX -->
   <div class="planning-status-box planning-state-{{ snapshot.state }}">
     <div class="planning-status-header">
       <span class="planning-state-badge">{{ snapshot.state|upper }}</span>
@@ -58,123 +63,108 @@
     {% endif %}
   </div>
 
-  {% if snapshot.state != 'failed' and snapshot.state != 'empty' %}
-    <div class="planning-layout">
-      <!-- SIDEBAR: Weekdays & Scenarios navigation -->
-      <nav class="planning-sidebar" aria-label="Days and scenarios navigation">
-        <div class="planning-nav-group">
-          <h2 class="planning-nav-title">Days</h2>
-          <ul class="planning-nav-list">
-            {% for day in days_data %}
-              <li><a href="#day-{{ day.slug }}">{{ day.name }}</a></li>
-            {% endfor %}
-            {% if snapshot.recurring %}
-              <li><a href="#recurring-items">Recurring</a></li>
-            {% endif %}
-          </ul>
+  {% if snapshot.state != 'failed' %}
+    <!-- JIBUN TECHO WEEKLY SPREAD -->
+    <div class="planning-spread" id="weekly-plan">
+      <!-- HEADER ROW: Weekly Plan + 7 Days Tabs -->
+      <div class="planning-spread-header">
+        <div class="planning-header-goal-col">
+          <h2 class="planning-goals-heading">Weekly plan</h2>
+          <span class="planning-goals-date">Week of {{ snapshot.week.start|default:"2026-10-12" }}</span>
         </div>
+        <div class="planning-header-days-grid">
+          {% for day in days_data %}
+            <div class="planning-day-tab planning-tab-{{ day.slug }}">
+              <span class="planning-tab-name">{{ day.name }}</span>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
 
-        <div class="planning-nav-group">
-          <h2 class="planning-nav-title">Scenarios</h2>
-          <ul class="planning-nav-list">
-            {% for sc in all_scenarios %}
-              <li>
-                <a href="?scenario={{ sc }}" {% if sc == scenario %}aria-current="true"{% endif %}>
-                  {{ sc|capfirst }}
-                </a>
+      <!-- MAIN TIMELINE SECTION: Goals Column + 7 Day 24h Columns -->
+      <div class="planning-spread-body">
+        <!-- LEFT COLUMN: Weekly Goals -->
+        <aside class="planning-goals-sidebar" aria-label="Weekly Goals">
+          <ul class="planning-goals-list">
+            {% for goal in weekly_goals %}
+              <li class="planning-goal-item">
+                <span class="planning-checkbox" aria-hidden="true"></span>
+                <span class="sr-only">Not started</span>
+                <span class="planning-goal-title">{{ goal.title }}</span>
               </li>
+            {% empty %}
+              <li class="planning-goals-empty">—</li>
             {% endfor %}
           </ul>
-        </div>
-      </nav>
+        </aside>
 
-      <!-- MAIN CONTENT: Days, Blocks & Items -->
-      <div class="planning-main-col">
-        {% for day in days_data %}
-          <section id="day-{{ day.slug }}" class="planning-day-section" aria-labelledby="heading-{{ day.slug }}">
-            <h2 id="heading-{{ day.slug }}" class="planning-day-heading">{{ day.name }}</h2>
+        <!-- 7 DAY 24-HOUR TIMELINE COLUMNS -->
+        <div class="planning-days-timeline-grid">
+          {% for day in days_data %}
+            <section class="planning-day-column planning-col-{{ day.slug }}" aria-labelledby="day-heading-{{ day.slug }}">
+              <h3 id="day-heading-{{ day.slug }}" class="sr-only">{{ day.name }}</h3>
 
-            {% if day.blocks %}
-              <div class="planning-blocks-list">
-                <h3 class="planning-subheading">Time Blocks</h3>
-                {% for block in day.blocks %}
-                  <div class="planning-block-card planning-block-{{ block.kind }}">
-                    <div class="planning-block-time">
-                      <span>{{ block.start }} – {{ block.end }}</span>
-                      <span class="planning-kind-tag">{{ block.kind }}</span>
-                    </div>
-                    <div class="planning-block-title">{{ block.title }}</div>
+              <!-- Hour markers down the left edge (0 to 24) -->
+              <div class="planning-timeline-axis" aria-hidden="true">
+                {% for h in timeline_hours %}
+                  <div class="planning-hour-mark planning-hour-{{ h }}">
+                    <span class="planning-hour-number">{{ h }}</span>
                   </div>
                 {% endfor %}
               </div>
-            {% endif %}
 
-            {% if day.items %}
-              <div class="planning-items-list">
-                <h3 class="planning-subheading">Items</h3>
-                <ul class="planning-item-bullets">
-                  {% for item in day.items %}
-                    <li class="planning-item-entry">
-                      <span class="planning-kind-tag">{{ item.kind }}</span>
-                      <span class="planning-item-title">{{ item.title }}</span>
-                    </li>
-                  {% endfor %}
-                </ul>
+              <!-- 96-row grid container for time blocks -->
+              <div class="planning-blocks-canvas">
+                {% for block in day.blocks %}
+                  <div class="planning-grid-block planning-block-{{ block.kind }} planning-row-start-{{ block.row_start }} planning-row-span-{{ block.row_span }}">
+                    <div class="planning-block-inner">
+                      <div class="planning-block-time-label">{{ block.start }}–{{ block.end }}</div>
+                      <div class="planning-block-title-text">{{ block.title }}</div>
+                      <span class="planning-kind-tag">{{ block.kind }}</span>
+                    </div>
+                  </div>
+                {% endfor %}
               </div>
-            {% endif %}
-
-            {% if not day.blocks and not day.items %}
-              <p class="planning-day-empty">No blocks or tasks scheduled for {{ day.name }}.</p>
-            {% endif %}
-          </section>
-        {% endfor %}
-
-        {% if unassigned_items %}
-          <section id="unscheduled-items" class="planning-day-section" aria-labelledby="heading-unscheduled">
-            <h2 id="heading-unscheduled" class="planning-day-heading">Unscheduled Items</h2>
-            <ul class="planning-item-bullets">
-              {% for item in unassigned_items %}
-                <li class="planning-item-entry">
-                  <span class="planning-kind-tag">{{ item.kind }}</span>
-                  <span class="planning-item-title">{{ item.title }}</span>
-                </li>
-              {% endfor %}
-            </ul>
-          </section>
-        {% endif %}
-
-        {% if snapshot.recurring %}
-          <section id="recurring-items" class="planning-day-section" aria-labelledby="heading-recurring">
-            <h2 id="heading-recurring" class="planning-day-heading">Recurring Routines</h2>
-            <ul class="planning-item-bullets">
-              {% for rec in snapshot.recurring %}
-                <li class="planning-item-entry">
-                  <span class="planning-kind-tag">{{ rec.cadence }}</span>
-                  <span class="planning-item-title">{{ rec.title }}</span>
-                  {% if rec.days %}
-                    <span class="planning-days-hint">({{ rec.days|join:", " }})</span>
-                  {% endif %}
-                </li>
-              {% endfor %}
-            </ul>
-          </section>
-        {% endif %}
+            </section>
+          {% endfor %}
+        </div>
       </div>
+
+      <!-- DAILY TASKS ROW -->
+      <div class="planning-tasks-row" aria-label="Daily tasks section">
+        <div class="planning-tasks-label-cell">
+          <span class="planning-tasks-label-text">Daily tasks</span>
+        </div>
+        <div class="planning-tasks-days-grid">
+          {% for day in days_data %}
+            <div class="planning-tasks-day-cell">
+              <ul class="planning-daily-tasks-list">
+                {% for t in day.tasks %}
+                  <li class="planning-task-item">
+                    <span class="planning-task-bullet" aria-hidden="true">·</span>
+                    <span class="planning-task-title">{{ t.title }}</span>
+                  </li>
+                {% empty %}
+                  <li class="planning-tasks-empty">—</li>
+                {% endfor %}
+              </ul>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- JOURNAL PLACEHOLDER -->
+      <section class="planning-journal-box" aria-labelledby="journal-heading">
+        <h2 id="journal-heading" class="planning-journal-title">Journal</h2>
+        <p class="planning-journal-note">Not built yet.</p>
+        <div class="planning-journal-ruled" aria-hidden="true"></div>
+      </section>
     </div>
   {% else %}
-    <!-- Empty / Failed navigation back to scenarios -->
-    <nav class="planning-fallback-nav" aria-label="Available scenarios">
-      <h2>Switch Scenario</h2>
-      <ul class="planning-scenario-pills">
-        {% for sc in all_scenarios %}
-          <li>
-            <a href="?scenario={{ sc }}" class="button {% if sc == scenario %}button-primary{% endif %}">
-              {{ sc|capfirst }}
-            </a>
-          </li>
-        {% endfor %}
-      </ul>
-    </nav>
+    <!-- Failed Scenario State -->
+    <div class="planning-failed-state">
+      <p>Snapshot projection failed to load. See reason code above.</p>
+    </div>
   {% endif %}
 </div>
 {% endblock %}

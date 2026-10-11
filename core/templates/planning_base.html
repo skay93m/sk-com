@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en-GB">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}SYNTHETIC Planning — Syafiq Kay{% endblock %}</title>
+  {% block meta %}{% endblock %}
+  <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
+<body class="planning-shell planning-font-{{ font }}">
+  <div class="planning-shell-layout">
+    <!-- LEFT RAIL (aihero-style navigation) -->
+    <nav class="planning-rail" aria-label="Planning navigation">
+      <div class="planning-rail-brand">
+        <a href="{% url 'core:home' %}" class="planning-rail-logo">Syafiq Kay</a>
+      </div>
+
+      <div class="planning-rail-section">
+        <h2 class="planning-rail-heading">Explore</h2>
+        <ul class="planning-rail-links">
+          <li><a href="{% url 'core:home' %}">Home</a></li>
+          <li><a href="{% url 'core:writings' %}">Writing</a></li>
+          <li><a href="{% url 'core:labs' %}">Labs</a></li>
+          <li><a href="{% url 'core:cv' %}">CV</a></li>
+        </ul>
+      </div>
+
+      <div class="planning-rail-section">
+        <h2 class="planning-rail-heading">Planning</h2>
+        <ul class="planning-rail-links">
+          <li><a href="#weekly-plan">Weekly plan</a></li>
+          {% for sc in all_scenarios %}
+            <li>
+              <a href="?scenario={{ sc }}&amp;font={{ font }}" {% if sc == scenario %}aria-current="page"{% endif %}>
+                Scenario: {{ sc|capfirst }}
+              </a>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      <div class="planning-rail-section">
+        <h2 class="planning-rail-heading">Typeface</h2>
+        <ul class="planning-rail-links">
+          {% for f in all_fonts %}
+            <li>
+              <a href="?scenario={{ scenario }}&amp;font={{ f }}" {% if f == font %}aria-current="page"{% endif %}>
+                Font: {{ f }}
+              </a>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      <div class="planning-rail-section">
+        <h2 class="planning-rail-heading">What changed</h2>
+        <p class="planning-rail-note">11 Oct 2026, prototype of the weekly spread (synthetic)</p>
+      </div>
+    </nav>
+
+    <!-- MAIN WORKSPACE -->
+    <main class="planning-content-pane">
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+</body>
+</html>

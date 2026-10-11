@@ -677,25 +677,201 @@ p {
 }
 
 /* --------------------------------------------------------------------------
-   Slice P1: Synthetic Planning Page
+   Approved Fonts for Planning Shell (@font-face)
    -------------------------------------------------------------------------- */
-
-.planning-container {
-  width: min(100% - 1rem, 64rem);
-  margin-inline: auto;
+@font-face {
+  font-family: "Patrick Hand";
+  src: url("/static/fonts/patrickhand/PatrickHand-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
 }
 
+@font-face {
+  font-family: "Atkinson Hyperlegible";
+  src: url("/static/fonts/atkinsonhyperlegible/AtkinsonHyperlegible-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Atkinson Hyperlegible";
+  src: url("/static/fonts/atkinsonhyperlegible/AtkinsonHyperlegible-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Shantell Sans";
+  src: url("/static/fonts/shantellsans/ShantellSans-wght.woff2") format("woff2");
+  font-weight: 300 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* --------------------------------------------------------------------------
+   Slice P1: Synthetic Planning Page & Jibun Techo Weekly Spread
+   -------------------------------------------------------------------------- */
+
+/* Desktop-only barrier (Below 75rem / 1200px) */
+.planning-desktop-warning {
+  display: none;
+  padding: 2.5rem 1.5rem;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 0.75rem;
+  margin: 2rem;
+  text-align: center;
+  font-family: var(--font-label);
+  font-size: 1.1rem;
+  color: var(--space-indigo);
+}
+
+@media (max-width: 74.99rem) {
+  .planning-desktop-warning {
+    display: block;
+  }
+  .planning-spread-wrapper {
+    display: none !important;
+  }
+}
+
+/* Shell Layout (aihero.dev style full-height left rail) */
+body.planning-shell {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+}
+
+/* Font Switching Scopes */
+body.planning-shell.planning-font-baseline {
+  --planning-font-heading: var(--font-prose);
+  --planning-font-body: Inter, ui-sans-serif, system-ui, sans-serif;
+  --planning-font-label: var(--font-label);
+}
+
+body.planning-shell.planning-font-c {
+  --planning-font-heading: "Patrick Hand", cursive, var(--font-prose);
+  --planning-font-body: "Atkinson Hyperlegible", sans-serif;
+  --planning-font-label: "Patrick Hand", cursive, var(--font-label);
+}
+
+body.planning-shell.planning-font-a {
+  --planning-font-heading: "Shantell Sans", cursive, sans-serif;
+  --planning-font-body: "Shantell Sans", cursive, sans-serif;
+  --planning-font-label: "Shantell Sans", cursive, sans-serif;
+}
+
+.planning-shell-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.planning-rail {
+  width: 15rem;
+  flex-shrink: 0;
+  background: var(--white);
+  border-right: 1px solid var(--line);
+  padding: 1.5rem 1.25rem;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+  font-family: var(--planning-font-label, var(--font-label));
+}
+
+.planning-rail-brand {
+  margin-bottom: 2rem;
+}
+
+.planning-rail-logo {
+  font-family: var(--planning-font-heading, var(--font-prose));
+  font-size: 1.35rem;
+  font-weight: 700;
+  text-decoration: none;
+  color: var(--space-indigo);
+}
+
+.planning-rail-section {
+  margin-bottom: 1.75rem;
+}
+
+.planning-rail-heading {
+  margin: 0 0 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--cool-steel);
+}
+
+.planning-rail-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.planning-rail-links a {
+  display: block;
+  padding: 0.35rem 0.5rem;
+  border-radius: 0.35rem;
+  text-decoration: none;
+  font-size: 0.88rem;
+  color: var(--space-indigo);
+}
+
+.planning-rail-links a:hover {
+  background: var(--powder-blue);
+  color: var(--space-indigo);
+}
+
+.planning-rail-links a[aria-current="page"] {
+  background: var(--space-indigo);
+  color: var(--white);
+  font-weight: 700;
+}
+
+.planning-rail-links a:focus-visible {
+  outline: 2px solid var(--tomato);
+  outline-offset: 2px;
+}
+
+.planning-rail-note {
+  margin: 0;
+  font-size: 0.82rem;
+  line-height: 1.45;
+  color: var(--muted);
+}
+
+.planning-content-pane {
+  flex-grow: 1;
+  padding: 1.5rem 2rem 4rem;
+  min-width: 0;
+  background: var(--paper);
+}
+
+.planning-spread-wrapper {
+  max-width: 82rem;
+  margin: 0 auto;
+}
+
+/* Synthetic Banner */
 .planning-synthetic-banner {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.75rem 1.25rem;
-  margin-bottom: 2rem;
+  padding: 0.6rem 1rem;
+  margin-bottom: 1.5rem;
   border: 1px solid var(--tomato);
   border-radius: 0.5rem;
   background: rgba(255, 79, 64, 0.08);
-  font-family: var(--font-label);
+  font-family: var(--planning-font-label, var(--font-label));
   font-size: 0.85rem;
 }
 
@@ -718,11 +894,12 @@ p {
   color: var(--muted);
 }
 
+/* Status Box */
 .planning-status-box {
   border: 1px solid var(--line);
-  border-radius: 0.75rem;
-  padding: 1.5rem;
-  margin-bottom: 2.5rem;
+  border-radius: 0.5rem;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
   background: var(--white);
 }
 
@@ -730,14 +907,14 @@ p {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.5rem;
 }
 
 .planning-state-badge {
   display: inline-block;
   padding: 0.2rem 0.55rem;
   border-radius: 0.25rem;
-  font-family: var(--font-label);
+  font-family: var(--planning-font-label, var(--font-label));
   font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.05em;
@@ -762,19 +939,19 @@ p {
 
 .planning-page-title {
   margin: 0;
-  font-size: 1.5rem;
-  font-family: var(--font-prose);
+  font-size: 1.25rem;
+  font-family: var(--planning-font-heading, var(--font-prose));
 }
 
 .planning-status-meta {
-  font-family: var(--font-label);
+  font-family: var(--planning-font-label, var(--font-label));
   font-size: 0.85rem;
   color: var(--muted);
   line-height: 1.5;
 }
 
 .planning-status-meta p {
-  margin: 0.2rem 0;
+  margin: 0.15rem 0;
 }
 
 .planning-reason-code code {
@@ -786,12 +963,12 @@ p {
 }
 
 .planning-alert-message {
-  margin-top: 1rem;
-  padding: 0.75rem 1rem;
+  margin-top: 0.75rem;
+  padding: 0.6rem 0.85rem;
   border-radius: 0.4rem;
-  font-family: var(--font-label);
-  font-size: 0.88rem;
-  line-height: 1.5;
+  font-family: var(--planning-font-label, var(--font-label));
+  font-size: 0.85rem;
+  line-height: 1.4;
 }
 
 .planning-alert-warning {
@@ -812,253 +989,570 @@ p {
   color: var(--state-failed-text);
 }
 
-.planning-layout {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 2.5rem;
-}
-
-@media (min-width: 48rem) {
-  .planning-layout {
-    grid-template-columns: 14rem minmax(0, 44rem);
-    align-items: start;
-  }
-}
-
-.planning-sidebar {
-  position: sticky;
-  top: 2rem;
-  padding: 1.25rem;
+/* Jibun Techo Spread Structure */
+.planning-spread {
   border: 1px solid var(--line);
-  border-radius: 0.75rem;
+  border-radius: 0.5rem;
   background: var(--white);
-  font-family: var(--font-label);
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
-.planning-nav-group {
-  margin-bottom: 1.5rem;
+/* Header Row: 12rem goals column + 7 equal day columns */
+.planning-spread-header {
+  display: grid;
+  grid-template-columns: 12rem repeat(7, 1fr);
+  border-bottom: 2px solid var(--line);
+  background: #fafbfc;
 }
 
-.planning-nav-group:last-child {
-  margin-bottom: 0;
+.planning-header-goal-col {
+  padding: 0.75rem 1rem;
+  border-right: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
-.planning-nav-title {
-  margin: 0 0 0.5rem;
-  font-size: 0.8rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
+.planning-goals-heading {
+  margin: 0;
+  font-family: var(--planning-font-heading, var(--font-prose));
+  font-size: 1.05rem;
+  color: var(--space-indigo);
+}
+
+.planning-goals-date {
+  font-family: var(--planning-font-label, var(--font-label));
+  font-size: 0.75rem;
   color: var(--muted);
 }
 
-.planning-nav-list {
+.planning-header-days-grid {
+  display: grid;
+  grid-column: span 7;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.planning-day-tab {
+  padding: 0.6rem 0.5rem;
+  text-align: center;
+  border-right: 1px solid var(--line);
+  font-family: var(--planning-font-label, var(--font-label));
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.planning-day-tab:last-child {
+  border-right: none;
+}
+
+/* Tab Colors: Mon-Fri grey, Sat blue, Sun coral (WCAG 2.2 AA compliant) */
+.planning-tab-monday,
+.planning-tab-tuesday,
+.planning-tab-wednesday,
+.planning-tab-thursday,
+.planning-tab-friday {
+  background: var(--lavender-grey);
+  color: var(--space-indigo);
+}
+
+.planning-tab-saturday {
+  background: var(--powder-blue);
+  color: var(--space-indigo);
+}
+
+.planning-tab-sunday {
+  background: rgba(255, 79, 64, 0.2);
+  color: #a72317;
+}
+
+/* Main Timeline Body */
+.planning-spread-body {
+  display: grid;
+  grid-template-columns: 12rem repeat(7, 1fr);
+  border-bottom: 2px solid var(--line);
+}
+
+/* Weekly Goals Column */
+.planning-goals-sidebar {
+  padding: 1rem 0.85rem;
+  border-right: 1px solid var(--line);
+  background: #fdfdfd;
+}
+
+.planning-goals-list {
   list-style: none;
   padding: 0;
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
+  gap: 0.65rem;
 }
 
-@media (max-width: 47.99rem) {
-  .planning-nav-list {
-    flex-direction: row;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-  }
-}
-
-.planning-nav-list a {
-  display: block;
-  padding: 0.3rem 0.5rem;
-  border-radius: 0.3rem;
-  text-decoration: none;
-  font-size: 0.88rem;
-  color: var(--space-indigo);
-}
-
-.planning-nav-list a:hover {
-  background: var(--powder-blue);
-  color: var(--space-indigo);
-}
-
-.planning-nav-list a[aria-current="true"] {
-  background: var(--space-indigo);
-  color: var(--white);
-  font-weight: 700;
-}
-
-.planning-main-col {
-  max-width: 44rem;
-}
-
-.planning-day-section {
-  padding-bottom: 2rem;
-  margin-bottom: 2rem;
-  border-bottom: 1px solid var(--line);
-}
-
-.planning-day-heading {
-  margin: 0 0 1rem;
-  font-family: var(--font-prose);
-  font-size: 1.6rem;
-  color: var(--space-indigo);
-}
-
-.planning-subheading {
-  margin: 1rem 0 0.5rem;
-  font-family: var(--font-label);
-  font-size: 0.78rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--cool-steel);
-}
-
-.planning-blocks-list {
+.planning-goal-item {
   display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
-  margin-bottom: 1rem;
+  align-items: flex-start;
+  gap: 0.5rem;
+  font-family: var(--planning-font-body, Inter, sans-serif);
+  font-size: 0.82rem;
+  line-height: 1.4;
+  color: var(--ink);
 }
 
-.planning-block-card {
-  padding: 0.75rem 1rem;
-  border: 1px solid var(--line);
-  border-left: 4px solid var(--cool-steel);
-  border-radius: 0.4rem;
+.planning-checkbox {
+  width: 0.85rem;
+  height: 0.85rem;
+  flex-shrink: 0;
+  margin-top: 0.15rem;
+  border: 1.5px solid var(--cool-steel);
+  border-radius: 2px;
   background: var(--white);
 }
 
-.planning-block-fixed {
-  border-left-color: var(--space-indigo);
-}
-
-.planning-block-focus {
-  border-left-color: var(--tomato);
-}
-
-.planning-block-admin {
-  border-left-color: var(--cool-steel);
-}
-
-.planning-block-household {
-  border-left-color: #27ae60;
-}
-
-.planning-block-travel {
-  border-left-color: #e67e22;
-}
-
-.planning-block-time {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-family: var(--font-label);
-  font-size: 0.78rem;
+.planning-goals-empty {
   color: var(--muted);
-  margin-bottom: 0.25rem;
+  font-size: 0.9rem;
 }
 
-.planning-kind-tag {
-  display: inline-block;
-  padding: 0.1rem 0.35rem;
-  border-radius: 0.2rem;
-  background: var(--powder-blue);
-  color: var(--space-indigo);
-  font-family: var(--font-label);
+/* 7 Day Timeline Columns */
+.planning-days-timeline-grid {
+  display: grid;
+  grid-column: span 7;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.planning-day-column {
+  border-right: 1px solid var(--line);
+  display: grid;
+  grid-template-columns: 1.5rem 1fr;
+  position: relative;
+  background: var(--white);
+}
+
+.planning-day-column:last-child {
+  border-right: none;
+}
+
+/* Timeline Axis: 0 to 24 markers */
+.planning-timeline-axis {
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #eef2f4;
+  background: #fafbfc;
+  height: 1152px; /* 96 rows * 12px */
+  position: relative;
+}
+
+.planning-hour-mark {
+  height: 48px; /* 4 rows * 12px = 1 hour */
+  box-sizing: border-box;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 1px;
+}
+
+.planning-hour-number {
+  font-family: var(--planning-font-label, var(--font-label));
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: var(--cool-steel);
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  border: 1px solid var(--lavender-grey);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--white);
+  line-height: 1;
+}
+
+/* Heavier lines at 6, 12, 18 */
+.planning-hour-6,
+.planning-hour-12,
+.planning-hour-18 {
+  border-top: 1.5px solid var(--cool-steel);
+}
+
+/* 96-Row Blocks Grid Canvas */
+.planning-blocks-canvas {
+  display: grid;
+  grid-template-rows: repeat(96, 12px);
+  position: relative;
+  height: 1152px;
+  background-image: linear-gradient(to bottom, #f3f5f7 1px, transparent 1px);
+  background-size: 100% 12px;
+}
+
+.planning-grid-block {
+  margin: 1px 2px;
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--cool-steel);
+  border-radius: 3px;
+  background: var(--white);
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  z-index: 1;
+}
+
+.planning-grid-block .planning-block-inner {
+  padding: 0.2rem 0.35rem;
+  font-family: var(--planning-font-body, Inter, sans-serif);
+}
+
+.planning-block-time-label {
+  font-family: var(--planning-font-label, var(--font-label));
+  font-size: 0.62rem;
+  color: var(--muted);
+  line-height: 1.2;
+}
+
+.planning-block-title-text {
   font-size: 0.72rem;
   font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-
-.planning-block-title {
-  font-family: var(--font-prose);
-  font-size: 1.05rem;
   color: var(--ink);
-  line-height: 1.4;
+  line-height: 1.2;
+  margin-top: 0.1rem;
 }
 
-.planning-item-bullets {
+.planning-grid-block .planning-kind-tag {
+  display: inline-block;
+  margin-top: 0.15rem;
+  font-size: 0.58rem;
+  padding: 0.05rem 0.2rem;
+  line-height: 1.1;
+}
+
+/* Kinds Border Colors */
+.planning-block-fixed { border-left-color: var(--space-indigo); }
+.planning-block-focus { border-left-color: var(--tomato); }
+.planning-block-admin { border-left-color: var(--cool-steel); }
+.planning-block-household { border-left-color: #27ae60; }
+.planning-block-travel { border-left-color: #d35400; }
+
+/* Daily Tasks Row */
+.planning-tasks-row {
+  display: grid;
+  grid-template-columns: 12rem repeat(7, 1fr);
+  border-bottom: 2px solid var(--line);
+  background: #fdfdfd;
+}
+
+.planning-tasks-label-cell {
+  padding: 0.75rem 1rem;
+  border-right: 1px solid var(--line);
+  font-family: var(--planning-font-heading, var(--font-prose));
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--space-indigo);
+}
+
+.planning-tasks-days-grid {
+  display: grid;
+  grid-column: span 7;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.planning-tasks-day-cell {
+  padding: 0.75rem 0.5rem;
+  border-right: 1px solid var(--line);
+  background: var(--white);
+}
+
+.planning-tasks-day-cell:last-child {
+  border-right: none;
+}
+
+.planning-daily-tasks-list {
   list-style: none;
   padding: 0;
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.4rem;
 }
 
-.planning-item-entry {
+.planning-task-item {
   display: flex;
   align-items: baseline;
-  gap: 0.6rem;
-  font-size: 0.95rem;
-  line-height: 1.5;
-}
-
-.planning-item-title {
+  gap: 0.35rem;
+  font-family: var(--planning-font-body, Inter, sans-serif);
+  font-size: 0.75rem;
+  line-height: 1.3;
   color: var(--ink);
 }
 
-.planning-days-hint {
-  font-family: var(--font-label);
-  font-size: 0.8rem;
+.planning-task-bullet {
+  color: var(--cool-steel);
+  font-weight: 700;
+}
+
+.planning-tasks-empty {
   color: var(--muted);
+  font-size: 0.85rem;
+  text-align: center;
 }
 
-.planning-day-empty {
-  font-family: var(--font-label);
-  font-size: 0.9rem;
-  color: var(--muted);
-  font-style: italic;
-  margin: 0.5rem 0;
+/* Journal Section */
+.planning-journal-box {
+  padding: 1.25rem 1.5rem;
+  background: #fff;
 }
 
-.planning-fallback-nav {
-  padding: 1.5rem;
-  border: 1px solid var(--line);
-  border-radius: 0.75rem;
-  background: var(--white);
+.planning-journal-title {
+  margin: 0 0 0.35rem;
+  font-family: var(--planning-font-heading, var(--font-prose));
+  font-size: 1.05rem;
+  color: var(--space-indigo);
 }
 
-.planning-fallback-nav h2 {
+.planning-journal-note {
   margin: 0 0 1rem;
-  font-family: var(--font-prose);
-  font-size: 1.25rem;
+  font-family: var(--planning-font-label, var(--font-label));
+  font-size: 0.85rem;
+  color: var(--muted);
 }
 
-.planning-scenario-pills {
-  list-style: none;
+.planning-journal-ruled {
+  height: 5rem;
+  background-image: repeating-linear-gradient(to bottom, transparent, transparent 1.15rem, var(--line) 1.15rem, var(--line) 1.25rem);
+}
+
+/* Failed scenario state message */
+.planning-failed-state {
+  padding: 2rem;
+  text-align: center;
+  color: var(--muted);
+  font-family: var(--planning-font-label, var(--font-label));
+}
+
+/* Screen-reader utility */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
   padding: 0;
-  margin: 0;
-  display: flex;
-  gap: 0.75rem;
-  flex-wrap: wrap;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
-/* Print styles: hide sidebar and scenario switchers, keep synthetic banner */
+/* --------------------------------------------------------------------------
+   Generated 15-Minute Grid Row Utilities (1 to 96)
+   -------------------------------------------------------------------------- */
+.planning-row-start-1 { grid-row-start: 1; }
+.planning-row-start-2 { grid-row-start: 2; }
+.planning-row-start-3 { grid-row-start: 3; }
+.planning-row-start-4 { grid-row-start: 4; }
+.planning-row-start-5 { grid-row-start: 5; }
+.planning-row-start-6 { grid-row-start: 6; }
+.planning-row-start-7 { grid-row-start: 7; }
+.planning-row-start-8 { grid-row-start: 8; }
+.planning-row-start-9 { grid-row-start: 9; }
+.planning-row-start-10 { grid-row-start: 10; }
+.planning-row-start-11 { grid-row-start: 11; }
+.planning-row-start-12 { grid-row-start: 12; }
+.planning-row-start-13 { grid-row-start: 13; }
+.planning-row-start-14 { grid-row-start: 14; }
+.planning-row-start-15 { grid-row-start: 15; }
+.planning-row-start-16 { grid-row-start: 16; }
+.planning-row-start-17 { grid-row-start: 17; }
+.planning-row-start-18 { grid-row-start: 18; }
+.planning-row-start-19 { grid-row-start: 19; }
+.planning-row-start-20 { grid-row-start: 20; }
+.planning-row-start-21 { grid-row-start: 21; }
+.planning-row-start-22 { grid-row-start: 22; }
+.planning-row-start-23 { grid-row-start: 23; }
+.planning-row-start-24 { grid-row-start: 24; }
+.planning-row-start-25 { grid-row-start: 25; }
+.planning-row-start-26 { grid-row-start: 26; }
+.planning-row-start-27 { grid-row-start: 27; }
+.planning-row-start-28 { grid-row-start: 28; }
+.planning-row-start-29 { grid-row-start: 29; }
+.planning-row-start-30 { grid-row-start: 30; }
+.planning-row-start-31 { grid-row-start: 31; }
+.planning-row-start-32 { grid-row-start: 32; }
+.planning-row-start-33 { grid-row-start: 33; }
+.planning-row-start-34 { grid-row-start: 34; }
+.planning-row-start-35 { grid-row-start: 35; }
+.planning-row-start-36 { grid-row-start: 36; }
+.planning-row-start-37 { grid-row-start: 37; }
+.planning-row-start-38 { grid-row-start: 38; }
+.planning-row-start-39 { grid-row-start: 39; }
+.planning-row-start-40 { grid-row-start: 40; }
+.planning-row-start-41 { grid-row-start: 41; }
+.planning-row-start-42 { grid-row-start: 42; }
+.planning-row-start-43 { grid-row-start: 43; }
+.planning-row-start-44 { grid-row-start: 44; }
+.planning-row-start-45 { grid-row-start: 45; }
+.planning-row-start-46 { grid-row-start: 46; }
+.planning-row-start-47 { grid-row-start: 47; }
+.planning-row-start-48 { grid-row-start: 48; }
+.planning-row-start-49 { grid-row-start: 49; }
+.planning-row-start-50 { grid-row-start: 50; }
+.planning-row-start-51 { grid-row-start: 51; }
+.planning-row-start-52 { grid-row-start: 52; }
+.planning-row-start-53 { grid-row-start: 53; }
+.planning-row-start-54 { grid-row-start: 54; }
+.planning-row-start-55 { grid-row-start: 55; }
+.planning-row-start-56 { grid-row-start: 56; }
+.planning-row-start-57 { grid-row-start: 57; }
+.planning-row-start-58 { grid-row-start: 58; }
+.planning-row-start-59 { grid-row-start: 59; }
+.planning-row-start-60 { grid-row-start: 60; }
+.planning-row-start-61 { grid-row-start: 61; }
+.planning-row-start-62 { grid-row-start: 62; }
+.planning-row-start-63 { grid-row-start: 63; }
+.planning-row-start-64 { grid-row-start: 64; }
+.planning-row-start-65 { grid-row-start: 65; }
+.planning-row-start-66 { grid-row-start: 66; }
+.planning-row-start-67 { grid-row-start: 67; }
+.planning-row-start-68 { grid-row-start: 68; }
+.planning-row-start-69 { grid-row-start: 69; }
+.planning-row-start-70 { grid-row-start: 70; }
+.planning-row-start-71 { grid-row-start: 71; }
+.planning-row-start-72 { grid-row-start: 72; }
+.planning-row-start-73 { grid-row-start: 73; }
+.planning-row-start-74 { grid-row-start: 74; }
+.planning-row-start-75 { grid-row-start: 75; }
+.planning-row-start-76 { grid-row-start: 76; }
+.planning-row-start-77 { grid-row-start: 77; }
+.planning-row-start-78 { grid-row-start: 78; }
+.planning-row-start-79 { grid-row-start: 79; }
+.planning-row-start-80 { grid-row-start: 80; }
+.planning-row-start-81 { grid-row-start: 81; }
+.planning-row-start-82 { grid-row-start: 82; }
+.planning-row-start-83 { grid-row-start: 83; }
+.planning-row-start-84 { grid-row-start: 84; }
+.planning-row-start-85 { grid-row-start: 85; }
+.planning-row-start-86 { grid-row-start: 86; }
+.planning-row-start-87 { grid-row-start: 87; }
+.planning-row-start-88 { grid-row-start: 88; }
+.planning-row-start-89 { grid-row-start: 89; }
+.planning-row-start-90 { grid-row-start: 90; }
+.planning-row-start-91 { grid-row-start: 91; }
+.planning-row-start-92 { grid-row-start: 92; }
+.planning-row-start-93 { grid-row-start: 93; }
+.planning-row-start-94 { grid-row-start: 94; }
+.planning-row-start-95 { grid-row-start: 95; }
+.planning-row-start-96 { grid-row-start: 96; }
+.planning-row-start-97 { grid-row-start: 97; }
+.planning-row-span-1 { grid-row-end: span 1; }
+.planning-row-span-2 { grid-row-end: span 2; }
+.planning-row-span-3 { grid-row-end: span 3; }
+.planning-row-span-4 { grid-row-end: span 4; }
+.planning-row-span-5 { grid-row-end: span 5; }
+.planning-row-span-6 { grid-row-end: span 6; }
+.planning-row-span-7 { grid-row-end: span 7; }
+.planning-row-span-8 { grid-row-end: span 8; }
+.planning-row-span-9 { grid-row-end: span 9; }
+.planning-row-span-10 { grid-row-end: span 10; }
+.planning-row-span-11 { grid-row-end: span 11; }
+.planning-row-span-12 { grid-row-end: span 12; }
+.planning-row-span-13 { grid-row-end: span 13; }
+.planning-row-span-14 { grid-row-end: span 14; }
+.planning-row-span-15 { grid-row-end: span 15; }
+.planning-row-span-16 { grid-row-end: span 16; }
+.planning-row-span-17 { grid-row-end: span 17; }
+.planning-row-span-18 { grid-row-end: span 18; }
+.planning-row-span-19 { grid-row-end: span 19; }
+.planning-row-span-20 { grid-row-end: span 20; }
+.planning-row-span-21 { grid-row-end: span 21; }
+.planning-row-span-22 { grid-row-end: span 22; }
+.planning-row-span-23 { grid-row-end: span 23; }
+.planning-row-span-24 { grid-row-end: span 24; }
+.planning-row-span-25 { grid-row-end: span 25; }
+.planning-row-span-26 { grid-row-end: span 26; }
+.planning-row-span-27 { grid-row-end: span 27; }
+.planning-row-span-28 { grid-row-end: span 28; }
+.planning-row-span-29 { grid-row-end: span 29; }
+.planning-row-span-30 { grid-row-end: span 30; }
+.planning-row-span-31 { grid-row-end: span 31; }
+.planning-row-span-32 { grid-row-end: span 32; }
+.planning-row-span-33 { grid-row-end: span 33; }
+.planning-row-span-34 { grid-row-end: span 34; }
+.planning-row-span-35 { grid-row-end: span 35; }
+.planning-row-span-36 { grid-row-end: span 36; }
+.planning-row-span-37 { grid-row-end: span 37; }
+.planning-row-span-38 { grid-row-end: span 38; }
+.planning-row-span-39 { grid-row-end: span 39; }
+.planning-row-span-40 { grid-row-end: span 40; }
+.planning-row-span-41 { grid-row-end: span 41; }
+.planning-row-span-42 { grid-row-end: span 42; }
+.planning-row-span-43 { grid-row-end: span 43; }
+.planning-row-span-44 { grid-row-end: span 44; }
+.planning-row-span-45 { grid-row-end: span 45; }
+.planning-row-span-46 { grid-row-end: span 46; }
+.planning-row-span-47 { grid-row-end: span 47; }
+.planning-row-span-48 { grid-row-end: span 48; }
+.planning-row-span-49 { grid-row-end: span 49; }
+.planning-row-span-50 { grid-row-end: span 50; }
+.planning-row-span-51 { grid-row-end: span 51; }
+.planning-row-span-52 { grid-row-end: span 52; }
+.planning-row-span-53 { grid-row-end: span 53; }
+.planning-row-span-54 { grid-row-end: span 54; }
+.planning-row-span-55 { grid-row-end: span 55; }
+.planning-row-span-56 { grid-row-end: span 56; }
+.planning-row-span-57 { grid-row-end: span 57; }
+.planning-row-span-58 { grid-row-end: span 58; }
+.planning-row-span-59 { grid-row-end: span 59; }
+.planning-row-span-60 { grid-row-end: span 60; }
+.planning-row-span-61 { grid-row-end: span 61; }
+.planning-row-span-62 { grid-row-end: span 62; }
+.planning-row-span-63 { grid-row-end: span 63; }
+.planning-row-span-64 { grid-row-end: span 64; }
+.planning-row-span-65 { grid-row-end: span 65; }
+.planning-row-span-66 { grid-row-end: span 66; }
+.planning-row-span-67 { grid-row-end: span 67; }
+.planning-row-span-68 { grid-row-end: span 68; }
+.planning-row-span-69 { grid-row-end: span 69; }
+.planning-row-span-70 { grid-row-end: span 70; }
+.planning-row-span-71 { grid-row-end: span 71; }
+.planning-row-span-72 { grid-row-end: span 72; }
+.planning-row-span-73 { grid-row-end: span 73; }
+.planning-row-span-74 { grid-row-end: span 74; }
+.planning-row-span-75 { grid-row-end: span 75; }
+.planning-row-span-76 { grid-row-end: span 76; }
+.planning-row-span-77 { grid-row-end: span 77; }
+.planning-row-span-78 { grid-row-end: span 78; }
+.planning-row-span-79 { grid-row-end: span 79; }
+.planning-row-span-80 { grid-row-end: span 80; }
+.planning-row-span-81 { grid-row-end: span 81; }
+.planning-row-span-82 { grid-row-end: span 82; }
+.planning-row-span-83 { grid-row-end: span 83; }
+.planning-row-span-84 { grid-row-end: span 84; }
+.planning-row-span-85 { grid-row-end: span 85; }
+.planning-row-span-86 { grid-row-end: span 86; }
+.planning-row-span-87 { grid-row-end: span 87; }
+.planning-row-span-88 { grid-row-end: span 88; }
+.planning-row-span-89 { grid-row-end: span 89; }
+.planning-row-span-90 { grid-row-end: span 90; }
+.planning-row-span-91 { grid-row-end: span 91; }
+.planning-row-span-92 { grid-row-end: span 92; }
+.planning-row-span-93 { grid-row-end: span 93; }
+.planning-row-span-94 { grid-row-end: span 94; }
+.planning-row-span-95 { grid-row-end: span 95; }
+.planning-row-span-96 { grid-row-end: span 96; }
+
+/* Print styles */
 @media print {
-  .site-header,
-  .site-footer,
-  .planning-sidebar,
-  .planning-fallback-nav,
-  .planning-scenario-pills {
+  .planning-rail,
+  .planning-desktop-warning {
     display: none !important;
   }
 
-  .planning-container {
+  .planning-content-pane {
+    padding: 0 !important;
+  }
+
+  .planning-spread-wrapper {
+    max-width: none !important;
     width: 100% !important;
-    max-width: none !important;
-  }
-
-  .planning-layout {
-    display: block !important;
-  }
-
-  .planning-main-col {
-    max-width: none !important;
   }
 
   .planning-synthetic-banner {
@@ -1072,7 +1566,8 @@ p {
     color: #fff !important;
   }
 
-  .planning-day-section {
-    page-break-inside: avoid;
+  .planning-spread {
+    box-shadow: none !important;
+    border: 1px solid #000 !important;
   }
 }
