@@ -258,6 +258,119 @@ recurring: []
     assert "This title is intentionally" not in (snapshot.reason_code or "")
 
 
+@pytest.mark.parametrize(
+    "override_yaml,expected_reason",
+    [
+        (
+            """
+blocks:
+  - id: "b1"
+    day: "Monday"
+    start: "09:00"
+    end: "10:00"
+    kind: "focus"
+    title: "Focus"
+    unknown_block_field: "bad"
+""",
+            "unknown_field",
+        ),
+        (
+            """
+blocks:
+  - id: "b1"
+    day: "Monday"
+    start: "99:99"
+    end: "10:00"
+    kind: "focus"
+    title: "Focus"
+""",
+            "invalid_time_format",
+        ),
+        (
+            """
+blocks:
+  - id: "b1"
+    day: "Moonday"
+    start: "09:00"
+    end: "10:00"
+    kind: "focus"
+    title: "Focus"
+""",
+            "invalid_weekday",
+        ),
+        (
+            """
+week:
+  start: "2026-10-12"
+  timezone: "Not/AZone"
+""",
+            "invalid_timezone",
+        ),
+        (
+            """
+run:
+  prepared_at: "2026-10-12T08:00:00Z"
+  status: "succeeded"
+  stale_after_hours: 24
+  sources:
+    - name: "tasks"
+      as_of: "garbage"
+""",
+            "invalid_source_as_of",
+        ),
+    ],
+)
+def test_manifest_validation_contract_rules(override_yaml, expected_reason):
+    from core.planning import parse_planning_snapshot
+
+    base_yaml = """
+schema_version: 1
+synthetic: true
+label: "SYNTHETIC EXAMPLE DATA"
+run:
+  prepared_at: "2026-10-12T08:00:00Z"
+  status: "succeeded"
+  stale_after_hours: 24
+  sources: []
+week:
+  start: "2026-10-12"
+  timezone: "Europe/London"
+blocks: []
+items: []
+recurring: []
+"""
+    if "blocks:" in override_yaml:
+        manifest_yaml = base_yaml.replace("blocks: []", override_yaml.strip())
+    elif "week:" in override_yaml:
+        manifest_yaml = base_yaml.replace(
+            """week:
+  start: "2026-10-12"
+  timezone: "Europe/London" """.strip(),
+            override_yaml.strip(),
+        )
+    elif "run:" in override_yaml:
+        manifest_yaml = base_yaml.replace(
+            """run:
+  prepared_at: "2026-10-12T08:00:00Z"
+  status: "succeeded"
+  stale_after_hours: 24
+  sources: []""".strip(),
+            override_yaml.strip(),
+        )
+    else:
+        manifest_yaml = base_yaml + "\n" + override_yaml
+
+    now = datetime(2026, 10, 12, 10, 0, 0, tzinfo=timezone.utc)
+    snapshot = parse_planning_snapshot(manifest_yaml, now=now)
+
+    assert snapshot.state == "failed"
+    assert snapshot.reason_code == expected_reason
+    # Ensure no manifest content is leaked into reason_code
+    assert "Moonday" not in (snapshot.reason_code or "")
+    assert "Not/AZone" not in (snapshot.reason_code or "")
+    assert "garbage" not in (snapshot.reason_code or "")
+
+
 # ---------------------------------------------------------------------------
 # Seam 2: View tests for /planning/synthetic/
 # ---------------------------------------------------------------------------
