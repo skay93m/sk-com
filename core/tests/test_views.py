@@ -41,6 +41,14 @@ def test_writings_page_returns_200(client):
 
 
 @pytest.mark.django_db
+def test_writings_page_heading_and_title(client):
+    response = client.get("/writings/")
+    assert response.status_code == 200
+    assert b"<h1>Writing</h1>" in response.content
+    assert b"<title>Writing \xe2\x80\x94 Syafiq Kay</title>" in response.content
+
+
+@pytest.mark.django_db
 def test_homepage_shows_writing_metadata(client):
     response = client.get("/")
     assert b"Why this site exists, and why a simple text-file workflow might last." in response.content
