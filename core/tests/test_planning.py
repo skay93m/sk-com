@@ -279,3 +279,29 @@ def test_planning_synthetic_page_renders_scenarios(client, scenario, expected_st
     assert b"<title>SYNTHETIC Planning" in response.content
     assert b"SYNTHETIC EXAMPLE DATA" in response.content
     assert expected_state_text.encode("utf-8") in response.content
+
+
+def test_planning_page_noindex_header(client):
+    response = client.get("/planning/synthetic/")
+    assert response.status_code == 200
+    assert response.headers.get("X-Robots-Tag") == "noindex"
+
+
+def test_robots_txt_disallows_planning(client):
+    response = client.get("/robots.txt")
+    assert response.status_code == 200
+    assert b"Disallow: /planning/\n" in response.content
+
+
+def test_unknown_scenario_returns_404(client):
+    response = client.get("/planning/synthetic/?scenario=nonexistent")
+    assert response.status_code == 404
+
+
+def test_no_absolute_external_urls_in_rendered_page(client):
+    response = client.get("/planning/synthetic/")
+    assert response.status_code == 200
+    # The page itself should not link out to external websites (except standard footer links if in base template)
+    # Inside the planning-container, ensure no external URLs exist
+    content_str = response.content.decode("utf-8")
+    assert "https://" not in content_str.split('<div class="planning-container">')[1].split('</main>')[0]
