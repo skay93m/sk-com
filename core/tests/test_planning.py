@@ -652,3 +652,29 @@ def test_planning_desktop_only_message_and_no_inline_styles(client):
     assert "This page is desktop only for now." in content_str
     assert 'style="' not in content_str
     assert "style='" not in content_str
+
+
+def test_planning_font_query_parameter(client):
+    # Valid font options
+    res_baseline = client.get("/planning/synthetic/?font=baseline")
+    assert res_baseline.status_code == 200
+    assert "planning-font-baseline" in res_baseline.content.decode("utf-8")
+
+    res_c = client.get("/planning/synthetic/?font=c")
+    assert res_c.status_code == 200
+    assert "planning-font-c" in res_c.content.decode("utf-8")
+
+    res_a = client.get("/planning/synthetic/?font=a")
+    assert res_a.status_code == 200
+    assert "planning-font-a" in res_a.content.decode("utf-8")
+
+    # Invalid font returns 404
+    res_bogus = client.get("/planning/synthetic/?font=bogus")
+    assert res_bogus.status_code == 404
+
+    # Font and scenario parameters preserve each other in links
+    res_combined = client.get("/planning/synthetic/?scenario=stale&font=c")
+    assert res_combined.status_code == 200
+    combined_content = res_combined.content.decode("utf-8")
+    assert "font=c" in combined_content
+    assert "scenario=stale" in combined_content
