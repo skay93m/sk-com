@@ -1,5 +1,6 @@
 ---
 title: Why Controlled Drug Prescriptions Still Require Hardcopy Signed in Indelible Ink in a Digital World
+description: A case for measuring the operational waste that keeps paper requirements in place.
 date: 2026-05-16
 slug: controlled-drugs-indelible-ink
 type: blog

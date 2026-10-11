@@ -1,5 +1,6 @@
 ---
 title: Hello World
+description: Why this site exists, and why a simple text-file workflow might last.
 date: 2026-04-24
 slug: hello-world
 type: blog
