@@ -79,8 +79,9 @@ def parse_planning_snapshot(manifest_yaml: str, now: Optional[datetime] = None) 
     if any(k not in ALLOWED_MANIFEST_KEYS for k in data.keys()):
         return PlanningSnapshot(state="failed", reason_code="unknown_field")
 
-    # schema_version must be 1
-    if data.get('schema_version') != 1:
+    # schema_version must be exact int 1 (reject bool and float)
+    schema_version = data.get('schema_version')
+    if type(schema_version) is not int or schema_version != 1:
         return PlanningSnapshot(state="failed", reason_code="unsupported_schema_version")
 
     # synthetic must be True
@@ -111,7 +112,7 @@ def parse_planning_snapshot(manifest_yaml: str, now: Optional[datetime] = None) 
 
     # stale_after_hours
     stale_after_hours = run.get('stale_after_hours')
-    if not isinstance(stale_after_hours, int) or stale_after_hours <= 0:
+    if type(stale_after_hours) is not int or stale_after_hours <= 0:
         return PlanningSnapshot(state="failed", reason_code="invalid_stale_after_hours")
 
     # status
