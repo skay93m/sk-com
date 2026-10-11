@@ -106,15 +106,6 @@ def parse_planning_snapshot(manifest_yaml: str, now: Optional[datetime] = None) 
     if run_status not in ('succeeded', 'failed'):
         return PlanningSnapshot(state="failed", reason_code="invalid_run_status")
 
-    if run_status == 'failed':
-        return PlanningSnapshot(
-            state="failed",
-            label=label,
-            prepared_at=prepared_at,
-            stale_after_hours=stale_after_hours,
-            reason_code="run_status_failed",
-        )
-
     # sources
     sources_raw = run.get('sources', [])
     if not isinstance(sources_raw, list):
@@ -187,7 +178,9 @@ def parse_planning_snapshot(manifest_yaml: str, now: Optional[datetime] = None) 
     age_hours = max(0.0, age_seconds / 3600.0)
 
     # Determine state: empty, fresh, or stale
-    if age_hours > stale_after_hours:
+    if not blocks and not items and not recurring:
+        state = "empty"
+    elif age_hours > stale_after_hours:
         state = "stale"
     else:
         state = "fresh"
