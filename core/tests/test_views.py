@@ -10,6 +10,8 @@ correctly. If it returns 404, the not-found path is working.
 
 Run with:  uv run pytest core/tests/test_views.py -v
 """
+from datetime import date
+
 import pytest
 
 
@@ -21,6 +23,10 @@ import pytest
 def test_homepage_returns_200(client):
     response = client.get("/")
     assert response.status_code == 200
+    assert (
+        b'<meta name="description" content="I solve problems using analytical thinking and drawing insights from various perspectives.">'
+        in response.content
+    )
 
 
 @pytest.mark.django_db
@@ -66,8 +72,36 @@ def test_known_post_slug_returns_200(client):
     response = client.get("/writings/hello-world/")
     assert response.status_code == 200
     assert b"article-notebook" in response.content
+    assert (
+        b'<meta name="description" content="Why this site exists, and why a simple text-file workflow might last.">'
+        in response.content
+    )
     assert b"Why this site exists, and why a simple text-file workflow might last." in response.content
     assert b"3 min read" in response.content
+
+
+@pytest.mark.django_db
+def test_post_detail_without_description_falls_back_to_tagline(client, monkeypatch):
+    dummy_post = {
+        "title": "No Description Post",
+        "description": None,
+        "read_time": "1 min read",
+        "date": date(2026, 1, 1),
+        "slug": "no-description",
+        "type": "article",
+        "author": "Syafiq Kay",
+        "body_html": "<p>Body</p>",
+    }
+    monkeypatch.setattr(
+        "core.views.get_post_by_slug",
+        lambda slug: dummy_post if slug == "no-description" else None,
+    )
+    response = client.get("/writings/no-description/")
+    assert response.status_code == 200
+    assert (
+        b'<meta name="description" content="I solve problems using analytical thinking and drawing insights from various perspectives.">'
+        in response.content
+    )
 
 
 @pytest.mark.django_db
