@@ -643,3 +643,12 @@ def test_planning_journal_placeholder(client):
     content_str = response.content.decode("utf-8")
     assert "Journal" in content_str
     assert "Not built yet." in content_str
+
+
+def test_planning_desktop_only_message_and_no_inline_styles(client):
+    response = client.get("/planning/synthetic/?scenario=fresh")
+    assert response.status_code == 200
+    content_str = response.content.decode("utf-8")
+    assert "This page is desktop only for now." in content_str
+    assert 'style="' not in content_str
+    assert "style='" not in content_str
