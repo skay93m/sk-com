@@ -187,9 +187,7 @@ def parse_planning_snapshot(manifest_yaml: str, now: Optional[datetime] = None) 
     age_hours = max(0.0, age_seconds / 3600.0)
 
     # Determine state: empty, fresh, or stale
-    if not blocks and not items and not recurring:
-        state = "empty"
-    elif age_hours >= stale_after_hours:
+    if age_hours > stale_after_hours:
         state = "stale"
     else:
         state = "fresh"
