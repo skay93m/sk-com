@@ -79,6 +79,7 @@ class RobotsTxtView(View):
             content = (
                 "User-agent: *\n"
                 "Disallow: /admin/\n"
+                "Disallow: /planning/\n"
                 "Crawl-delay: 1\n"
             )
         return HttpResponse(content, content_type='text/plain')
