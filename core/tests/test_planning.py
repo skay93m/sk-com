@@ -157,3 +157,102 @@ recurring: []
     assert snapshot.blocks == []
     assert snapshot.items == []
     assert snapshot.recurring == []
+
+
+def test_failed_run_status_snapshot():
+    from core.planning import parse_planning_snapshot
+
+    manifest_yaml = """
+schema_version: 1
+synthetic: true
+label: "SYNTHETIC EXAMPLE DATA"
+run:
+  prepared_at: "2026-10-12T08:00:00Z"
+  status: "failed"
+  stale_after_hours: 24
+  sources: []
+week:
+  start: "2026-10-12"
+  timezone: "Europe/London"
+blocks: []
+items: []
+recurring: []
+"""
+    now = datetime(2026, 10, 12, 10, 0, 0, tzinfo=timezone.utc)
+    snapshot = parse_planning_snapshot(manifest_yaml, now=now)
+
+    assert snapshot.state == "failed"
+    assert snapshot.reason_code == "run_status_failed"
+
+
+@pytest.mark.parametrize(
+    "override_yaml,expected_reason",
+    [
+        ("unknown_key: true", "unknown_field"),
+        ("synthetic: false", "synthetic_required"),
+        (
+            """
+blocks:
+  - id: "b1"
+    day: "Monday"
+    start: "09:00"
+    end: "10:00"
+    kind: "focus"
+    title: "This title is intentionally way longer than eighty characters so that it triggers the validation limit properly"
+""",
+            "title_too_long",
+        ),
+        (
+            """
+week:
+  start: "2026-10-13"
+  timezone: "Europe/London"
+""",
+            "week_start_not_monday",
+        ),
+    ],
+)
+def test_invalid_manifest_reasons(override_yaml, expected_reason):
+    from core.planning import parse_planning_snapshot
+
+    base_yaml = """
+schema_version: 1
+synthetic: true
+label: "SYNTHETIC EXAMPLE DATA"
+run:
+  prepared_at: "2026-10-12T08:00:00Z"
+  status: "succeeded"
+  stale_after_hours: 24
+  sources: []
+week:
+  start: "2026-10-12"
+  timezone: "Europe/London"
+blocks: []
+items: []
+recurring: []
+"""
+    # If the override replaces an existing section or adds a key
+    if "unknown_key" in override_yaml or "synthetic: false" in override_yaml:
+        if "synthetic: false" in override_yaml:
+            manifest_yaml = base_yaml.replace("synthetic: true", "synthetic: false")
+        else:
+            manifest_yaml = base_yaml + "\n" + override_yaml
+    elif "blocks:" in override_yaml:
+        manifest_yaml = base_yaml.replace("blocks: []", override_yaml.strip())
+    elif "week:" in override_yaml:
+        manifest_yaml = base_yaml.replace(
+            """week:
+  start: "2026-10-12"
+  timezone: "Europe/London" """.strip(),
+            override_yaml.strip(),
+        )
+    else:
+        manifest_yaml = base_yaml + "\n" + override_yaml
+
+    now = datetime(2026, 10, 12, 10, 0, 0, tzinfo=timezone.utc)
+    snapshot = parse_planning_snapshot(manifest_yaml, now=now)
+
+    assert snapshot.state == "failed"
+    assert snapshot.reason_code == expected_reason
+    # Ensure no manifest content is leaked into reason_code
+    assert "This title is intentionally" not in (snapshot.reason_code or "")
