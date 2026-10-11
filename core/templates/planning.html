@@ -88,7 +88,7 @@
       </nav>
 
       <!-- MAIN CONTENT: Days, Blocks & Items -->
-      <main class="planning-main-col">
+      <div class="planning-main-col">
         {% for day in days_data %}
           <section id="day-{{ day.slug }}" class="planning-day-section" aria-labelledby="heading-{{ day.slug }}">
             <h2 id="heading-{{ day.slug }}" class="planning-day-heading">{{ day.name }}</h2>
@@ -128,6 +128,20 @@
           </section>
         {% endfor %}
 
+        {% if unassigned_items %}
+          <section id="unscheduled-items" class="planning-day-section" aria-labelledby="heading-unscheduled">
+            <h2 id="heading-unscheduled" class="planning-day-heading">Unscheduled Items</h2>
+            <ul class="planning-item-bullets">
+              {% for item in unassigned_items %}
+                <li class="planning-item-entry">
+                  <span class="planning-kind-tag">{{ item.kind }}</span>
+                  <span class="planning-item-title">{{ item.title }}</span>
+                </li>
+              {% endfor %}
+            </ul>
+          </section>
+        {% endif %}
+
         {% if snapshot.recurring %}
           <section id="recurring-items" class="planning-day-section" aria-labelledby="heading-recurring">
             <h2 id="heading-recurring" class="planning-day-heading">Recurring Routines</h2>
@@ -144,7 +158,7 @@
             </ul>
           </section>
         {% endif %}
-      </main>
+      </div>
     </div>
   {% else %}
     <!-- Empty / Failed navigation back to scenarios -->

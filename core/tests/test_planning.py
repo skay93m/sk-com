@@ -414,10 +414,10 @@ def test_unknown_scenario_returns_404(client):
 def test_no_absolute_external_urls_in_rendered_page(client):
     response = client.get("/planning/synthetic/")
     assert response.status_code == 200
-    # The page itself should not link out to external websites (except standard footer links if in base template)
-    # Inside the planning-container, ensure no external URLs exist
+    # Inside the main block, ensure no external URLs exist
     content_str = response.content.decode("utf-8")
-    assert "https://" not in content_str.split('<div class="planning-container">')[1].split('</div>\n{% endblock %}' if '</div>\n{% endblock %}' in content_str else '</div>\n</body>')[0]
+    main_content = content_str.split('<main class="page-frame page-content">')[1].split('</main>')[0]
+    assert "https://" not in main_content
 
 
 def test_unscheduled_items_rendered(client, monkeypatch):

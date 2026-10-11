@@ -11,6 +11,10 @@
   --white: #ffffff;
   --font-prose: Georgia, "Times New Roman", serif;
   --font-label: Arial, sans-serif;
+  --state-stale-bg: #fff8e1;
+  --state-stale-text: #5d4037;
+  --state-failed-bg: #ffebee;
+  --state-failed-text: #b71c1c;
 }
 
 * {
@@ -700,7 +704,7 @@ p {
   padding: 0.2rem 0.5rem;
   border-radius: 0.25rem;
   background: var(--tomato);
-  color: var(--white);
+  color: var(--space-indigo);
   font-weight: 700;
   letter-spacing: 0.05em;
 }
@@ -742,8 +746,8 @@ p {
 }
 
 .planning-state-stale .planning-state-badge {
-  background: #ffeaa7;
-  color: #795548;
+  background: var(--state-stale-bg);
+  color: var(--state-stale-text);
 }
 
 .planning-state-empty .planning-state-badge {
@@ -752,8 +756,8 @@ p {
 }
 
 .planning-state-failed .planning-state-badge {
-  background: #ffcccc;
-  color: #900c3f;
+  background: var(--state-failed-bg);
+  color: var(--state-failed-text);
 }
 
 .planning-page-title {
@@ -791,9 +795,9 @@ p {
 }
 
 .planning-alert-warning {
-  border: 1px solid #ffeaa7;
-  background: #fffdf5;
-  color: #614400;
+  border: 1px solid #ffe082;
+  background: var(--state-stale-bg);
+  color: var(--state-stale-text);
 }
 
 .planning-alert-info {
@@ -803,9 +807,9 @@ p {
 }
 
 .planning-alert-danger {
-  border: 1px solid #ffcccc;
-  background: #fff5f5;
-  color: #900c3f;
+  border: 1px solid #ef9a9a;
+  background: var(--state-failed-bg);
+  color: var(--state-failed-text);
 }
 
 .planning-layout {
