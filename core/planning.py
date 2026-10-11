@@ -26,10 +26,22 @@ ALLOWED_RUN_KEYS = {
     'sources',
 }
 
+ALLOWED_WEEK_KEYS = {'start', 'timezone'}
+ALLOWED_SOURCE_KEYS = {'name', 'as_of'}
+ALLOWED_BLOCK_KEYS = {'id', 'day', 'start', 'end', 'kind', 'title'}
+ALLOWED_ITEM_KEYS = {'id', 'title', 'kind', 'day', 'block_id'}
+ALLOWED_RECURRING_KEYS = {'id', 'title', 'cadence', 'days'}
+
+VALID_WEEKDAYS = {'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'}
 VALID_SOURCE_NAMES = {'tasks', 'calendar', 'email', 'shifts', 'recurring'}
 VALID_BLOCK_KINDS = {'fixed', 'focus', 'admin', 'household', 'travel'}
 VALID_ITEM_KINDS = {'task', 'event', 'household'}
 VALID_CADENCES = {'daily', 'weekly'}
+
+import zoneinfo
+import re
+
+TIME_RE = re.compile(r'^(?:[01]\d|2[0-3]):[0-5]\d$')
 
 
 @dataclass
@@ -122,14 +134,37 @@ def parse_planning_snapshot(manifest_yaml: str, now: Optional[datetime] = None) 
         return PlanningSnapshot(state="failed", reason_code="invalid_sources")
     sources = []
     for s in sources_raw:
-        if not isinstance(s, dict) or s.get('name') not in VALID_SOURCE_NAMES or 'as_of' not in s:
+        if not isinstance(s, dict):
             return PlanningSnapshot(state="failed", reason_code="invalid_source_entry")
+        if any(k not in ALLOWED_SOURCE_KEYS for k in s.keys()):
+            return PlanningSnapshot(state="failed", reason_code="unknown_field")
+        if s.get('name') not in VALID_SOURCE_NAMES or 'as_of' not in s:
+            return PlanningSnapshot(state="failed", reason_code="invalid_source_entry")
+        # Validate as_of format (ISO 8601 with offset)
+        as_of_raw = s.get('as_of')
+        if not isinstance(as_of_raw, str):
+            return PlanningSnapshot(state="failed", reason_code="invalid_source_as_of")
+        try:
+            as_of_dt = datetime.fromisoformat(as_of_raw)
+            if as_of_dt.tzinfo is None:
+                return PlanningSnapshot(state="failed", reason_code="invalid_source_as_of")
+        except ValueError:
+            return PlanningSnapshot(state="failed", reason_code="invalid_source_as_of")
         sources.append(s)
 
     # week
     week = data.get('week')
     if not isinstance(week, dict) or 'start' not in week or 'timezone' not in week:
         return PlanningSnapshot(state="failed", reason_code="invalid_week")
+    if any(k not in ALLOWED_WEEK_KEYS for k in week.keys()):
+        return PlanningSnapshot(state="failed", reason_code="unknown_field")
+
+    # Timezone validation
+    tz_name = str(week['timezone'])
+    try:
+        zoneinfo.ZoneInfo(tz_name)
+    except Exception:
+        return PlanningSnapshot(state="failed", reason_code="invalid_timezone")
 
     try:
         start_date = date.fromisoformat(str(week['start']))
@@ -146,6 +181,16 @@ def parse_planning_snapshot(manifest_yaml: str, now: Optional[datetime] = None) 
     for b in blocks_raw:
         if not isinstance(b, dict):
             return PlanningSnapshot(state="failed", reason_code="invalid_block_entry")
+        if any(k not in ALLOWED_BLOCK_KEYS for k in b.keys()):
+            return PlanningSnapshot(state="failed", reason_code="unknown_field")
+        if 'id' not in b or not str(b['id']).strip():
+            return PlanningSnapshot(state="failed", reason_code="missing_id")
+        if b.get('day') not in VALID_WEEKDAYS:
+            return PlanningSnapshot(state="failed", reason_code="invalid_weekday")
+        start_str = str(b.get('start', ''))
+        end_str = str(b.get('end', ''))
+        if not TIME_RE.match(start_str) or not TIME_RE.match(end_str):
+            return PlanningSnapshot(state="failed", reason_code="invalid_time_format")
         title = str(b.get('title', ''))
         if len(title) > 80:
             return PlanningSnapshot(state="failed", reason_code="title_too_long")
@@ -161,6 +206,12 @@ def parse_planning_snapshot(manifest_yaml: str, now: Optional[datetime] = None) 
     for it in items_raw:
         if not isinstance(it, dict):
             return PlanningSnapshot(state="failed", reason_code="invalid_item_entry")
+        if any(k not in ALLOWED_ITEM_KEYS for k in it.keys()):
+            return PlanningSnapshot(state="failed", reason_code="unknown_field")
+        if 'id' not in it or not str(it['id']).strip():
+            return PlanningSnapshot(state="failed", reason_code="missing_id")
+        if 'day' in it and it['day'] is not None and it['day'] not in VALID_WEEKDAYS:
+            return PlanningSnapshot(state="failed", reason_code="invalid_weekday")
         title = str(it.get('title', ''))
         if len(title) > 80:
             return PlanningSnapshot(state="failed", reason_code="title_too_long")
@@ -176,11 +227,18 @@ def parse_planning_snapshot(manifest_yaml: str, now: Optional[datetime] = None) 
     for r in recurring_raw:
         if not isinstance(r, dict):
             return PlanningSnapshot(state="failed", reason_code="invalid_recurring_entry")
+        if any(k not in ALLOWED_RECURRING_KEYS for k in r.keys()):
+            return PlanningSnapshot(state="failed", reason_code="unknown_field")
+        if 'id' not in r or not str(r['id']).strip():
+            return PlanningSnapshot(state="failed", reason_code="missing_id")
         title = str(r.get('title', ''))
         if len(title) > 80:
             return PlanningSnapshot(state="failed", reason_code="title_too_long")
         if r.get('cadence') not in VALID_CADENCES:
             return PlanningSnapshot(state="failed", reason_code="invalid_recurring_cadence")
+        days = r.get('days', [])
+        if not isinstance(days, list) or any(d not in VALID_WEEKDAYS for d in days):
+            return PlanningSnapshot(state="failed", reason_code="invalid_weekday")
         recurring.append(r)
 
     # Calculate age
