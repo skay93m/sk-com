@@ -820,7 +820,7 @@ p {
 
 @media (min-width: 48rem) {
   .planning-layout {
-    grid-template-columns: 14rem 44rem;
+    grid-template-columns: 14rem minmax(0, 44rem);
     align-items: start;
   }
 }
