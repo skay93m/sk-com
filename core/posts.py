@@ -1,3 +1,4 @@
+import math
 import re
 from datetime import date, datetime
 from pathlib import Path
@@ -6,6 +7,7 @@ from typing import Optional
 import markdown
 import yaml
 from django.conf import settings
+from django.utils.html import strip_tags
 
 
 FRONTMATTER_RE = re.compile(r'^---\s*\n(.*?)\n---\s*\n', re.DOTALL)
@@ -13,8 +15,16 @@ FRONTMATTER_RE = re.compile(r'^---\s*\n(.*?)\n---\s*\n', re.DOTALL)
 VALID_TYPES = {'blog', 'article'}
 REQUIRED_AUTHOR = 'Syafiq Kay'
 POST_REQUIRED_FIELDS = ('title', 'date', 'slug', 'type', 'author')
+WORDS_PER_MINUTE = 200
 
 _cache: Optional[list[dict]] = None
+
+
+def _read_time(body_html: str) -> str:
+    text = strip_tags(body_html)
+    words = len(text.split())
+    minutes = max(1, math.ceil(words / WORDS_PER_MINUTE))
+    return f"{minutes} min read"
 
 
 def _normalise_date(value) -> Optional[date]:
@@ -62,10 +72,11 @@ def _parse_post_file(path: Path) -> Optional[dict]:
         return None
 
     body_html = markdown.markdown(raw[match.end():], extensions=['extra', 'nl2br'])
+    read_time = str(meta['read_time']) if meta.get('read_time') else _read_time(body_html)
     return {
         'title': str(meta['title']),
         'description': str(meta['description']) if meta.get('description') else None,
-        'read_time': str(meta['read_time']) if meta.get('read_time') else None,
+        'read_time': read_time,
         'date': parsed_date,
         'slug': str(meta['slug']),
         'type': str(meta['type']).lower(),
