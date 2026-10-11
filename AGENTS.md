@@ -106,7 +106,7 @@ The site is a public record of how Syafiq thinks and what he has done across pha
 
 Four sections:
 
-- Writing: what he is thinking about. Articles have a title, description, date, read time; read time computed from word count unless `read_time` is set
+- Writing: what he is thinking about. Articles have a title, description, date and read time; read time computed from word count unless `read_time` is set
 - Labs: what he is experimenting with, as a public research notebook
 - CV: what he has done. A clean and conventional CV (Experience, Education, Projects, Publications, Skills, Professional registrations) with a Download PDF is planned
 - About: how the strands fit together
