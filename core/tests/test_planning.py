@@ -129,3 +129,31 @@ recurring: []
     now_past = datetime(2026, 10, 12, 8, 0, 1, tzinfo=timezone.utc)
     snapshot_past = parse_planning_snapshot(manifest_yaml, now=now_past)
     assert snapshot_past.state == "stale"
+
+
+def test_empty_manifest_snapshot():
+    from core.planning import parse_planning_snapshot
+
+    manifest_yaml = """
+schema_version: 1
+synthetic: true
+label: "SYNTHETIC EXAMPLE DATA"
+run:
+  prepared_at: "2026-10-12T08:00:00Z"
+  status: "succeeded"
+  stale_after_hours: 24
+  sources: []
+week:
+  start: "2026-10-12"
+  timezone: "Europe/London"
+blocks: []
+items: []
+recurring: []
+"""
+    now = datetime(2026, 10, 12, 10, 0, 0, tzinfo=timezone.utc)
+    snapshot = parse_planning_snapshot(manifest_yaml, now=now)
+
+    assert snapshot.state == "empty"
+    assert snapshot.blocks == []
+    assert snapshot.items == []
+    assert snapshot.recurring == []
