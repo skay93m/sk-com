@@ -579,24 +579,21 @@ def test_no_absolute_external_urls_in_rendered_page(client):
     assert "https://" not in main_content
 
 
-def test_unscheduled_items_rendered(client, monkeypatch):
-    from core.planning import PlanningSnapshot
-    dummy_snapshot = PlanningSnapshot(
-        state="fresh",
-        label="SYNTHETIC EXAMPLE DATA",
-        week={"start": "2026-10-12", "timezone": "Europe/London"},
-        items=[
-            {"id": "u1", "title": "Example unscheduled item", "kind": "task", "day": None, "block_id": None}
-        ]
-    )
-    monkeypatch.setattr(
-        "core.planning.load_scenario_snapshot",
-        lambda sc: (dummy_snapshot, datetime(2026, 10, 12, 10, 0, 0, tzinfo=timezone.utc)),
-    )
+def test_weekly_goals_and_daily_tasks_lists(client):
     response = client.get("/planning/synthetic/?scenario=fresh")
     assert response.status_code == 200
-    assert b"Unscheduled" in response.content
-    assert b"Example unscheduled item" in response.content
+    content_str = response.content.decode("utf-8")
+    # Weekly goals in left column
+    assert "Weekly plan" in content_str
+    assert "Example weekly goal: finalize quarterly thesis" in content_str
+    assert "Not started" in content_str  # screen reader text
+    # Daily tasks row
+    assert "Daily tasks" in content_str
+    # Recurring daily routine appears under days
+    assert "Example morning standup routine" in content_str
+    # Daily items appear under specific days
+    assert "Example project review task" in content_str
+    assert "Example grocery restock" in content_str
 
 
 def test_planning_page_displays_utc_times(client):
