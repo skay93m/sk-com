@@ -1,0 +1,14 @@
+schema_version: 1
+synthetic: true
+label: "SYNTHETIC EXAMPLE DATA"
+run:
+  prepared_at: "2026-10-12T07:30:00Z"
+  status: "failed"
+  stale_after_hours: 24
+  sources: []
+week:
+  start: "2026-10-12"
+  timezone: "Europe/London"
+blocks: []
+items: []
+recurring: []

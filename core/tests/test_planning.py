@@ -256,3 +256,26 @@ recurring: []
     assert snapshot.reason_code == expected_reason
     # Ensure no manifest content is leaked into reason_code
     assert "This title is intentionally" not in (snapshot.reason_code or "")
+
+
+# ---------------------------------------------------------------------------
+# Seam 2: View tests for /planning/synthetic/
+# ---------------------------------------------------------------------------
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    "scenario,expected_state_text",
+    [
+        ("fresh", "Snapshot is fresh"),
+        ("stale", "Snapshot is stale"),
+        ("empty", "Snapshot is empty"),
+        ("failed", "Snapshot failed"),
+    ],
+)
+def test_planning_synthetic_page_renders_scenarios(client, scenario, expected_state_text):
+    response = client.get(f"/planning/synthetic/?scenario={scenario}")
+    assert response.status_code == 200
+    assert b"SYNTHETIC" in response.content
+    assert b"<title>SYNTHETIC Planning" in response.content
+    assert b"SYNTHETIC EXAMPLE DATA" in response.content
+    assert expected_state_text.encode("utf-8") in response.content
