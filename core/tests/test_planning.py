@@ -417,4 +417,24 @@ def test_no_absolute_external_urls_in_rendered_page(client):
     # The page itself should not link out to external websites (except standard footer links if in base template)
     # Inside the planning-container, ensure no external URLs exist
     content_str = response.content.decode("utf-8")
-    assert "https://" not in content_str.split('<div class="planning-container">')[1].split('</main>')[0]
+    assert "https://" not in content_str.split('<div class="planning-container">')[1].split('</div>\n{% endblock %}' if '</div>\n{% endblock %}' in content_str else '</div>\n</body>')[0]
+
+
+def test_unscheduled_items_rendered(client, monkeypatch):
+    from core.planning import PlanningSnapshot
+    dummy_snapshot = PlanningSnapshot(
+        state="fresh",
+        label="SYNTHETIC EXAMPLE DATA",
+        week={"start": "2026-10-12", "timezone": "Europe/London"},
+        items=[
+            {"id": "u1", "title": "Example unscheduled item", "kind": "task", "day": None, "block_id": None}
+        ]
+    )
+    monkeypatch.setattr(
+        "core.planning.load_scenario_snapshot",
+        lambda sc: (dummy_snapshot, datetime(2026, 10, 12, 10, 0, 0, tzinfo=timezone.utc)),
+    )
+    response = client.get("/planning/synthetic/?scenario=fresh")
+    assert response.status_code == 200
+    assert b"Unscheduled" in response.content
+    assert b"Example unscheduled item" in response.content
