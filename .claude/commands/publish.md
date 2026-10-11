@@ -34,6 +34,13 @@ Required fields:
 | `type`   | Must be `blog` or `article` (not `lab`, `draft`, `note`, etc.) |
 | `author` | Must be `Syafiq Kay` — used in citation meta tags              |
 
+Optional fields:
+
+| Field         | Rule                                                                                    |
+|---------------|-----------------------------------------------------------------------------------------|
+| `description` | One sentence, shown on listings and used as the page meta description                   |
+| `read_time`   | Overrides the value computed from word count, for example `4 min read`                  |
+
 ### Labs (`type: lab`)
 
 Required fields:

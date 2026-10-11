@@ -48,7 +48,7 @@ Planned: `/now/`, `/tools/<name>/`.
 
 ## Content rules
 
-Posts need `title`, `date` (YYYY-MM-DD), `slug`, `type` (`blog` or `article`) and `author: Syafiq Kay`. Labs also need `project` (a slug in `content/labs/projects.yaml`) and `type: lab`. Optional lists: `tools`, `objectives`, `skills`. A file missing a required field or with invalid frontmatter is silently skipped.
+Posts need `title`, `date` (YYYY-MM-DD), `slug`, `type` (`blog` or `article`) and `author: Syafiq Kay`. Posts also accept optional `description` (one sentence, shown on listings and used as the page meta description) and `read_time` (overrides the computed value, for example `4 min read`). Labs also need `project` (a slug in `content/labs/projects.yaml`) and `type: lab`. Optional lists: `tools`, `objectives`, `skills`. A file missing a required field or with invalid frontmatter is silently skipped.
 
 - Never change a published `slug`. It is the URL
 - Lab assets go in `static/labs/<slug>/`, created by hand
@@ -106,7 +106,7 @@ The site is a public record of how Syafiq thinks and what he has done across pha
 
 Four sections:
 
-- Writing: what he is thinking about. Articles currently have a title and date; descriptions and read times are planned
+- Writing: what he is thinking about. Articles have a title, description, date, read time; read time computed from word count unless `read_time` is set
 - Labs: what he is experimenting with, as a public research notebook
 - CV: what he has done. A clean and conventional CV (Experience, Education, Projects, Publications, Skills, Professional registrations) with a Download PDF is planned
 - About: how the strands fit together
