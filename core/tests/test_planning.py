@@ -597,3 +597,11 @@ def test_unscheduled_items_rendered(client, monkeypatch):
     assert response.status_code == 200
     assert b"Unscheduled" in response.content
     assert b"Example unscheduled item" in response.content
+
+
+def test_planning_page_displays_utc_times(client):
+    response = client.get("/planning/synthetic/?scenario=fresh")
+    assert response.status_code == 200
+    content_str = response.content.decode("utf-8")
+    assert "07:30 UTC" in content_str
+    assert "09:30 UTC" in content_str
