@@ -463,6 +463,73 @@ recurring: []
     assert snapshot.reason_code == expected_reason
 
 
+@pytest.mark.parametrize(
+    "override_yaml,expected_reason",
+    [
+        ("schema_version: true", "unsupported_schema_version"),
+        ("schema_version: 1.0", "unsupported_schema_version"),
+        (
+            """
+run:
+  prepared_at: "2026-10-12T08:00:00Z"
+  status: "succeeded"
+  stale_after_hours: true
+  sources: []
+""",
+            "invalid_stale_after_hours",
+        ),
+        (
+            """
+run:
+  prepared_at: "2026-10-12T08:00:00Z"
+  status: "succeeded"
+  stale_after_hours: 24.0
+  sources: []
+""",
+            "invalid_stale_after_hours",
+        ),
+    ],
+)
+def test_exact_integer_validation(override_yaml, expected_reason):
+    from core.planning import parse_planning_snapshot
+
+    base_yaml = """
+schema_version: 1
+synthetic: true
+label: "SYNTHETIC EXAMPLE DATA"
+run:
+  prepared_at: "2026-10-12T08:00:00Z"
+  status: "succeeded"
+  stale_after_hours: 24
+  sources: []
+week:
+  start: "2026-10-12"
+  timezone: "Europe/London"
+blocks: []
+items: []
+recurring: []
+"""
+    if "schema_version:" in override_yaml:
+        manifest_yaml = base_yaml.replace("schema_version: 1", override_yaml.strip())
+    elif "run:" in override_yaml:
+        manifest_yaml = base_yaml.replace(
+            """run:
+  prepared_at: "2026-10-12T08:00:00Z"
+  status: "succeeded"
+  stale_after_hours: 24
+  sources: []""".strip(),
+            override_yaml.strip(),
+        )
+    else:
+        manifest_yaml = base_yaml + "\n" + override_yaml
+
+    now = datetime(2026, 10, 12, 10, 0, 0, tzinfo=timezone.utc)
+    snapshot = parse_planning_snapshot(manifest_yaml, now=now)
+
+    assert snapshot.state == "failed"
+    assert snapshot.reason_code == expected_reason
+
+
 # ---------------------------------------------------------------------------
 # Seam 2: View tests for /planning/synthetic/
 # ---------------------------------------------------------------------------
