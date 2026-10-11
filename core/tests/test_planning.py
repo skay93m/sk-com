@@ -626,3 +626,15 @@ def test_planning_rail_banner_and_single_main(client, scenario):
     assert "Typeface" in content_str
     assert "What changed" in content_str
     assert "11 Oct 2026, prototype of the weekly spread (synthetic)" in content_str
+
+
+def test_planning_day_blocks_row_placement_classes(client):
+    response = client.get("/planning/synthetic/?scenario=fresh")
+    assert response.status_code == 200
+    content_str = response.content.decode("utf-8")
+    # In fresh.yaml, Monday b2 is 09:30 to 12:30 -> start row 39, span 12 rows
+    assert "planning-row-start-39" in content_str
+    assert "planning-row-span-12" in content_str
+    # Monday b1 is 08:30 to 09:30 -> start row 35, span 4 rows
+    assert "planning-row-start-35" in content_str
+    assert "planning-row-span-4" in content_str
