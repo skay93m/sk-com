@@ -82,3 +82,43 @@ class RobotsTxtView(View):
                 "Crawl-delay: 1\n"
             )
         return HttpResponse(content, content_type='text/plain')
+
+
+class PlanningSyntheticView(TemplateView):
+    template_name = 'planning.html'
+
+    def get(self, request, *args, **kwargs):
+        scenario = request.GET.get('scenario', 'fresh')
+        from .planning import load_scenario_snapshot
+        try:
+            snapshot, simulated_now = load_scenario_snapshot(scenario)
+        except (ValueError, FileNotFoundError):
+            raise Http404(f"Unknown scenario: {scenario}")
+
+        # Group blocks and items by day for easy template rendering
+        weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+        days_data = []
+        for day in weekdays:
+            day_blocks = [b for b in snapshot.blocks if b.get('day') == day]
+            day_blocks.sort(key=lambda b: b.get('start', ''))
+            day_items = [it for it in snapshot.items if it.get('day') == day]
+            days_data.append({
+                'name': day,
+                'slug': day.lower(),
+                'blocks': day_blocks,
+                'items': day_items,
+            })
+
+        unassigned_items = [it for it in snapshot.items if not it.get('day')]
+
+        context = {
+            'snapshot': snapshot,
+            'scenario': scenario,
+            'simulated_now': simulated_now,
+            'days_data': days_data,
+            'unassigned_items': unassigned_items,
+            'all_scenarios': ['fresh', 'stale', 'empty', 'failed'],
+        }
+        response = self.render_to_response(context)
+        response['X-Robots-Tag'] = 'noindex'
+        return response

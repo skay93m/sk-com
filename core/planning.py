@@ -3,6 +3,7 @@ core/planning.py - Snapshot parsing and data structures for the synthetic planni
 """
 from dataclasses import dataclass, field
 from datetime import date, datetime, timezone
+from pathlib import Path
 from typing import Any, Optional
 import yaml
 
@@ -206,3 +207,41 @@ def parse_planning_snapshot(manifest_yaml: str, now: Optional[datetime] = None) 
         items=items,
         recurring=recurring,
     )
+
+
+SCENARIO_CONFIG = {
+    'fresh': {'fixture': 'fresh.yaml', 'offset_hours': 2},
+    'stale': {'fixture': 'stale.yaml', 'offset_hours': 50},
+    'empty': {'fixture': 'empty.yaml', 'offset_hours': 2},
+    'failed': {'fixture': 'failed.yaml', 'offset_hours': 2},
+}
+
+
+def load_scenario_snapshot(scenario: str) -> tuple[PlanningSnapshot, datetime]:
+    """
+    Loads fixture for the requested scenario and parses it with simulated now clock.
+    Returns (snapshot, simulated_now).
+    Raises ValueError if scenario is unknown or fixture is missing.
+    """
+    if scenario not in SCENARIO_CONFIG:
+        raise ValueError(f"Unknown scenario: {scenario}")
+
+    cfg = SCENARIO_CONFIG[scenario]
+    fixture_path = Path(__file__).parent / "fixtures" / "planning" / cfg['fixture']
+    if not fixture_path.exists():
+        raise FileNotFoundError(f"Fixture not found: {fixture_path}")
+
+    raw_yaml = fixture_path.read_text(encoding="utf-8")
+
+    # Determine prepared_at to set simulated now
+    try:
+        raw_data = yaml.safe_load(raw_yaml)
+        prepared_at_raw = raw_data.get('run', {}).get('prepared_at')
+        base_prepared_at = datetime.fromisoformat(prepared_at_raw)
+    except Exception:
+        base_prepared_at = datetime(2026, 10, 12, 8, 0, 0, tzinfo=timezone.utc)
+
+    from datetime import timedelta
+    simulated_now = base_prepared_at + timedelta(hours=cfg['offset_hours'])
+    snapshot = parse_planning_snapshot(raw_yaml, now=simulated_now)
+    return snapshot, simulated_now

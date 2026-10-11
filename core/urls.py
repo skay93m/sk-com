@@ -10,4 +10,5 @@ urlpatterns = [
     path('cv/', views.CVView.as_view(), name='cv'),
     path('labs/', views.LabsView.as_view(), name='labs'),
     path('labs/<slug:slug>/', views.LabDetailView.as_view(), name='lab-detail'),
+    path('planning/synthetic/', views.PlanningSyntheticView.as_view(), name='planning-synthetic'),
 ]
