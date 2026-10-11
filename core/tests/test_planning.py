@@ -371,6 +371,98 @@ recurring: []
     assert "garbage" not in (snapshot.reason_code or "")
 
 
+@pytest.mark.parametrize(
+    "override_yaml,expected_reason",
+    [
+        (
+            """
+run:
+  prepared_at: "2026-10-12T08:00:00Z"
+  status: "succeeded"
+  stale_after_hours: 24
+  sources:
+    - name: ["tasks"]
+      as_of: "2026-10-12T07:55:00Z"
+""",
+            "invalid_source_entry",
+        ),
+        (
+            """
+blocks:
+  - id: "b1"
+    day: "Monday"
+    start: "09:00"
+    end: "10:00"
+    kind: {bad: "kind"}
+    title: "Focus"
+""",
+            "invalid_block_kind",
+        ),
+        (
+            """
+items:
+  - id: "i1"
+    title: "Example"
+    kind: ["task"]
+""",
+            "invalid_item_kind",
+        ),
+        (
+            """
+recurring:
+  - id: "r1"
+    title: "Routine"
+    cadence: {daily: true}
+    days: []
+""",
+            "invalid_recurring_cadence",
+        ),
+    ],
+)
+def test_malformed_yaml_value_types(override_yaml, expected_reason):
+    from core.planning import parse_planning_snapshot
+
+    base_yaml = """
+schema_version: 1
+synthetic: true
+label: "SYNTHETIC EXAMPLE DATA"
+run:
+  prepared_at: "2026-10-12T08:00:00Z"
+  status: "succeeded"
+  stale_after_hours: 24
+  sources: []
+week:
+  start: "2026-10-12"
+  timezone: "Europe/London"
+blocks: []
+items: []
+recurring: []
+"""
+    if "blocks:" in override_yaml:
+        manifest_yaml = base_yaml.replace("blocks: []", override_yaml.strip())
+    elif "items:" in override_yaml:
+        manifest_yaml = base_yaml.replace("items: []", override_yaml.strip())
+    elif "recurring:" in override_yaml:
+        manifest_yaml = base_yaml.replace("recurring: []", override_yaml.strip())
+    elif "run:" in override_yaml:
+        manifest_yaml = base_yaml.replace(
+            """run:
+  prepared_at: "2026-10-12T08:00:00Z"
+  status: "succeeded"
+  stale_after_hours: 24
+  sources: []""".strip(),
+            override_yaml.strip(),
+        )
+    else:
+        manifest_yaml = base_yaml + "\n" + override_yaml
+
+    now = datetime(2026, 10, 12, 10, 0, 0, tzinfo=timezone.utc)
+    snapshot = parse_planning_snapshot(manifest_yaml, now=now)
+
+    assert snapshot.state == "failed"
+    assert snapshot.reason_code == expected_reason
+
+
 # ---------------------------------------------------------------------------
 # Seam 2: View tests for /planning/synthetic/
 # ---------------------------------------------------------------------------
