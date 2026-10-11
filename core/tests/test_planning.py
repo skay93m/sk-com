@@ -605,3 +605,24 @@ def test_planning_page_displays_utc_times(client):
     content_str = response.content.decode("utf-8")
     assert "07:30 UTC" in content_str
     assert "09:30 UTC" in content_str
+
+
+@pytest.mark.parametrize("scenario", ["fresh", "stale", "empty", "failed"])
+def test_planning_rail_banner_and_single_main(client, scenario):
+    response = client.get(f"/planning/synthetic/?scenario={scenario}")
+    assert response.status_code == 200
+    content_str = response.content.decode("utf-8")
+    assert "SYNTHETIC" in content_str
+    assert "<title>SYNTHETIC Planning" in content_str
+    # Verify exactly one main landmark
+    assert content_str.count("<main") == 1
+    assert content_str.count("</main>") == 1
+    # Verify navigation rail exists
+    assert 'aria-label="Planning navigation"' in content_str or '<nav class="planning-rail"' in content_str
+    # Verify rail contains site mark and groups
+    assert "Syafiq Kay" in content_str
+    assert "Explore" in content_str
+    assert "Planning" in content_str
+    assert "Typeface" in content_str
+    assert "What changed" in content_str
+    assert "11 Oct 2026, prototype of the weekly spread (synthetic)" in content_str
