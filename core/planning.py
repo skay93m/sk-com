@@ -138,7 +138,7 @@ def parse_planning_snapshot(manifest_yaml: str, now: Optional[datetime] = None) 
             return PlanningSnapshot(state="failed", reason_code="invalid_source_entry")
         if any(k not in ALLOWED_SOURCE_KEYS for k in s.keys()):
             return PlanningSnapshot(state="failed", reason_code="unknown_field")
-        if s.get('name') not in VALID_SOURCE_NAMES or 'as_of' not in s:
+        if not isinstance(s.get('name'), str) or s.get('name') not in VALID_SOURCE_NAMES or 'as_of' not in s:
             return PlanningSnapshot(state="failed", reason_code="invalid_source_entry")
         # Validate as_of format (ISO 8601 with offset)
         as_of_raw = s.get('as_of')
@@ -185,7 +185,7 @@ def parse_planning_snapshot(manifest_yaml: str, now: Optional[datetime] = None) 
             return PlanningSnapshot(state="failed", reason_code="unknown_field")
         if 'id' not in b or not str(b['id']).strip():
             return PlanningSnapshot(state="failed", reason_code="missing_id")
-        if b.get('day') not in VALID_WEEKDAYS:
+        if not isinstance(b.get('day'), str) or b.get('day') not in VALID_WEEKDAYS:
             return PlanningSnapshot(state="failed", reason_code="invalid_weekday")
         start_str = str(b.get('start', ''))
         end_str = str(b.get('end', ''))
@@ -194,7 +194,7 @@ def parse_planning_snapshot(manifest_yaml: str, now: Optional[datetime] = None) 
         title = str(b.get('title', ''))
         if len(title) > 80:
             return PlanningSnapshot(state="failed", reason_code="title_too_long")
-        if b.get('kind') not in VALID_BLOCK_KINDS:
+        if not isinstance(b.get('kind'), str) or b.get('kind') not in VALID_BLOCK_KINDS:
             return PlanningSnapshot(state="failed", reason_code="invalid_block_kind")
         blocks.append(b)
 
@@ -210,12 +210,12 @@ def parse_planning_snapshot(manifest_yaml: str, now: Optional[datetime] = None) 
             return PlanningSnapshot(state="failed", reason_code="unknown_field")
         if 'id' not in it or not str(it['id']).strip():
             return PlanningSnapshot(state="failed", reason_code="missing_id")
-        if 'day' in it and it['day'] is not None and it['day'] not in VALID_WEEKDAYS:
+        if 'day' in it and it['day'] is not None and (not isinstance(it['day'], str) or it['day'] not in VALID_WEEKDAYS):
             return PlanningSnapshot(state="failed", reason_code="invalid_weekday")
         title = str(it.get('title', ''))
         if len(title) > 80:
             return PlanningSnapshot(state="failed", reason_code="title_too_long")
-        if it.get('kind') not in VALID_ITEM_KINDS:
+        if not isinstance(it.get('kind'), str) or it.get('kind') not in VALID_ITEM_KINDS:
             return PlanningSnapshot(state="failed", reason_code="invalid_item_kind")
         items.append(it)
 
@@ -234,10 +234,10 @@ def parse_planning_snapshot(manifest_yaml: str, now: Optional[datetime] = None) 
         title = str(r.get('title', ''))
         if len(title) > 80:
             return PlanningSnapshot(state="failed", reason_code="title_too_long")
-        if r.get('cadence') not in VALID_CADENCES:
+        if not isinstance(r.get('cadence'), str) or r.get('cadence') not in VALID_CADENCES:
             return PlanningSnapshot(state="failed", reason_code="invalid_recurring_cadence")
         days = r.get('days', [])
-        if not isinstance(days, list) or any(d not in VALID_WEEKDAYS for d in days):
+        if not isinstance(days, list) or any(not isinstance(d, str) or d not in VALID_WEEKDAYS for d in days):
             return PlanningSnapshot(state="failed", reason_code="invalid_weekday")
         recurring.append(r)
 
