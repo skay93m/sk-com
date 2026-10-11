@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load tz %}
 
 {% block title %}SYNTHETIC Planning — Syafiq Kay{% endblock %}
 
@@ -29,9 +30,9 @@
     </div>
 
     <div class="planning-status-meta">
-      <p>Scenario: <strong>{{ scenario }}</strong> (simulated time: {{ simulated_now|date:"Y-m-d H:i" }} UTC)</p>
+      <p>Scenario: <strong>{{ scenario }}</strong> (simulated time: {{ simulated_now|utc|date:"Y-m-d H:i" }} UTC)</p>
       {% if snapshot.prepared_at %}
-        <p>Prepared at: <time datetime="{{ snapshot.prepared_at|date:'c' }}">{{ snapshot.prepared_at|date:"Y-m-d H:i" }} UTC</time>
+        <p>Prepared at: <time datetime="{{ snapshot.prepared_at|utc|date:'c' }}">{{ snapshot.prepared_at|utc|date:"Y-m-d H:i" }} UTC</time>
         {% if snapshot.age_hours is not None %}
           ({{ snapshot.age_hours|floatformat:1 }} hours ago, threshold: {{ snapshot.stale_after_hours }}h)
         {% endif %}
