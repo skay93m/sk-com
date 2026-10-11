@@ -635,3 +635,11 @@ def test_planning_day_blocks_row_placement_classes(client):
     # Monday b1 is 08:30 to 09:30 -> start row 35, span 4 rows
     assert "planning-row-start-35" in content_str
     assert "planning-row-span-4" in content_str
+
+
+def test_planning_journal_placeholder(client):
+    response = client.get("/planning/synthetic/?scenario=fresh")
+    assert response.status_code == 200
+    content_str = response.content.decode("utf-8")
+    assert "Journal" in content_str
+    assert "Not built yet." in content_str
