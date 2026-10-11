@@ -20,6 +20,7 @@ build step.
 | `/writings/`, `/writings/<slug>/` | Posts and essays |
 | `/labs/`, `/labs/<slug>/` | Technical lab write-ups, grouped by project |
 | `/cv/` | CV |
+| `/planning/synthetic/` | Synthetic planning page (unlisted, noindex, synthetic only) |
 
 ## Running locally
 

@@ -1,0 +1,170 @@
+{% extends "planning_base.html" %}
+{% load tz %}
+
+{% block title %}SYNTHETIC Planning — Syafiq Kay{% endblock %}
+
+{% block content %}
+<!-- DESKTOP-ONLY BANNER / MESSAGE (Shown below 75rem / 1200px via CSS) -->
+<div class="planning-desktop-warning" role="note">
+  <p>This page is desktop only for now.</p>
+</div>
+
+<div class="planning-spread-wrapper">
+  <!-- SYNTHETIC BANNER -->
+  <div class="planning-synthetic-banner" role="alert" aria-label="Synthetic data warning">
+    <span class="planning-banner-tag">SYNTHETIC</span>
+    <span class="planning-banner-text">{{ snapshot.label|default:"SYNTHETIC EXAMPLE DATA" }}</span>
+    <span class="planning-banner-note">Read-only fixture data. No real data or external access.</span>
+  </div>
+
+  <!-- COMPACT STATUS / STATE BOX -->
+  <div class="planning-status-box planning-state-{{ snapshot.state }}">
+    <div class="planning-status-header">
+      <span class="planning-state-badge">{{ snapshot.state|upper }}</span>
+      <h1 class="planning-page-title">
+        {% if snapshot.state == 'fresh' %}
+          Snapshot is fresh
+        {% elif snapshot.state == 'stale' %}
+          Snapshot is stale
+        {% elif snapshot.state == 'empty' %}
+          Snapshot is empty
+        {% elif snapshot.state == 'failed' %}
+          Snapshot failed
+        {% endif %}
+      </h1>
+    </div>
+
+    <div class="planning-status-meta">
+      <p>Scenario: <strong>{{ scenario }}</strong> (simulated time: {{ simulated_now|utc|date:"Y-m-d H:i" }} UTC)</p>
+      {% if snapshot.prepared_at %}
+        <p>Prepared at: <time datetime="{{ snapshot.prepared_at|utc|date:'c' }}">{{ snapshot.prepared_at|utc|date:"Y-m-d H:i" }} UTC</time>
+        {% if snapshot.age_hours is not None %}
+          ({{ snapshot.age_hours|floatformat:1 }} hours ago, threshold: {{ snapshot.stale_after_hours }}h)
+        {% endif %}
+        </p>
+      {% endif %}
+      {% if snapshot.reason_code %}
+        <p class="planning-reason-code">Reason code: <code>{{ snapshot.reason_code }}</code></p>
+      {% endif %}
+    </div>
+
+    {% if snapshot.state == 'stale' %}
+      <div class="planning-alert-message planning-alert-warning" role="alert">
+        <strong>Warning:</strong> This plan snapshot has exceeded the freshness threshold of {{ snapshot.stale_after_hours }} hours. Information may be out of date.
+      </div>
+    {% elif snapshot.state == 'empty' %}
+      <div class="planning-alert-message planning-alert-info">
+        No planned blocks or items were returned for this week.
+      </div>
+    {% elif snapshot.state == 'failed' %}
+      <div class="planning-alert-message planning-alert-danger" role="alert">
+        The snapshot projection failed to complete. Inspect the reason code above.
+      </div>
+    {% endif %}
+  </div>
+
+  {% if snapshot.state != 'failed' %}
+    <!-- JIBUN TECHO WEEKLY SPREAD -->
+    <div class="planning-spread" id="weekly-plan">
+      <!-- HEADER ROW: Weekly Plan + 7 Days Tabs -->
+      <div class="planning-spread-header">
+        <div class="planning-header-goal-col">
+          <h2 class="planning-goals-heading">Weekly plan</h2>
+          <span class="planning-goals-date">Week of {{ snapshot.week.start|default:"2026-10-12" }}</span>
+        </div>
+        <div class="planning-header-days-grid">
+          {% for day in days_data %}
+            <div class="planning-day-tab planning-tab-{{ day.slug }}">
+              <span class="planning-tab-name">{{ day.name }}</span>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- MAIN TIMELINE SECTION: Goals Column + 7 Day 24h Columns -->
+      <div class="planning-spread-body">
+        <!-- LEFT COLUMN: Weekly Goals -->
+        <aside class="planning-goals-sidebar" aria-label="Weekly Goals">
+          <ul class="planning-goals-list">
+            {% for goal in weekly_goals %}
+              <li class="planning-goal-item">
+                <span class="planning-checkbox" aria-hidden="true"></span>
+                <span class="sr-only">Not started</span>
+                <span class="planning-goal-title">{{ goal.title }}</span>
+              </li>
+            {% empty %}
+              <li class="planning-goals-empty">—</li>
+            {% endfor %}
+          </ul>
+        </aside>
+
+        <!-- 7 DAY 24-HOUR TIMELINE COLUMNS -->
+        <div class="planning-days-timeline-grid">
+          {% for day in days_data %}
+            <section class="planning-day-column planning-col-{{ day.slug }}" aria-labelledby="day-heading-{{ day.slug }}">
+              <h3 id="day-heading-{{ day.slug }}" class="sr-only">{{ day.name }}</h3>
+
+              <!-- Hour markers down the left edge (0 to 24) -->
+              <div class="planning-timeline-axis" aria-hidden="true">
+                {% for h in timeline_hours %}
+                  <div class="planning-hour-mark planning-hour-{{ h }}">
+                    <span class="planning-hour-number">{{ h }}</span>
+                  </div>
+                {% endfor %}
+              </div>
+
+              <!-- 96-row grid container for time blocks -->
+              <div class="planning-blocks-canvas">
+                {% for block in day.blocks %}
+                  <div class="planning-grid-block planning-block-{{ block.kind }} planning-row-start-{{ block.row_start }} planning-row-span-{{ block.row_span }}">
+                    <div class="planning-block-inner">
+                      <div class="planning-block-time-label">{{ block.start }}–{{ block.end }}</div>
+                      <div class="planning-block-title-text">{{ block.title }}</div>
+                      <span class="planning-kind-tag">{{ block.kind }}</span>
+                    </div>
+                  </div>
+                {% endfor %}
+              </div>
+            </section>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- DAILY TASKS ROW -->
+      <div class="planning-tasks-row" aria-label="Daily tasks section">
+        <div class="planning-tasks-label-cell">
+          <span class="planning-tasks-label-text">Daily tasks</span>
+        </div>
+        <div class="planning-tasks-days-grid">
+          {% for day in days_data %}
+            <div class="planning-tasks-day-cell">
+              <ul class="planning-daily-tasks-list">
+                {% for t in day.tasks %}
+                  <li class="planning-task-item">
+                    <span class="planning-task-bullet" aria-hidden="true">·</span>
+                    <span class="planning-task-title">{{ t.title }}</span>
+                  </li>
+                {% empty %}
+                  <li class="planning-tasks-empty">—</li>
+                {% endfor %}
+              </ul>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- JOURNAL PLACEHOLDER -->
+      <section class="planning-journal-box" aria-labelledby="journal-heading">
+        <h2 id="journal-heading" class="planning-journal-title">Journal</h2>
+        <p class="planning-journal-note">Not built yet.</p>
+        <div class="planning-journal-ruled" aria-hidden="true"></div>
+      </section>
+    </div>
+  {% else %}
+    <!-- Failed Scenario State -->
+    <div class="planning-failed-state">
+      <p>Snapshot projection failed to load. See reason code above.</p>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

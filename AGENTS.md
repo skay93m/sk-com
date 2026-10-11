@@ -42,7 +42,7 @@ Needs `DJANGO_SECRET_KEY`. Set `DEBUG=True` and `ALLOWED_HOSTS=localhost,127.0.0
 
 ## Routes
 
-`/` home, `/writings/`, `/writings/<slug>/`, `/labs/`, `/labs/<slug>/`, `/cv/`, `/robots.txt`, `/admin/` (to be removed).
+`/` home, `/writings/`, `/writings/<slug>/`, `/labs/`, `/labs/<slug>/`, `/cv/`, `/planning/synthetic/` (unlisted, noindex, synthetic only), `/robots.txt`, `/admin/` (to be removed).
 
 Planned: `/now/`, `/tools/<name>/`.
 

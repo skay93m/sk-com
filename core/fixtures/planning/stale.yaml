@@ -1,0 +1,33 @@
+schema_version: 1
+synthetic: true
+label: "SYNTHETIC EXAMPLE DATA"
+run:
+  prepared_at: "2026-10-10T05:30:00Z"
+  status: "succeeded"
+  stale_after_hours: 24
+  sources:
+    - name: "calendar"
+      as_of: "2026-10-10T05:25:00Z"
+    - name: "tasks"
+      as_of: "2026-10-10T05:28:00Z"
+week:
+  start: "2026-10-12"
+  timezone: "Europe/London"
+blocks:
+  - id: "b1"
+    day: "Monday"
+    start: "09:00"
+    end: "11:00"
+    kind: "focus"
+    title: "Example focus block"
+items:
+  - id: "i1"
+    title: "Example archived backlog item"
+    kind: "task"
+    day: "Monday"
+    block_id: "b1"
+recurring:
+  - id: "r1"
+    title: "Example daily routine"
+    cadence: "daily"
+    days: []
