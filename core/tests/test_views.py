@@ -12,6 +12,7 @@ import pytest
 from django.utils.html import escape
 
 from core.context_processors import BIO
+from core.urls import LEGACY_REDIRECT_PATHS
 
 
 # ---------------------------------------------------------------------------
@@ -56,9 +57,9 @@ def test_homepage_shows_writing_metadata(client):
 
 
 @pytest.mark.django_db
-@pytest.mark.parametrize("path", ["/cv/", "/labs/", "/about/", "/writing/"])
-def test_stage_one_legacy_redirects(client, path):
-    response = client.get(path)
+@pytest.mark.parametrize("slug", LEGACY_REDIRECT_PATHS)
+def test_stage_one_legacy_redirects(client, slug):
+    response = client.get(f"/{slug}/")
     assert response.status_code == 302
     assert response["Location"] == "/"
 

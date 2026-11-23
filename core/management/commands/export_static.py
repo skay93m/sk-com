@@ -12,9 +12,8 @@ from django.urls import resolve, reverse
 
 from core.labs import get_all_labs
 from core.posts import get_all_posts
+from core.urls import LEGACY_REDIRECT_PATHS
 from core.views import HomeView, LabDetailView, PostDetailView, RobotsTxtView, WritingsView
-
-LEGACY_REDIRECT_NAMES = ('core:cv', 'core:labs', 'core:about', 'core:writing')
 
 
 class Command(BaseCommand):
@@ -52,7 +51,7 @@ class Command(BaseCommand):
             for item in items:
                 pages.append((reverse(name, args=[item['slug']]), view, {'slug': item['slug']}))
 
-        redirect_urls = [reverse(name) for name in LEGACY_REDIRECT_NAMES]
+        redirect_urls = [reverse(f'core:{slug}') for slug in LEGACY_REDIRECT_PATHS]
 
         with TemporaryDirectory(dir=output.parent) as temporary:
             staging = Path(temporary) / 'site'

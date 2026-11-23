@@ -13,8 +13,10 @@ tokens. No runtime JavaScript is used. Export with
 `/cv/`, `/labs/`, `/about/` and `/writing/` return Django HTTP 302 to `/`.
 LinkedIn owns the career record. Published `/writings/<slug>/` URLs are preserved.
 The proposed `render.yaml` targets a Static Site and disables previews, but the
-dashboard remains authoritative. Render static redirects return 301. See README
-for the unresolved 302 hosting constraint and cutover steps.
+dashboard remains authoritative. Render static edge redirects return 301 for
+permanently retired paths (`/cv`, `/labs`, `/writing`), while planned Stage 2
+`/about` uses a rewrite to its meta-refresh fallback page to avoid permanent 301
+browser caching. See README for the unresolved 302 hosting constraint and cutover steps.
 
 The CV roadmap and Bootstrap CDN description below are historical and retired for
 Stage 1. The stylesheet is now populated and no external CSS or fonts are loaded.
@@ -67,14 +69,14 @@ Production runs `uv run --frozen --no-dev`.
 - `/` Stage 1 homepage
 - `/writings/` writing index, `/writings/<slug>/` published notes (Reading layout)
 - `/labs/<slug>/` published lab detail URLs
-- `/cv/`, `/labs/`, `/about/`, `/writing/` HTTP `302` redirects to `/` in Django (`render.yaml` edge redirects return `301` on Render Static Sites, and `export_static` generates `<meta http-equiv="refresh">` fallback HTML)
+- `/cv/`, `/labs/`, `/about/`, `/writing/` HTTP `302` redirects to `/` in Django (`render.yaml` uses `301` edge redirects for `/cv`, `/labs`, `/writing`, `rewrite` to `/about/index.html` for `/about`, and `export_static` generates `<meta http-equiv="refresh">` fallback HTML for all four paths)
 - `/robots.txt`, `/admin/` (to be removed)
 
 Planned: `/now/`, `/tools/<name>/`.
 
 ## Content rules
 
-Posts need `title`, `date` (YYYY-MM-DD), `slug`, `type` (`blog` or `article`) and `author: Syafiq Kay`. Posts also accept optional `description` (one sentence, shown on listings and used as the page meta description) and `read_time` (overrides the computed value, for example `4 min read`). Labs also need `project` (a slug in `content/labs/projects.yaml`) and `type: lab`. Optional lists: `tools`, `objectives`, `skills`. A file missing a required field or with invalid frontmatter is silently skipped.
+Posts need `title`, `date` (YYYY-MM-DD), `slug`, `type` (`blog` or `article`) and `author: Syafiq Kay`. Posts also accept optional `description` (one sentence, shown on listings and used as the page meta description), `read_time` (overrides the computed value, for example `4 min read`), and `ai_disclosure` (shown in Reading provenance; when omitted, defaults to an unrecorded notice rather than inferring author prose). Labs also need `project` (a slug in `content/labs/projects.yaml`) and `type: lab`. Optional lists: `tools`, `objectives`, `skills`. A file missing a required field or with invalid frontmatter is silently skipped.
 
 - Never change a published `slug`. It is the URL
 - Lab assets go in `static/labs/<slug>/`, created by hand

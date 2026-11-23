@@ -1,6 +1,7 @@
 """Check exported pages in Chromium without external network requests."""
 
 import argparse
+import sys
 from functools import partial
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -9,18 +10,21 @@ from threading import Thread
 from playwright.sync_api import sync_playwright
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
+
+from core.urls import LEGACY_REDIRECT_PATHS  # noqa: E402
 
 
 def discover_note_paths(directory: Path) -> list[str]:
     writings_dir = directory / 'writings'
     if not writings_dir.is_dir():
         return []
-    paths = [
+    return [
         f'/writings/{entry.name}/'
         for entry in sorted(writings_dir.iterdir())
         if entry.is_dir() and (entry / 'index.html').is_file()
     ]
-    return paths
 
 
 def main():
@@ -91,6 +95,10 @@ def main():
                             assert page.locator('hr').count() == 0
                         elif path in note_paths:
                             assert page.locator('.site-header').evaluate('(el) => getComputedStyle(el).maxWidth') == '1120px'
+                            if width == 1440:
+                                assert page.locator('.reading-margin').evaluate('(el) => getComputedStyle(el).paddingTop') == '230px'
+                            else:
+                                assert not page.locator('.reading-margin').is_visible()
                             page.get_by_text('AI contribution', exact=True).click()
                             assert page.locator('details').first.get_attribute('open') is not None
                             page.get_by_text('AI contribution', exact=True).click()
@@ -106,15 +114,15 @@ def main():
                             count += 1
                         page.emulate_media(media='screen')
 
-            for redirect_path in ['/cv/', '/labs/', '/about/', '/writing/']:
-                page.goto(origin + redirect_path)
+            for slug in LEGACY_REDIRECT_PATHS:
+                page.goto(f'{origin}/{slug}/')
                 page.wait_for_url(origin + '/')
                 count += 1
 
             assert not external, external
             assert not errors, errors
             browser.close()
-            print(f'{count} rendered checks passed across {len(paths)} pages and 4 static redirects; no external requests or browser errors.')
+            print(f'{count} rendered checks passed across {len(paths)} pages and {len(LEGACY_REDIRECT_PATHS)} static redirects; no external requests or browser errors.')
     finally:
         server.shutdown()
         server.server_close()

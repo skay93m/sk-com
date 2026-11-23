@@ -84,10 +84,12 @@ paid service after the new site is verified. There is no database to migrate for
 public pages.
 
 Render's documented static redirect rules return **301**, and the Blueprint schema
-does not expose a status-code field. The proposed static rules therefore cannot
-meet the required temporary **302** status. Django implements and tests 302.
-Resolve this hosting constraint before cutover if temporary redirects are required;
-do not describe static production redirects as 302.
+does not expose a status-code field. In `render.yaml`, permanently retired paths
+(`/cv`, `/labs`, `/writing` and trailing-slash forms) use Render edge `redirect` rules
+(301) alongside static meta-refresh fallbacks, whereas planned Stage 2 `/about` uses
+a `rewrite` to `/about/index.html` (`<meta http-equiv="refresh" content="0; url=/">`)
+to avoid permanent browser `301` caching. Django implements and tests HTTP 302 for all
+four routes; do not describe Render edge redirect rules as 302.
 See [Render redirect rules](https://render.com/docs/redirects-rewrites) and
 [Blueprint configuration](https://render.com/docs/blueprint-spec).
 

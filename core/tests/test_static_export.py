@@ -7,6 +7,7 @@ from django.conf import settings
 from django.core.management import CommandError, call_command
 
 from core.posts import get_all_posts
+from core.urls import LEGACY_REDIRECT_PATHS
 
 
 class AssetLinks(HTMLParser):
@@ -39,7 +40,7 @@ def test_static_export_is_complete_and_repeatable(tmp_path):
         assert b'Back to homepage' in note_html
         assert b'article-provenance' in note_html
 
-    for legacy in ['cv', 'labs', 'about', 'writing']:
+    for legacy in LEGACY_REDIRECT_PATHS:
         fallback = (output / legacy / 'index.html').read_text()
         assert 'http-equiv="refresh"' in fallback
         assert 'url=/' in fallback
@@ -85,6 +86,21 @@ def test_render_static_configuration():
     assert service['runtime'] == 'static'
     assert service['staticPublishPath'] == 'dist'
     assert service['previews']['generation'] == 'off'
-    routes = {r['source']: r['destination'] for r in service['routes']}
-    for path in ['/cv/', '/labs/', '/about/', '/writing/']:
-        assert routes[path] == '/'
+    assert 'uv==0.11.32' in service['buildCommand']
+
+    redirects = {
+        r['source']: r['destination']
+        for r in service['routes']
+        if r['type'] == 'redirect'
+    }
+    for path in ['/cv', '/cv/', '/labs', '/labs/', '/writing', '/writing/']:
+        assert redirects[path] == '/'
+    assert not any(source.startswith('/about') for source in redirects)
+
+    rewrites = {
+        r['source']: r['destination']
+        for r in service['routes']
+        if r['type'] == 'rewrite'
+    }
+    assert rewrites['/about'] == '/about/index.html'
+    assert rewrites['/about/*'] == '/about/index.html'

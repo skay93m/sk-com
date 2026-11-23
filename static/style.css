@@ -325,6 +325,7 @@ body.sk-spatial-canvas.sk-view-reading .site-header {
 }
 
 .sk-section-block p.sk-boundary,
+.article p.sk-boundary,
 .sk-boundary {
   font-family: "IBM Plex Sans", sans-serif;
   font-size: 0.85rem;
@@ -458,10 +459,6 @@ body.sk-spatial-canvas.sk-view-reading .site-header {
 }
 
 .article p.sk-boundary {
-  font-family: "IBM Plex Sans", sans-serif;
-  font-size: 0.85rem;
-  line-height: 1.6;
-  color: var(--sk-muted);
   margin-top: var(--sk-block-gap);
 }
 
@@ -480,6 +477,7 @@ body.sk-spatial-canvas.sk-view-reading .site-header {
 .reading-margin {
   font: 0.85rem/1.6 "IBM Plex Sans", sans-serif;
   color: var(--sk-muted);
+  padding-top: 230px;
 }
 
 /* Writing index and lab detail layouts */
@@ -532,16 +530,8 @@ body.sk-spatial-canvas.sk-view-reading .site-header {
   color: var(--sk-muted);
 }
 
-.text-decoration-none {
-  text-decoration: none;
-}
-
 .fw-normal {
   font-weight: 400;
-}
-
-.small {
-  font-size: 0.875rem;
 }
 
 .h6 {

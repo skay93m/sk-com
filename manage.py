@@ -7,6 +7,8 @@ import sys
 def main():
     """Run administrative tasks."""
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'syafiqkay.settings')
+    if sys.argv[1:2] == ['check'] and '--deploy' in sys.argv[2:]:
+        os.environ.setdefault('DJANGO_DEPLOY_CHECK', '1')
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:

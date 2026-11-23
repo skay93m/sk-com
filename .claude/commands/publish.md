@@ -36,10 +36,11 @@ Required fields:
 
 Optional fields:
 
-| Field         | Rule                                                                                    |
-|---------------|-----------------------------------------------------------------------------------------|
-| `description` | One sentence, shown on listings and used as the page meta description                   |
-| `read_time`   | Overrides the value computed from word count, for example `4 min read`                  |
+| Field           | Rule                                                                                    |
+|-----------------|-----------------------------------------------------------------------------------------|
+| `description`   | One sentence, shown on listings and used as the page meta description                   |
+| `read_time`     | Overrides the value computed from word count, for example `4 min read`                  |
+| `ai_disclosure` | Optional AI-use disclosure shown in Reading provenance; omit unless explicitly supplied |
 
 ### Labs (`type: lab`)
 
@@ -58,7 +59,7 @@ Required fields:
 
 - `tools` — list of tool names used
 - `objectives` — list of learning objectives
-- `skills` — list of skills demonstrated (shown as badges on /labs/)
+- `skills` — list of skills demonstrated (shown as badges on lab detail pages)
 
 Always read `content/labs/projects.yaml` for the authoritative list of valid project slugs.
 The list below is illustrative only and will go out of date as projects are added:
