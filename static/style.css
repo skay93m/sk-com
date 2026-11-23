@@ -30,8 +30,6 @@
   --sk-border: #d9d8e2;
   --sk-coral: #ff4f40;
   --sk-link: #9c3028;
-  --sk-soft: #ffe2dc;
-  --sk-green: #087f75;
   --sk-fill: #f0eff4;
   --sk-block-gap: 3rem;
 }
@@ -43,9 +41,7 @@
   --sk-muted: #afb4bc;
   --sk-border: #6d747e;
   --sk-link: #ffa093;
-  --sk-soft: #22252a;
   --sk-fill: #22252a;
-  --sk-green: #5ed3bf;
 }
 
 * {
@@ -537,11 +533,6 @@ body.sk-spatial-canvas.sk-view-reading .site-header {
 .h6 {
   font-family: "IBM Plex Mono", monospace;
   font-size: 0.85rem;
-}
-
-.text-uppercase {
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
 }
 
 .mt-2 {

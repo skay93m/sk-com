@@ -71,7 +71,10 @@ def test_optional_writing_metadata_defaults_to_none(tmp_path):
 
     assert result["description"] is None
     assert result["read_time"] == "1 min read"
-    assert "No AI contribution is recorded" in result["ai_disclosure"]
+    assert (
+        "No separate AI contribution metadata is recorded for this note; "
+        "see the note text for any author disclosure."
+    ) in result["ai_disclosure"]
 
 
 def test_optional_ai_disclosure_is_parsed(tmp_path):

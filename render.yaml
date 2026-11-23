@@ -1,9 +1,11 @@
 # Proposed static-site deployment. The dashboard remains authoritative until
 # this Blueprint is adopted. Disable previews on the existing service there too.
-# Django retains HTTP 302 for all legacy routes (/cv/, /labs/, /about/, /writing/).
-# On Render Static Sites, permanently retired /cv, /labs, and /writing use edge
-# redirect rules (301) alongside meta-refresh fallbacks, while planned Stage 2
-# /about uses a rewrite to its meta-refresh fallback HTML to avoid 301 caching.
+# Django retains true HTTP 302 redirects for /cv/, /labs/, /about/, and /writing/.
+# On Render Static Sites, exported dist/{cv,labs,about,writing}/index.html files
+# take precedence over route rules, and Render edge redirects only return
+# permanent HTTP 301s. Uniform rewrite rules therefore map bare and subpath
+# legacy paths to export_static's <meta http-equiv="refresh"> fallback pages
+# without emitting 301s (preserving any published /labs/<slug>/ files first).
 previews:
   generation: "off"
 services:
@@ -21,30 +23,30 @@ services:
       - key: DEBUG
         value: "False"
     routes:
-      - type: redirect
+      - type: rewrite
         source: /cv
-        destination: /
-      - type: redirect
-        source: /cv/
-        destination: /
-      - type: redirect
+        destination: /cv/index.html
+      - type: rewrite
+        source: /cv/*
+        destination: /cv/index.html
+      - type: rewrite
         source: /labs
-        destination: /
-      - type: redirect
-        source: /labs/
-        destination: /
-      - type: redirect
-        source: /writing
-        destination: /
-      - type: redirect
-        source: /writing/
-        destination: /
+        destination: /labs/index.html
+      - type: rewrite
+        source: /labs/*
+        destination: /labs/index.html
       - type: rewrite
         source: /about
         destination: /about/index.html
       - type: rewrite
         source: /about/*
         destination: /about/index.html
+      - type: rewrite
+        source: /writing
+        destination: /writing/index.html
+      - type: rewrite
+        source: /writing/*
+        destination: /writing/index.html
     headers:
       - path: /*
         name: X-Content-Type-Options

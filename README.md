@@ -83,13 +83,16 @@ existing Docker service, verify the output, transfer custom domains, and retire 
 paid service after the new site is verified. There is no database to migrate for
 public pages.
 
-Render's documented static redirect rules return **301**, and the Blueprint schema
-does not expose a status-code field. In `render.yaml`, permanently retired paths
-(`/cv`, `/labs`, `/writing` and trailing-slash forms) use Render edge `redirect` rules
-(301) alongside static meta-refresh fallbacks, whereas planned Stage 2 `/about` uses
-a `rewrite` to `/about/index.html` (`<meta http-equiv="refresh" content="0; url=/">`)
-to avoid permanent browser `301` caching. Django implements and tests HTTP 302 for all
-four routes; do not describe Render edge redirect rules as 302.
+Render's documented static redirect rules return **301** (no status-code field is
+exposed in the Blueprint schema), and Render Static Sites always serve existing
+physical files before evaluating route rules. `render.yaml` therefore uses uniform
+`type: rewrite` rules mapping `/cv`, `/labs`, `/about`, `/writing` (and subpath
+wildcards) to `export_static`'s `<meta http-equiv="refresh" content="0; url=/">`
+fallback pages (`dist/{cv,labs,about,writing}/index.html`), avoiding permanent
+`301` browser caching while preserving physical `/labs/<slug>/` files. Django
+implements and tests true HTTP **302** for all four routes; resolve this static
+HTTP `302` hosting constraint before cutover if edge HTTP `302` responses are
+required, and do not describe Render static site responses as `302`.
 See [Render redirect rules](https://render.com/docs/redirects-rewrites) and
 [Blueprint configuration](https://render.com/docs/blueprint-spec).
 
@@ -99,8 +102,9 @@ The stylesheet ports the selected Stage 1 SK Design System baseline (F3 IBM Plex
 D1 dark tokens, coral-dot mark, 760px homepage, Reading pattern). Fonts are
 self-hosted in `static/fonts/` with their SIL Open Font Licence texts.
 Published text and dates remain authoritative in `content/`. Optional
-`ai_disclosure` frontmatter is shown in Reading provenance. Missing disclosures
-are labelled as unrecorded rather than inferred.
+`ai_disclosure` frontmatter is shown in Reading provenance; when omitted, the
+provenance notice directs readers to the note text for any author disclosure
+rather than inferring prose.
 
 Publication is governed by [AGENTS.md](AGENTS.md). Do not import private notes or
 planning documents into this repository. All changes go through a pull request.

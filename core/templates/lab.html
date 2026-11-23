@@ -28,7 +28,7 @@
     <div class="row g-4 mb-4">
       {% if lab.objectives %}
         <div class="col-sm-7">
-          <h2 class="h6 text-uppercase text-muted fw-normal mb-2">Objectives</h2>
+          <h2 class="h6 text-muted fw-normal mb-2">Objectives</h2>
           <ul class="mb-0 ps-3">
             {% for obj in lab.objectives %}
               <li>{{ obj }}</li>
@@ -38,7 +38,7 @@
       {% endif %}
       {% if lab.tools %}
         <div class="col-sm-5">
-          <h2 class="h6 text-uppercase text-muted fw-normal mb-2">Tools</h2>
+          <h2 class="h6 text-muted fw-normal mb-2">Tools</h2>
           <ul class="mb-0 ps-3">
             {% for tool in lab.tools %}
               <li>{{ tool }}</li>

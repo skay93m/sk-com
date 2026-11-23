@@ -88,19 +88,13 @@ def test_render_static_configuration():
     assert service['previews']['generation'] == 'off'
     assert 'uv==0.11.32' in service['buildCommand']
 
-    redirects = {
-        r['source']: r['destination']
-        for r in service['routes']
-        if r['type'] == 'redirect'
-    }
-    for path in ['/cv', '/cv/', '/labs', '/labs/', '/writing', '/writing/']:
-        assert redirects[path] == '/'
-    assert not any(source.startswith('/about') for source in redirects)
+    assert not any(r['type'] == 'redirect' for r in service['routes'])
 
     rewrites = {
         r['source']: r['destination']
         for r in service['routes']
         if r['type'] == 'rewrite'
     }
-    assert rewrites['/about'] == '/about/index.html'
-    assert rewrites['/about/*'] == '/about/index.html'
+    for slug in LEGACY_REDIRECT_PATHS:
+        assert rewrites[f'/{slug}'] == f'/{slug}/index.html'
+        assert rewrites[f'/{slug}/*'] == f'/{slug}/index.html'
