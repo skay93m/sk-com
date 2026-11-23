@@ -11,6 +11,7 @@ from datetime import date
 import pytest
 
 from core.posts import POST_REQUIRED_FIELDS, _parse_post_file, get_all_posts, get_post_by_slug
+from core.tests.constants import FORBIDDEN_AI_DISCLOSURE_TEXT, HELLO_WORLD_AI_DISCLOSURE
 
 
 # ---------------------------------------------------------------------------
@@ -71,20 +72,29 @@ def test_optional_writing_metadata_defaults_to_none(tmp_path):
 
     assert result["description"] is None
     assert result["read_time"] == "1 min read"
-    assert (
-        "No separate AI contribution metadata is recorded for this note; "
-        "see the note text for any author disclosure."
-    ) in result["ai_disclosure"]
+    assert result["ai_disclosure"] is None
 
 
 def test_optional_ai_disclosure_is_parsed(tmp_path):
     content = VALID_POST.replace(
         "title: Test Post",
-        "title: Test Post\nai_disclosure: Verified grammar only.",
+        "title: Test Post\nai_disclosure: '  Verified grammar only.  '",
     )
     result = _parse_post_file(make_post_file(tmp_path, content))
 
     assert result["ai_disclosure"] == "Verified grammar only."
+
+
+@pytest.mark.parametrize("raw_value", ["''", "'   '", "null", "~"])
+def test_blank_ai_disclosure_normalises_to_none(tmp_path, raw_value):
+    content = VALID_POST.replace(
+        "title: Test Post",
+        f"title: Test Post\nai_disclosure: {raw_value}",
+    )
+    result = _parse_post_file(make_post_file(tmp_path, content))
+
+    assert result is not None
+    assert result["ai_disclosure"] is None
 
 
 def test_computed_read_time_boundary_200_words(tmp_path):
@@ -244,3 +254,21 @@ def test_get_post_by_slug_known_returns_post():
     result = get_post_by_slug("hello-world")
     assert result is not None
     assert result["slug"] == "hello-world"
+    assert result["ai_disclosure"] == HELLO_WORLD_AI_DISCLOSURE
+    assert "<hr" not in result["body_html"]
+    assert "<em>" not in result["body_html"]
+    assert HELLO_WORLD_AI_DISCLOSURE not in result["body_html"]
+
+
+@pytest.mark.django_db
+def test_controlled_drugs_post_has_no_ai_disclosure_fallback():
+    result = get_post_by_slug("controlled-drugs-indelible-ink")
+    assert result is not None
+    assert result["ai_disclosure"] is None
+
+
+@pytest.mark.django_db
+def test_published_posts_contain_no_ai_disclosure_boilerplate():
+    for post in get_all_posts():
+        assert FORBIDDEN_AI_DISCLOSURE_TEXT not in (post["ai_disclosure"] or "")
+        assert FORBIDDEN_AI_DISCLOSURE_TEXT not in post["body_html"]

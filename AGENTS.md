@@ -77,7 +77,7 @@ Planned: `/now/`, `/tools/<name>/`.
 
 ## Content rules
 
-Posts need `title`, `date` (YYYY-MM-DD), `slug`, `type` (`blog` or `article`) and `author: Syafiq Kay`. Posts also accept optional `description` (one sentence, shown on listings and used as the page meta description), `read_time` (overrides the computed value, for example `4 min read`), and `ai_disclosure` (shown in Reading provenance; when omitted, defaults to a notice pointing readers to the note text for any author disclosure rather than inferring prose). Labs also need `project` (a slug in `content/labs/projects.yaml`) and `type: lab`. Optional lists: `tools`, `objectives`, `skills`. A file missing a required field or with invalid frontmatter is silently skipped.
+Posts need `title`, `date` (YYYY-MM-DD), `slug`, `type` (`blog` or `article`) and `author: Syafiq Kay`. Posts also accept optional `description` (one sentence, shown on listings and used as the page meta description), `read_time` (overrides the computed value, for example `4 min read`), and `ai_disclosure` (shown in Reading provenance when set; omitted from rendered provenance with no boilerplate fallback when absent or blank). Labs also need `project` (a slug in `content/labs/projects.yaml`) and `type: lab`. Optional lists: `tools`, `objectives`, `skills`. A file missing a required field or with invalid frontmatter is silently skipped.
 
 - Never change a published `slug`. It is the URL
 - Lab assets go in `static/labs/<slug>/`, created by hand

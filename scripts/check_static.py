@@ -15,6 +15,14 @@ if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
 from core.context_processors import BIO  # noqa: E402
+from core.tests.constants import (  # noqa: E402
+    AI_CONTRIBUTION_LABEL,
+    AI_CONTRIBUTION_SUMMARY,
+    FORBIDDEN_AI_DISCLOSURE_TEXT,
+    FORBIDDEN_BOUNDARY_TEXT,
+    HELLO_WORLD_AI_DISCLOSURE,
+    REVISION_HISTORY_LABEL,
+)
 from core.urls import LEGACY_REDIRECT_PATHS  # noqa: E402
 
 THEME_BACKGROUNDS = (
@@ -23,11 +31,6 @@ THEME_BACKGROUNDS = (
 )
 PRINT_MODES = ('colour', 'greyscale', 'black-white')
 VIEWPORT_WIDTHS = (1440, 390)
-FORBIDDEN_BOUNDARY_TEXT = (
-    'I am a pharmacist who prefers lasting fixes',
-    'AI use: AI tools assist',
-    'Personal analysis, not clinical advice',
-)
 
 
 def discover_note_paths(directory: Path) -> list[str]:
@@ -78,7 +81,20 @@ def _verify_homepage(page: Page) -> None:
     _verify_no_boundary_copy(page)
 
 
-def _verify_reading_note(page: Page, width: int) -> None:
+def _verify_disclosure_toggle(provenance, summary_text: str, expected_text: str | None = None) -> None:
+    """Assert a provenance disclosure summary toggles open/closed and shows expected text."""
+    summary = provenance.locator('summary', has_text=summary_text)
+    assert summary.count() == 1
+    details = summary.locator('..')
+    summary.click()
+    assert details.get_attribute('open') is not None
+    if expected_text is not None:
+        assert details.locator('p').inner_text() == expected_text
+    summary.click()
+    assert details.get_attribute('open') is None
+
+
+def _verify_reading_note(page: Page, path: str, width: int) -> None:
     """Assert Reading layout margin, disclosure controls, and boundary removal."""
     assert page.locator('.site-header').evaluate('(el) => getComputedStyle(el).maxWidth') == '1120px'
     if width == 1440:
@@ -86,12 +102,26 @@ def _verify_reading_note(page: Page, width: int) -> None:
     else:
         assert not page.locator('.reading-margin').is_visible()
     _verify_no_boundary_copy(page)
+    assert FORBIDDEN_AI_DISCLOSURE_TEXT not in page.content()
     assert 'Published by Syafiq Kay.' in page.locator('.reading-margin').text_content()
-    page.get_by_text('AI contribution', exact=True).click()
-    assert page.locator('details').first.get_attribute('open') is not None
-    page.get_by_text('AI contribution', exact=True).click()
-    if page.locator('.article hr').count() > 0:
-        assert page.locator('.article hr').first.is_visible()
+
+    provenance = page.locator('.article-provenance')
+    _verify_disclosure_toggle(provenance, REVISION_HISTORY_LABEL)
+
+    if path == '/writings/hello-world/':
+        _verify_disclosure_toggle(provenance, AI_CONTRIBUTION_LABEL, HELLO_WORLD_AI_DISCLOSURE)
+        assert page.locator('.article hr').count() == 0
+        assert page.locator('.article em').count() == 0
+        body_paragraphs_text = '\n'.join(page.locator('.article > p').all_inner_texts())
+        assert HELLO_WORLD_AI_DISCLOSURE not in body_paragraphs_text
+    elif path == '/writings/controlled-drugs-indelible-ink/':
+        assert provenance.locator('summary', has_text=AI_CONTRIBUTION_LABEL).count() == 0
+        assert AI_CONTRIBUTION_SUMMARY not in page.content()
+    else:
+        if provenance.locator('summary', has_text=AI_CONTRIBUTION_LABEL).count() > 0:
+            _verify_disclosure_toggle(provenance, AI_CONTRIBUTION_LABEL)
+        if page.locator('.article hr').count() > 0:
+            assert page.locator('.article hr').first.is_visible()
 
 
 def verify_screen_layout(page: Page, path: str, width: int, note_paths: list[str], paper: str) -> None:
@@ -118,7 +148,7 @@ def verify_screen_layout(page: Page, path: str, width: int, note_paths: list[str
     if path == '/':
         _verify_homepage(page)
     elif path in note_paths:
-        _verify_reading_note(page, width)
+        _verify_reading_note(page, path, width)
 
 
 def verify_print_modes(page: Page) -> int:

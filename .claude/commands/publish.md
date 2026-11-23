@@ -40,7 +40,7 @@ Optional fields:
 |-----------------|-----------------------------------------------------------------------------------------|
 | `description`   | One sentence, shown on listings and used as the page meta description                   |
 | `read_time`     | Overrides the value computed from word count, for example `4 min read`                  |
-| `ai_disclosure` | Optional AI-use disclosure shown in Reading provenance; omit unless explicitly supplied |
+| `ai_disclosure` | Optional AI-use disclosure shown in Reading provenance when set; omit unless explicitly supplied (no AI contribution dropdown or boilerplate fallback is rendered when omitted or blank) |
 
 ### Labs (`type: lab`)
 

@@ -5,6 +5,7 @@ date: 2026-04-24
 slug: hello-world
 type: blog
 author: Syafiq Kay
+ai_disclosure: "I drafted this with AI assistance. The idea and words are mine. Inspired by Che Det's writing style."
 ---
 
 1. I have a website. I have had several versions of it. None of them lasted very long.
@@ -24,7 +25,3 @@ author: Syafiq Kay
 8. The site is minimal because I have nothing to hide behind. If the writing is not interesting, no amount of design will fix it.
 
 9. Let us see how long this one lasts.
-
----
-
-*I drafted this with AI assistance. The idea and words are mine. Inspired by Che Det's writing style.*
