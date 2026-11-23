@@ -3,6 +3,7 @@ Django settings for syafiqkay project.
 """
 
 import os
+import secrets
 import sys
 from pathlib import Path
 
@@ -19,6 +20,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY") or (
     "test-only-not-for-production" if TESTING else None
 )
+if not SECRET_KEY and sys.argv[1:2] == ['check'] and '--deploy' in sys.argv[2:]:
+    # Configuration validation needs no persistent signing key. Server startup
+    # still requires an explicit secret, and supplied keys remain checked.
+    SECRET_KEY = secrets.token_urlsafe(64)
 if not SECRET_KEY:
     raise KeyError("DJANGO_SECRET_KEY environment variable is required")
 

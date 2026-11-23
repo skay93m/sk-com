@@ -36,7 +36,17 @@ LinkedIn is the canonical career record. The local CV is retired.
 
 ## Static export and verification
 
-Use production settings for the deployment check:
+The deployment check can run without a configured secret:
+
+```bash
+uv run pytest -q && uv run python manage.py check --deploy --fail-level WARNING
+```
+
+Only `check --deploy` generates a temporary signing key when `DJANGO_SECRET_KEY`
+is absent. It does not store the key. A supplied key is checked as configured.
+Server startup and static export still require an explicit key. The check without
+a supplied key validates configuration, but cannot validate the deployment secret.
+Use production settings and a generated key for export and browser verification:
 
 ```bash
 export DEBUG="False"

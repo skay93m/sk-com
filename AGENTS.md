@@ -55,7 +55,11 @@ uv run pytest
 uv run python manage.py check --deploy --fail-level WARNING
 ```
 
-Needs `DJANGO_SECRET_KEY`. Set `DEBUG=True` and `ALLOWED_HOSTS=localhost,127.0.0.1` for local work. Use `uv`, never bare `pip`. Production runs `uv run --frozen --no-dev`.
+Server startup and export need `DJANGO_SECRET_KEY`. The standalone `check --deploy`
+command generates a temporary key if none is supplied; it cannot validate the
+deployment secret in that case. Set `DEBUG=True` and
+`ALLOWED_HOSTS=localhost,127.0.0.1` for local work. Use `uv`, never bare `pip`.
+Production runs `uv run --frozen --no-dev`.
 
 ## Routes
 
