@@ -27,9 +27,8 @@ Restart Django after editing content because Markdown is cached in memory.
 | --- | --- |
 | `/` | Stage 1 homepage |
 | `/writings/<slug>/` | Published note, using the Reading layout |
-| `/?note=<slug>` | Django-only prototype compatibility; static links use published paths |
 | `/writings/` | Preserved published writing index |
-| `/cv/`, `/labs/`, `/about/`, `/writing/` | Django HTTP 302 to `/` |
+| `/cv/`, `/labs/`, `/about/`, `/writing/` | Django HTTP 302 to `/` (static export includes `<meta http-equiv="refresh">` fallback HTML) |
 | `/labs/<slug>/` | Preserved published lab URLs |
 
 LinkedIn is the canonical career record. The local CV is retired.
@@ -62,8 +61,9 @@ uv run python -m http.server 8000 --directory dist
 The exporter writes `dist/` by default, or an explicit `--output` directory. It
 replaces only directories marked as previous exports and removes stale pages.
 It exports all published notes, the existing writing index and lab detail pages,
-robots.txt, and local assets. It does not export admin or CV pages. Do not use
-`?note=` links on a static host: static servers cannot select HTML by query string.
+static `<meta http-equiv="refresh">` redirect fallbacks for `/cv/`, `/labs/`,
+`/about/`, and `/writing/`, `robots.txt`, and local assets. It does not export
+admin or retired CV content.
 
 The Chromium check blocks external requests and checks desktop and 390px layouts,
 light and D1 dark tokens, F3 typography, disclosure controls, and colour, greyscale,

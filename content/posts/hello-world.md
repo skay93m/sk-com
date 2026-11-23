@@ -5,7 +5,6 @@ date: 2026-04-24
 slug: hello-world
 type: blog
 author: Syafiq Kay
-ai_disclosure: I drafted this with AI assistance. The idea and words are mine. Inspired by Che Det's writing style.
 ---
 
 1. I have a website. I have had several versions of it. None of them lasted very long.

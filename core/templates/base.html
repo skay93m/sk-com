@@ -14,8 +14,7 @@
     <header class="site-header">
       <a
         class="sk-logo"
-        href="/"
-
+        href="{% url 'core:home' %}"
         aria-label="Syafiq Kay home"
         >sk<span></span></a
       >
@@ -55,7 +54,7 @@
 <main id="main" tabindex="-1">{% block content %}{% endblock %}</main>
     <footer class="sk-site-footer">
       <div class="sk-footer-inner">
-        <p class="sk-footer-copy">&copy; 2026 Syafiq Kay</p>
+        <p class="sk-footer-copy">&copy; {% now "Y" %} Syafiq Kay</p>
         <p class="sk-footer-prose">This site is <a href="https://github.com/skay93m/sk-com" target="_blank" rel="noopener noreferrer">open source</a>. I build in public and welcome corrections.</p>
       </div>
     </footer>

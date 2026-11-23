@@ -7,10 +7,13 @@
 <meta name="citation_date" content="{{ lab.date|date:'Y/m/d' }}">
 {% endblock %}
 {% block content %}
-<article>
+<div class="sk-spatial-shell">
+<article class="article">
   <header class="mb-4">
-    <h1 class="fw-normal">{{ lab.title }}</h1>
-    <time class="text-muted small" datetime="{{ lab.date|date:'Y-m-d' }}">{{ lab.date|date:"d F Y" }}</time>
+    <h1>{{ lab.title }}</h1>
+    <div class="article-meta">
+      <time datetime="{{ lab.date|date:'Y-m-d' }}">{{ lab.date|date:"d F Y" }}</time>
+    </div>
 
     {% if lab.skills %}
       <div class="mt-2">
@@ -50,5 +53,6 @@
     {{ lab.body_html|safe }}
   </div>
 </article>
-<p class="mt-4"><a href="{% url 'core:labs' %}" class="text-muted text-decoration-none">← All labs</a></p>
+<p class="mt-4"><a href="{% url 'core:home' %}" class="sk-back-link">← Back to homepage</a></p>
+</div>
 {% endblock %}

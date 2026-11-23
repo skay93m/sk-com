@@ -3,7 +3,10 @@ from html.parser import HTMLParser
 
 import pytest
 import yaml
+from django.conf import settings
 from django.core.management import CommandError, call_command
+
+from core.posts import get_all_posts
 
 
 class AssetLinks(HTMLParser):
@@ -22,13 +25,28 @@ class AssetLinks(HTMLParser):
 def test_static_export_is_complete_and_repeatable(tmp_path):
     output = tmp_path / 'site'
     call_command('export_static', output=str(output))
+
+    posts = get_all_posts()
+    assert posts
     assert (output / 'index.html').is_file()
-    assert (output / 'writings/hello-world/index.html').is_file()
+    assert (output / 'writings/index.html').is_file()
     assert (output / 'static/fonts/IBMPlexSerif-Regular.ttf').is_file()
-    assert b'Back to homepage' in (output / 'writings/hello-world/index.html').read_bytes()
     assert b'Long-form notes' in (output / 'index.html').read_bytes()
-    assert not (output / 'cv/index.html').exists()
     assert (output / 'robots.txt').is_file()
+
+    for post in posts:
+        note_html = (output / 'writings' / post['slug'] / 'index.html').read_bytes()
+        assert b'Back to homepage' in note_html
+        assert b'article-provenance' in note_html
+
+    for legacy in ['cv', 'labs', 'about', 'writing']:
+        fallback = (output / legacy / 'index.html').read_text()
+        assert 'http-equiv="refresh"' in fallback
+        assert 'url=/' in fallback
+        assert 'noindex' in fallback
+        assert '<script' not in fallback
+        assert 'Experience' not in fallback
+
     for page in output.rglob('*.html'):
         parser = AssetLinks()
         parser.feed(page.read_text())
@@ -37,8 +55,11 @@ def test_static_export_is_complete_and_repeatable(tmp_path):
             assert (output / asset.lstrip('/')).is_file()
 
     def digests():
-        return {str(p.relative_to(output)): sha256(p.read_bytes()).hexdigest()
-                for p in output.rglob('*') if p.is_file()}
+        return {
+            str(p.relative_to(output)): sha256(p.read_bytes()).hexdigest()
+            for p in output.rglob('*')
+            if p.is_file()
+        }
 
     first = digests()
     (output / 'stale.html').write_text('old page')
@@ -56,7 +77,8 @@ def test_export_refuses_to_replace_unrelated_directory(tmp_path):
 
 
 def test_render_static_configuration():
-    with open('render.yaml') as source:
+    render_path = settings.BASE_DIR / 'render.yaml'
+    with render_path.open() as source:
         config = yaml.safe_load(source)
     assert config['previews']['generation'] == 'off'
     service = config['services'][0]

@@ -37,12 +37,13 @@ Live: https://syafiqkay.com. Source is public.
 
 ```
 core/            single Django app: views.py, urls.py, posts.py, labs.py,
-                 context_processors.py (bio), templates/, tests/
+                 context_processors.py (bio/tagline), management/, templates/, tests/
 content/posts/   posts (type: blog | article)
 content/labs/    lab write-ups plus projects.yaml
-static/          style.css, labs/<slug>/ assets
+static/          style.css, fonts/, labs/<slug>/ assets
+scripts/         check_static.py (headless Chromium verification)
 syafiqkay/       settings, urls, wsgi
-.github/workflows/ci.yml   tests and `check --deploy`
+.github/workflows/ci.yml   tests, `check --deploy`, static export, Chromium smoke check
 .claude/commands/publish.md   the /publish command
 ```
 
@@ -63,7 +64,11 @@ Production runs `uv run --frozen --no-dev`.
 
 ## Routes
 
-`/` home, `/writings/`, `/writings/<slug>/`, `/labs/`, `/labs/<slug>/`, `/cv/`, `/robots.txt`, `/admin/` (to be removed).
+- `/` Stage 1 homepage
+- `/writings/` writing index, `/writings/<slug>/` published notes (Reading layout)
+- `/labs/<slug>/` published lab detail URLs
+- `/cv/`, `/labs/`, `/about/`, `/writing/` HTTP `302` redirects to `/` in Django (`render.yaml` edge redirects return `301` on Render Static Sites, and `export_static` generates `<meta http-equiv="refresh">` fallback HTML)
+- `/robots.txt`, `/admin/` (to be removed)
 
 Planned: `/now/`, `/tools/<name>/`.
 
@@ -112,14 +117,12 @@ A tool that sends data to the server is a defect even if it works. First planned
 ## Code conventions
 
 - DRY, small functions, meaningful names. Remove before adding
-- Plain CSS in `static/style.css`. No framework or CDN usage beyond the existing Bootstrap 5.3.3 exception; do not expand it. No inline `<style>`, no npm, no build step
+- Plain CSS in `static/style.css` using local SK Design System tokens, F3 IBM Plex fonts (`static/fonts/`), and D1 dark tokens. No external CSS or font CDN, no inline `<style>`, no npm, no build step
 - No JavaScript site-wide. Vanilla JS only inside a tool page that needs it
 - Aesthetic: sharp academic notebook. Single column, serif-ish type
-- Palette: tomato `#ff4f40`, lavender grey `#a4a8d1`, powder blue `#a4bfeb`, cool steel `#8cabbe`, space indigo `#34344a`
+- Palette: SK Design System light paper `#f7f6f2`, ink `#34344a`, coral `#ff4f40`, and D1 dark `#17191c`
 - Python and template filenames are lowercase with underscores
 - Do not add a database, models or secrets in code
-
-Bootstrap 5.3.3 is still loaded from a CDN in `base.html` and `static/style.css` is empty. Do not add new Bootstrap usage. Replacing it with the stylesheet is roadmap step 1.
 
 ## Purpose and site plan
 
