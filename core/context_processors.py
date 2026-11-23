@@ -1,8 +1,18 @@
 BIO = {
-    'tagline': 'I solve problems using analytical thinking and drawing insights from various perspectives.',
+    'tagline': (
+        'Pharmacist · Digital Medicines & Clinical Systems · '
+        'EPMA, Epic & Medicines Optimisation · MSc Mental Health, Ethics & Law'
+    ),
     'paragraphs': [
-        'Pharmacist working in London with over 8 years of experience across community, hospital, and mental health settings. I am currently conducting working identity tests — structured experiments with defined aims, hypotheses, and methods — across pharmacy, actuarial science, cybersecurity, and law.',
-        'I write about past experiences — reflecting and learning from them. I also write essays on topics I am currently exploring: healthcare, ethics, law, and technology. I am positive that I can develop a career that builds upon my multiple interests and solves complex problems.',
+        (
+            'I am a pharmacist who prefers lasting fixes to quick patches. '
+            'Whether a prescribing workflow breaks in software or a statutory rule '
+            'clashes with ward reality, I want to repair the underlying design so '
+            'the problem stays solved. Lately that focus narrows to one question: '
+            'whether mental health tribunals should have jurisdiction to review '
+            'compulsory treatment decisions. This site collects my working notes '
+            'along the way.'
+        ),
     ],
 }
 

@@ -71,6 +71,20 @@ def test_optional_writing_metadata_defaults_to_none(tmp_path):
 
     assert result["description"] is None
     assert result["read_time"] == "1 min read"
+    assert (
+        "No separate AI contribution metadata is recorded for this note; "
+        "see the note text for any author disclosure."
+    ) in result["ai_disclosure"]
+
+
+def test_optional_ai_disclosure_is_parsed(tmp_path):
+    content = VALID_POST.replace(
+        "title: Test Post",
+        "title: Test Post\nai_disclosure: Verified grammar only.",
+    )
+    result = _parse_post_file(make_post_file(tmp_path, content))
+
+    assert result["ai_disclosure"] == "Verified grammar only."
 
 
 def test_computed_read_time_boundary_200_words(tmp_path):

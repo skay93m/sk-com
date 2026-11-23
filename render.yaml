@@ -1,38 +1,59 @@
-# NOT CURRENTLY SYNCED AS A RENDER BLUEPRINT.
-# The live service is managed from the Render dashboard, and its environment
-# differs from this file. Editing this file does not change the running service.
-# It is kept as an accurate description of the deployment and as the basis for
-# adopting Blueprint management later. Verify against the dashboard before
-# assuming anything here is in effect.
+# Proposed static-site deployment. The dashboard remains authoritative until
+# this Blueprint is adopted. Disable previews on the existing service there too.
+# Django retains true HTTP 302 redirects for /cv/, /labs/, /about/, and /writing/.
+# On Render Static Sites, exported dist/{cv,labs,about,writing}/index.html files
+# take precedence over route rules, and Render edge redirects only return
+# permanent HTTP 301s. Uniform rewrite rules therefore map bare and subpath
+# legacy paths to export_static's <meta http-equiv="refresh"> fallback pages
+# without emitting 301s (preserving any published /labs/<slug>/ files first).
+previews:
+  generation: "off"
 services:
   - type: web
     name: syafiqkay.com
-    runtime: docker
-    dockerfilePath: ./Dockerfile
-    dockerContext: .
-    region: frankfurt
-    plan: starter
+    runtime: static
     branch: main
+    buildCommand: pip install --upgrade pip && pip install uv==0.11.32 && uv sync --frozen --no-dev && uv run --frozen --no-dev python manage.py export_static
+    staticPublishPath: dist
+    previews:
+      generation: "off"
     envVars:
       - key: DJANGO_SECRET_KEY
         generateValue: true
       - key: DEBUG
         value: "False"
-      - key: ALLOWED_HOSTS
-        value: "sk-website.onrender.com,syafiq-kay-1.onrender.com,syafiqkay.com,www.syafiqkay.com"
-      - key: SECURE_SSL_REDIRECT
-        value: "True"
-      - key: SECURE_HSTS_SECONDS
-        value: "31536000"
-      - key: SECURE_HSTS_INCLUDE_SUBDOMAINS
-        value: "True"
-      - key: SECURE_HSTS_PRELOAD
-        value: "True"
-      - key: SESSION_COOKIE_SECURE
-        value: "True"
-      - key: CSRF_COOKIE_SECURE
-        value: "True"
-      - key: WHITENOISE_USE_FINDERS
-        value: "False"
-      - key: WHITENOISE_AUTOREFRESH
-        value: "False"
+    routes:
+      - type: rewrite
+        source: /cv
+        destination: /cv/index.html
+      - type: rewrite
+        source: /cv/*
+        destination: /cv/index.html
+      - type: rewrite
+        source: /labs
+        destination: /labs/index.html
+      - type: rewrite
+        source: /labs/*
+        destination: /labs/index.html
+      - type: rewrite
+        source: /about
+        destination: /about/index.html
+      - type: rewrite
+        source: /about/*
+        destination: /about/index.html
+      - type: rewrite
+        source: /writing
+        destination: /writing/index.html
+      - type: rewrite
+        source: /writing/*
+        destination: /writing/index.html
+    headers:
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: X-Frame-Options
+        value: DENY
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin

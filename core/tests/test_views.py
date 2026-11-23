@@ -4,29 +4,27 @@ Tests for core/views.py
 These are integration tests — they go through Django's URL routing, views,
 and templates. pytest-django's `client` fixture provides a test HTTP client.
 
-Concept: you are testing behaviour from the outside in, the same way a user
-(or a browser) would. If the URL returns 200, the view and template wired up
-correctly. If it returns 404, the not-found path is working.
-
 Run with:  uv run pytest core/tests/test_views.py -v
 """
 from datetime import date
 
 import pytest
+from django.utils.html import escape
+
+from core.context_processors import BIO
+from core.urls import LEGACY_REDIRECT_PATHS
 
 
 # ---------------------------------------------------------------------------
-# Public pages — smoke tests (do they respond at all?)
+# Public pages — smoke tests
 # ---------------------------------------------------------------------------
 
 @pytest.mark.django_db
 def test_homepage_returns_200(client):
     response = client.get("/")
     assert response.status_code == 200
-    assert (
-        b'<meta name="description" content="I solve problems using analytical thinking and drawing insights from various perspectives.">'
-        in response.content
-    )
+    expected_meta = f'<meta name="description" content="{escape(BIO["tagline"])}">'.encode()
+    assert expected_meta in response.content
 
 
 @pytest.mark.django_db
@@ -45,7 +43,7 @@ def test_writings_page_heading_and_title(client):
     response = client.get("/writings/")
     assert response.status_code == 200
     assert b"<h1>Writing</h1>" in response.content
-    assert b"<title>Writing \xe2\x80\x94 Syafiq Kay</title>" in response.content
+    assert "<title>Writing · Syafiq Kay</title>" in response.content.decode()
 
 
 @pytest.mark.django_db
@@ -59,15 +57,11 @@ def test_homepage_shows_writing_metadata(client):
 
 
 @pytest.mark.django_db
-def test_labs_page_returns_200(client):
-    response = client.get("/labs/")
-    assert response.status_code == 200
-
-
-@pytest.mark.django_db
-def test_cv_page_returns_200(client):
-    response = client.get("/cv/")
-    assert response.status_code == 200
+@pytest.mark.parametrize("slug", LEGACY_REDIRECT_PATHS)
+def test_stage_one_legacy_redirects(client, slug):
+    response = client.get(f"/{slug}/")
+    assert response.status_code == 302
+    assert response["Location"] == "/"
 
 
 # ---------------------------------------------------------------------------
@@ -98,6 +92,7 @@ def test_post_detail_without_description_falls_back_to_tagline(client, monkeypat
         "slug": "no-description",
         "type": "article",
         "author": "Syafiq Kay",
+        "ai_disclosure": "No AI contribution is recorded for this note.",
         "body_html": "<p>Body</p>",
     }
     monkeypatch.setattr(
@@ -106,10 +101,8 @@ def test_post_detail_without_description_falls_back_to_tagline(client, monkeypat
     )
     response = client.get("/writings/no-description/")
     assert response.status_code == 200
-    assert (
-        b'<meta name="description" content="I solve problems using analytical thinking and drawing insights from various perspectives.">'
-        in response.content
-    )
+    expected_meta = f'<meta name="description" content="{escape(BIO["tagline"])}">'.encode()
+    assert expected_meta in response.content
 
 
 @pytest.mark.django_db
@@ -123,13 +116,41 @@ def test_unknown_post_slug_returns_404(client):
 # ---------------------------------------------------------------------------
 
 @pytest.mark.django_db
+def test_lab_detail_renders_with_shell_and_home_link(client, tmp_path, settings):
+    settings.CONTENT_DIR = tmp_path
+    labs_dir = tmp_path / "labs"
+    labs_dir.mkdir()
+    (labs_dir / "sample-lab.md").write_text(
+        "---\n"
+        "title: Sample Lab\n"
+        "date: 2026-05-16\n"
+        "slug: sample-lab\n"
+        "type: lab\n"
+        "project: comptia-network-plus\n"
+        "author: Syafiq Kay\n"
+        "skills:\n"
+        "  - VLANs\n"
+        "---\n\n"
+        "Lab notes.\n",
+        encoding="utf-8",
+    )
+    response = client.get("/labs/sample-lab/")
+    assert response.status_code == 200
+    html = response.content.decode()
+    assert "sk-spatial-shell" in html
+    assert "Sample Lab" in html
+    assert "Back to homepage" in html
+    assert 'href="/labs/"' not in html
+
+
+@pytest.mark.django_db
 def test_unknown_lab_slug_returns_404(client):
     response = client.get("/labs/this-lab-does-not-exist/")
     assert response.status_code == 404
 
 
 # ---------------------------------------------------------------------------
-# Robots.txt
+# Robots.txt & Stage 1 contracts
 # ---------------------------------------------------------------------------
 
 @pytest.mark.django_db
@@ -137,3 +158,67 @@ def test_robots_txt_returns_200(client):
     response = client.get("/robots.txt")
     assert response.status_code == 200
     assert response["Content-Type"] == "text/plain"
+
+
+def test_stage_one_homepage_contract(client):
+    html = client.get("/").content.decode()
+    for text in [
+        "sk-spatial-shell",
+        "Long-form notes",
+        "King's College London",
+        "clinical advice",
+        'aria-label="LinkedIn"',
+        'aria-label="GitHub"',
+        'aria-label="Email"',
+        'aria-label="ResearchGate"',
+        'aria-label="ORCID"',
+    ]:
+        assert text in html
+    assert "<script" not in html
+    assert "<hr" not in html
+    assert "?note=" not in html
+
+
+def test_query_note_ignored_on_homepage(client):
+    response = client.get("/", {"note": "hello-world"})
+    assert response.status_code == 200
+    html = response.content.decode()
+    assert "Long-form notes" in html
+    assert 'class="article-provenance"' not in html
+
+
+@pytest.mark.parametrize("slug", ["hello-world", "controlled-drugs-indelible-ink"])
+def test_reading_mode_note_contract(client, slug):
+    response = client.get(f"/writings/{slug}/")
+    assert response.status_code == 200
+    html = response.content.decode()
+    assert "sk-view-reading" in html
+    assert 'class="abstract"' in html
+    assert 'class="article-provenance"' in html
+    assert "Back to homepage" in html
+    assert "sk-reading-relations" not in html
+    assert "<script" not in html
+
+
+def test_reading_relations_shown_when_populated(client, monkeypatch):
+    dummy_post = {
+        "title": "Linked Note",
+        "description": "Summary.",
+        "read_time": "1 min read",
+        "date": date(2026, 5, 16),
+        "slug": "linked-note",
+        "type": "article",
+        "author": "Syafiq Kay",
+        "ai_disclosure": "No AI contribution is recorded for this note.",
+        "body_html": "<p>Body</p>",
+        "backlinks": [{"href": "/writings/hello-world/", "title": "Hello World"}],
+        "similar_links": [],
+    }
+    monkeypatch.setattr(
+        "core.views.get_post_by_slug",
+        lambda slug: dummy_post if slug == "linked-note" else None,
+    )
+    html = client.get("/writings/linked-note/").content.decode()
+    assert 'class="sk-reading-relations"' in html
+    assert "Backlinks" in html
+    assert "Hello World" in html

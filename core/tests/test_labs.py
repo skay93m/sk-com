@@ -4,17 +4,14 @@ Tests for core/labs.py
 Run with:  uv run pytest core/tests/test_labs.py -v
 """
 from datetime import date
-from pathlib import Path
 
 import pytest
-import yaml
 
 from core.labs import (
     LAB_REQUIRED_FIELDS,
     _parse_lab_file,
     get_all_labs,
     get_lab_by_slug,
-    get_labs_grouped_by_project,
 )
 
 
@@ -26,13 +23,6 @@ def make_lab_file(tmp_path, content, filename="test_lab.md"):
     f = tmp_path / filename
     f.write_text(content, encoding="utf-8")
     return f
-
-
-def make_projects_yaml(labs_dir: Path, projects: list):
-    labs_dir.mkdir(parents=True, exist_ok=True)
-    (labs_dir / "projects.yaml").write_text(
-        yaml.dump(projects), encoding="utf-8"
-    )
 
 
 VALID_LAB = """\
@@ -77,7 +67,6 @@ Body.
 # _parse_lab_file — unit tests (no Django, no filesystem beyond tmp_path)
 # ---------------------------------------------------------------------------
 
-# Concept: happy path — all fields including optional metadata.
 def test_valid_lab_with_metadata_is_parsed(tmp_path):
     path = make_lab_file(tmp_path, VALID_LAB)
     result = _parse_lab_file(path)
@@ -95,7 +84,6 @@ def test_valid_lab_with_metadata_is_parsed(tmp_path):
     assert "Body text" in result["body_html"]
 
 
-# Concept: optional fields absent — parse fine with empty lists.
 def test_valid_lab_without_optional_fields_is_parsed(tmp_path):
     path = make_lab_file(tmp_path, MINIMAL_LAB)
     result = _parse_lab_file(path)
@@ -107,7 +95,6 @@ def test_valid_lab_without_optional_fields_is_parsed(tmp_path):
     assert result["skills"] == []
 
 
-# Concept: boundary condition — every required field, including project, must be present.
 @pytest.mark.parametrize("missing_field", LAB_REQUIRED_FIELDS)
 def test_lab_missing_required_field_returns_none(tmp_path, missing_field):
     lines = [
@@ -128,14 +115,12 @@ def test_lab_missing_required_field_returns_none(tmp_path, missing_field):
     assert _parse_lab_file(path) is None
 
 
-# Concept: value validation — author must be exactly "Syafiq Kay"; any other value is rejected.
 def test_lab_wrong_author_returns_none(tmp_path):
     content = VALID_LAB.replace("author: Syafiq Kay", "author: Someone Else")
     path = make_lab_file(tmp_path, content)
     assert _parse_lab_file(path) is None
 
 
-# Concept: valid/invalid enum — only type: lab is accepted.
 @pytest.mark.parametrize("post_type,should_parse", [
     ("lab", True),
     ("blog", False),
@@ -153,8 +138,6 @@ def test_lab_type_validation(tmp_path, post_type, should_parse):
         assert result is None
 
 
-# Concept: robustness — a header block that parses to nothing (or to a scalar) is
-# malformed content. It must be skipped, never crash every page that lists labs.
 @pytest.mark.parametrize("header", ["", "just a string", "- a\n- list"])
 def test_lab_with_non_mapping_frontmatter_returns_none(tmp_path, header):
     path = make_lab_file(tmp_path, f"---\n{header}\n---\n\nBody.\n")
@@ -163,106 +146,7 @@ def test_lab_with_non_mapping_frontmatter_returns_none(tmp_path, header):
 
 
 # ---------------------------------------------------------------------------
-# get_labs_grouped_by_project — integration using settings fixture
-#
-# Concept: the settings fixture (from pytest-django) lets you override Django
-# settings for a single test. Here we point CONTENT_DIR at tmp_path so we
-# can control exactly which labs and projects exist without touching real files.
-# ---------------------------------------------------------------------------
-
-PROJECTS = [
-    {"slug": "comptia-network-plus", "name": "CompTIA Network+", "description": "Networking labs."},
-    {"slug": "clinical-pharmacy",    "name": "Clinical Pharmacy",  "description": "Clinical cases."},
-]
-
-
-def _write_lab(labs_dir: Path, slug: str, project: str, date_str: str, filename=None):
-    content = f"""\
----
-title: Lab {slug}
-date: {date_str}
-slug: {slug}
-type: lab
-project: {project}
-author: Syafiq Kay
----
-
-Body.
-"""
-    (labs_dir / (filename or f"{slug}.md")).write_text(content, encoding="utf-8")
-
-
-# Concept: correct structure — grouped result has name, description, and labs list.
-@pytest.mark.django_db
-def test_get_labs_grouped_returns_correct_structure(tmp_path, settings):
-    settings.CONTENT_DIR = tmp_path
-    labs_dir = tmp_path / "labs"
-    labs_dir.mkdir()
-    make_projects_yaml(labs_dir, PROJECTS)
-    _write_lab(labs_dir, "vlan-lab", "comptia-network-plus", "2026-05-16")
-
-    result = get_labs_grouped_by_project()
-
-    assert len(result) == 1
-    project = result[0]
-    assert project["slug"] == "comptia-network-plus"
-    assert project["name"] == "CompTIA Network+"
-    assert "description" in project
-    assert len(project["labs"]) == 1
-    assert project["labs"][0]["slug"] == "vlan-lab"
-
-
-# Concept: ordering — project with the most recent lab comes first.
-@pytest.mark.django_db
-def test_projects_sorted_by_most_recent_lab(tmp_path, settings):
-    settings.CONTENT_DIR = tmp_path
-    labs_dir = tmp_path / "labs"
-    labs_dir.mkdir()
-    make_projects_yaml(labs_dir, PROJECTS)
-    _write_lab(labs_dir, "old-lab",    "comptia-network-plus", "2026-01-01")
-    _write_lab(labs_dir, "recent-lab", "clinical-pharmacy",    "2026-05-16")
-
-    result = get_labs_grouped_by_project()
-
-    assert result[0]["slug"] == "clinical-pharmacy"
-    assert result[1]["slug"] == "comptia-network-plus"
-
-
-# Concept: empty state — a project defined in YAML with no matching labs is hidden.
-@pytest.mark.django_db
-def test_project_with_no_labs_not_included(tmp_path, settings):
-    settings.CONTENT_DIR = tmp_path
-    labs_dir = tmp_path / "labs"
-    labs_dir.mkdir()
-    make_projects_yaml(labs_dir, PROJECTS)
-    _write_lab(labs_dir, "vlan-lab", "comptia-network-plus", "2026-05-16")
-    # clinical-pharmacy has no labs
-
-    result = get_labs_grouped_by_project()
-
-    slugs = [p["slug"] for p in result]
-    assert "comptia-network-plus" in slugs
-    assert "clinical-pharmacy" not in slugs
-
-
-# Concept: validation at load time — a lab whose project slug is not in projects.yaml
-# is silently excluded from the grouped output. The parser accepts any non-empty
-# project string; the grouping function enforces the allow-list.
-@pytest.mark.django_db
-def test_lab_with_unknown_project_excluded_from_grouping(tmp_path, settings):
-    settings.CONTENT_DIR = tmp_path
-    labs_dir = tmp_path / "labs"
-    labs_dir.mkdir()
-    make_projects_yaml(labs_dir, PROJECTS)
-    _write_lab(labs_dir, "orphan-lab", "unknown-project", "2026-05-16")
-
-    result = get_labs_grouped_by_project()
-
-    assert result == []
-
-
-# ---------------------------------------------------------------------------
-# get_all_labs / get_lab_by_slug — basic integration
+# get_all_labs / get_lab_by_slug — integration
 # ---------------------------------------------------------------------------
 
 @pytest.mark.django_db

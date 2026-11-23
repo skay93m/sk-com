@@ -9,7 +9,5 @@ import core.labs as labs_module
 @pytest.fixture(autouse=True)
 def reset_labs_cache():
     labs_module._cache = None
-    labs_module._projects_cache = None
     yield
     labs_module._cache = None
-    labs_module._projects_cache = None

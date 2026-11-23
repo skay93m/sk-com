@@ -36,10 +36,11 @@ Required fields:
 
 Optional fields:
 
-| Field         | Rule                                                                                    |
-|---------------|-----------------------------------------------------------------------------------------|
-| `description` | One sentence, shown on listings and used as the page meta description                   |
-| `read_time`   | Overrides the value computed from word count, for example `4 min read`                  |
+| Field           | Rule                                                                                    |
+|-----------------|-----------------------------------------------------------------------------------------|
+| `description`   | One sentence, shown on listings and used as the page meta description                   |
+| `read_time`     | Overrides the value computed from word count, for example `4 min read`                  |
+| `ai_disclosure` | Optional AI-use disclosure shown in Reading provenance; omit unless explicitly supplied |
 
 ### Labs (`type: lab`)
 
@@ -58,7 +59,7 @@ Required fields:
 
 - `tools` — list of tool names used
 - `objectives` — list of learning objectives
-- `skills` — list of skills demonstrated (shown as badges on /labs/)
+- `skills` — list of skills demonstrated (shown as badges on lab detail pages)
 
 Always read `content/labs/projects.yaml` for the authoritative list of valid project slugs.
 The list below is illustrative only and will go out of date as projects are added:
@@ -137,7 +138,7 @@ Keep the report short — one line per item.
 
 ## Publishing rules reference
 
-These are the constraints enforced by `core/posts.py` and `core/labs.py` at render time.
+These are the constraints enforced by `core/posts.py` and `core/labs.py` when loading content.
 A file that violates them will be silently skipped — it will not appear on the site.
 
 - **Posts directory:** `content/posts/` — served at `/writings/<slug>/`
@@ -145,7 +146,7 @@ A file that violates them will be silently skipped — it will not appear on the
 - **Allowed post types:** `blog`, `article` — `draft`, `note`, `lab`, or anything else is skipped
 - **Lab type:** must be exactly `lab`
 - **Author:** required on all posts and labs; must be `Syafiq Kay`
-- **Lab project:** must match a slug in `content/labs/projects.yaml` — unknown slugs are excluded from `/labs/` grouping
+- **Lab project:** required non-empty string (valid taxonomy slugs live in `content/labs/projects.yaml`; `/labs/` redirects to `/` in Stage 1 while published `/labs/<slug>/` detail pages remain served)
 - **Date:** parsed as `date` object; strings and YAML dates both accepted; invalid dates silently skip the file
 - **Slug:** used as-is in the URL; Django's slug URL converter requires `[a-zA-Z0-9_-]`
 - **Filename:** does not matter — slug in frontmatter is the canonical URL

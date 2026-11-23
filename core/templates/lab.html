@@ -7,10 +7,13 @@
 <meta name="citation_date" content="{{ lab.date|date:'Y/m/d' }}">
 {% endblock %}
 {% block content %}
-<article>
+<div class="sk-spatial-shell">
+<article class="article">
   <header class="mb-4">
-    <h1 class="fw-normal">{{ lab.title }}</h1>
-    <time class="text-muted small" datetime="{{ lab.date|date:'Y-m-d' }}">{{ lab.date|date:"d F Y" }}</time>
+    <h1>{{ lab.title }}</h1>
+    <div class="article-meta">
+      <time datetime="{{ lab.date|date:'Y-m-d' }}">{{ lab.date|date:"d F Y" }}</time>
+    </div>
 
     {% if lab.skills %}
       <div class="mt-2">
@@ -25,7 +28,7 @@
     <div class="row g-4 mb-4">
       {% if lab.objectives %}
         <div class="col-sm-7">
-          <h2 class="h6 text-uppercase text-muted fw-normal mb-2">Objectives</h2>
+          <h2 class="h6 text-muted fw-normal mb-2">Objectives</h2>
           <ul class="mb-0 ps-3">
             {% for obj in lab.objectives %}
               <li>{{ obj }}</li>
@@ -35,7 +38,7 @@
       {% endif %}
       {% if lab.tools %}
         <div class="col-sm-5">
-          <h2 class="h6 text-uppercase text-muted fw-normal mb-2">Tools</h2>
+          <h2 class="h6 text-muted fw-normal mb-2">Tools</h2>
           <ul class="mb-0 ps-3">
             {% for tool in lab.tools %}
               <li>{{ tool }}</li>
@@ -50,5 +53,6 @@
     {{ lab.body_html|safe }}
   </div>
 </article>
-<p class="mt-4"><a href="{% url 'core:labs' %}" class="text-muted text-decoration-none">← All labs</a></p>
+<p class="mt-4"><a href="{% url 'core:home' %}" class="sk-back-link">← Back to homepage</a></p>
+</div>
 {% endblock %}

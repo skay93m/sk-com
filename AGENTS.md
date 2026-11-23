@@ -2,6 +2,26 @@
 
 Instructions for AI coding agents working on syafiqkay.com. Describes the repo as it is now.
 
+## Current Stage 1 implementation
+
+The Stage 1 ticket supersedes the older site plan below for current delivery.
+The homepage and Reading templates use local SK Design System F3 fonts and D1
+tokens. No runtime JavaScript is used. Export with
+`uv run python manage.py export_static`; verify with
+`uv run python scripts/check_static.py` after installing Chromium.
+
+`/cv/`, `/labs/`, `/about/` and `/writing/` return Django HTTP 302 to `/`.
+LinkedIn owns the career record. Published `/writings/<slug>/` URLs are preserved.
+The proposed `render.yaml` targets a Static Site and disables previews, but the
+dashboard remains authoritative. Because Render Static Sites serve physical
+`dist/{cv,labs,about,writing}/index.html` files before route rules and edge
+redirects only emit permanent 301s, `render.yaml` uses uniform `type: rewrite`
+rules to those meta-refresh fallback pages. See README for the unresolved HTTP 302
+static-hosting constraint and cutover steps.
+
+The CV roadmap and Bootstrap CDN description below are historical and retired for
+Stage 1. The stylesheet is now populated and no external CSS or fonts are loaded.
+
 ## What this is
 
 Personal site for Syafiq Kay, positioned on the intersection of clinical practice, law and technical work. Content-first and identity-forward. It hosts evidence of ongoing work and is not a brochure. It is a repositioning of a working site, not a rewrite.
@@ -20,12 +40,13 @@ Live: https://syafiqkay.com. Source is public.
 
 ```
 core/            single Django app: views.py, urls.py, posts.py, labs.py,
-                 context_processors.py (bio), templates/, tests/
+                 context_processors.py (bio/tagline), management/, templates/, tests/
 content/posts/   posts (type: blog | article)
 content/labs/    lab write-ups plus projects.yaml
-static/          style.css, labs/<slug>/ assets
+static/          style.css, fonts/, labs/<slug>/ assets
+scripts/         check_static.py (headless Chromium verification)
 syafiqkay/       settings, urls, wsgi
-.github/workflows/ci.yml   tests and `check --deploy`
+.github/workflows/ci.yml   tests, `check --deploy`, static export, Chromium smoke check
 .claude/commands/publish.md   the /publish command
 ```
 
@@ -38,22 +59,30 @@ uv run pytest
 uv run python manage.py check --deploy --fail-level WARNING
 ```
 
-Needs `DJANGO_SECRET_KEY`. Set `DEBUG=True` and `ALLOWED_HOSTS=localhost,127.0.0.1` for local work. Use `uv`, never bare `pip`. Production runs `uv run --frozen --no-dev`.
+Server startup and export need `DJANGO_SECRET_KEY`. The standalone `check --deploy`
+command generates a temporary key if none is supplied; it cannot validate the
+deployment secret in that case. Set `DEBUG=True` and
+`ALLOWED_HOSTS=localhost,127.0.0.1` for local work. Use `uv`, never bare `pip`.
+Production runs `uv run --frozen --no-dev`.
 
 ## Routes
 
-`/` home, `/writings/`, `/writings/<slug>/`, `/labs/`, `/labs/<slug>/`, `/cv/`, `/robots.txt`, `/admin/` (to be removed).
+- `/` Stage 1 homepage
+- `/writings/` writing index, `/writings/<slug>/` published notes (Reading layout)
+- `/labs/<slug>/` published lab detail URLs
+- `/cv/`, `/labs/`, `/about/`, `/writing/` HTTP `302` redirects to `/` in Django (`export_static` generates `<meta http-equiv="refresh">` fallback HTML and `render.yaml` maps bare/subpath legacy URLs via `type: rewrite` to avoid permanent `301` browser caching)
+- `/robots.txt`, `/admin/` (to be removed)
 
 Planned: `/now/`, `/tools/<name>/`.
 
 ## Content rules
 
-Posts need `title`, `date` (YYYY-MM-DD), `slug`, `type` (`blog` or `article`) and `author: Syafiq Kay`. Posts also accept optional `description` (one sentence, shown on listings and used as the page meta description) and `read_time` (overrides the computed value, for example `4 min read`). Labs also need `project` (a slug in `content/labs/projects.yaml`) and `type: lab`. Optional lists: `tools`, `objectives`, `skills`. A file missing a required field or with invalid frontmatter is silently skipped.
+Posts need `title`, `date` (YYYY-MM-DD), `slug`, `type` (`blog` or `article`) and `author: Syafiq Kay`. Posts also accept optional `description` (one sentence, shown on listings and used as the page meta description), `read_time` (overrides the computed value, for example `4 min read`), and `ai_disclosure` (shown in Reading provenance; when omitted, defaults to a notice pointing readers to the note text for any author disclosure rather than inferring prose). Labs also need `project` (a slug in `content/labs/projects.yaml`) and `type: lab`. Optional lists: `tools`, `objectives`, `skills`. A file missing a required field or with invalid frontmatter is silently skipped.
 
 - Never change a published `slug`. It is the URL
 - Lab assets go in `static/labs/<slug>/`, created by hand
 - New content: use `/publish <file>`. It creates `publish/<slug>`, commits and pushes
-- CV: edit `core/templates/cv.html`. Bio: edit `core/context_processors.py`
+- Homepage: edit `core/templates/index.html`. Career history: LinkedIn.
 
 ## Publication policy
 
@@ -91,14 +120,12 @@ A tool that sends data to the server is a defect even if it works. First planned
 ## Code conventions
 
 - DRY, small functions, meaningful names. Remove before adding
-- Plain CSS in `static/style.css`. No framework or CDN usage beyond the existing Bootstrap 5.3.3 exception; do not expand it. No inline `<style>`, no npm, no build step
+- Plain CSS in `static/style.css` using local SK Design System tokens, F3 IBM Plex fonts (`static/fonts/`), and D1 dark tokens. No external CSS or font CDN, no inline `<style>`, no npm, no build step
 - No JavaScript site-wide. Vanilla JS only inside a tool page that needs it
 - Aesthetic: sharp academic notebook. Single column, serif-ish type
-- Palette: tomato `#ff4f40`, lavender grey `#a4a8d1`, powder blue `#a4bfeb`, cool steel `#8cabbe`, space indigo `#34344a`
+- Palette: SK Design System light paper `#f7f6f2`, ink `#34344a`, coral `#ff4f40`, and D1 dark `#17191c`
 - Python and template filenames are lowercase with underscores
 - Do not add a database, models or secrets in code
-
-Bootstrap 5.3.3 is still loaded from a CDN in `base.html` and `static/style.css` is empty. Do not add new Bootstrap usage. Replacing it with the stylesheet is roadmap step 1.
 
 ## Purpose and site plan
 
