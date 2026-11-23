@@ -124,3 +124,18 @@ def test_render_static_configuration():
         if slug != 'notes':
             assert rewrites[f'/{slug}/*'] == f'/{slug}/index.html'
     assert '/notes/*' not in rewrites
+
+
+def test_dockerfile_installs_git_when_uv_lock_has_git_dependencies():
+    dockerfile_path = settings.BASE_DIR / 'Dockerfile'
+    uv_lock_path = settings.BASE_DIR / 'uv.lock'
+    if not dockerfile_path.is_file() or not uv_lock_path.is_file():
+        return
+    uv_lock_text = uv_lock_path.read_text()
+    if 'git = "https://' in uv_lock_text or 'git+https://' in uv_lock_text:
+        dockerfile_text = dockerfile_path.read_text()
+        assert 'uv sync --frozen' in dockerfile_text
+        before_uv_sync = dockerfile_text.split('uv sync --frozen', 1)[0]
+        assert 'ca-certificates' in before_uv_sync
+        assert 'git' in before_uv_sync
+
