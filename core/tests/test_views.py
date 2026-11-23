@@ -7,19 +7,21 @@ and templates. pytest-django's `client` fixture provides a test HTTP client.
 Run with:  uv run pytest core/tests/test_views.py -v
 """
 from datetime import date
-import re
 
 import pytest
 from django.utils.html import escape
 
 from core.context_processors import BIO
 from core.tests.constants import (
-    AI_CONTRIBUTION_LABEL,
     AI_CONTRIBUTION_SUMMARY,
     FORBIDDEN_AI_DISCLOSURE_TEXT,
-    FORBIDDEN_BOUNDARY_TEXT,
-    HELLO_WORLD_AI_DISCLOSURE,
     REVISION_HISTORY_SUMMARY,
+)
+from core.tests.helpers import (
+    assert_hello_world_rendering,
+    assert_no_boundary_copy,
+    assert_note_provenance_contract,
+    split_provenance_and_body,
 )
 from core.urls import LEGACY_REDIRECT_PATHS
 
@@ -177,31 +179,6 @@ STAGE_ONE_STATEMENT_PARAGRAPHS = (
 )
 
 
-def _assert_no_boundary_copy(html):
-    for forbidden in FORBIDDEN_BOUNDARY_TEXT:
-        assert forbidden not in html
-
-
-def _split_provenance_and_body(html: str) -> tuple[str, str]:
-    start = html.find('<div class="article-provenance">')
-    assert start != -1
-    depth = 0
-    end = None
-    for tag in re.finditer(r'<(/)?div\b', html[start:]):
-        depth += -1 if tag.group(1) else 1
-        if depth == 0:
-            close_end = html.find('>', start + tag.end())
-            assert close_end != -1
-            end = close_end + 1
-            break
-    assert end is not None
-    article_end = html.find('</article>', end)
-    assert article_end != -1
-    relations_start = html.find('<div class="sk-reading-relations">', end)
-    body_end = relations_start if -1 < relations_start < article_end else article_end
-    return html[start:end], html[end:body_end]
-
-
 def test_stage_one_homepage_contract(client):
     html = client.get("/").content.decode()
     for text in [
@@ -218,7 +195,7 @@ def test_stage_one_homepage_contract(client):
     assert len(BIO["paragraphs"]) == 3
     for paragraph in STAGE_ONE_STATEMENT_PARAGRAPHS:
         assert escape(paragraph) in html
-    _assert_no_boundary_copy(html)
+    assert_no_boundary_copy(html)
     assert "<script" not in html
     assert "<hr" not in html
     assert "?note=" not in html
@@ -239,11 +216,11 @@ def test_reading_mode_note_contract(client, slug):
     html = response.content.decode()
     assert "sk-view-reading" in html
     assert 'class="abstract"' in html
-    provenance_html, _ = _split_provenance_and_body(html)
+    provenance_html, _ = split_provenance_and_body(html)
     assert REVISION_HISTORY_SUMMARY in provenance_html
     assert "Published by Syafiq Kay." in html
     assert "Back to homepage" in html
-    _assert_no_boundary_copy(html)
+    assert_no_boundary_copy(html)
     assert FORBIDDEN_AI_DISCLOSURE_TEXT not in html
     assert "sk-reading-relations" not in html
     assert "<script" not in html
@@ -251,25 +228,12 @@ def test_reading_mode_note_contract(client, slug):
 
 def test_hello_world_renders_ai_disclosure_without_duplicate_footer(client):
     html = client.get("/writings/hello-world/").content.decode()
-    provenance_html, body_html = _split_provenance_and_body(html)
-    expected_disclosure = (
-        f"<details>{AI_CONTRIBUTION_SUMMARY}<p>{escape(HELLO_WORLD_AI_DISCLOSURE)}</p></details>"
-    )
-    assert expected_disclosure in provenance_html
-    assert "<hr" not in body_html
-    assert "<em>" not in body_html
-    assert escape(HELLO_WORLD_AI_DISCLOSURE) not in body_html
-    assert html.count(escape(HELLO_WORLD_AI_DISCLOSURE)) == 1
-    assert FORBIDDEN_AI_DISCLOSURE_TEXT not in html
+    assert_hello_world_rendering(html)
 
 
 def test_controlled_drugs_omits_ai_contribution_disclosure(client):
     html = client.get("/writings/controlled-drugs-indelible-ink/").content.decode()
-    provenance_html, _ = _split_provenance_and_body(html)
-    assert REVISION_HISTORY_SUMMARY in provenance_html
-    assert AI_CONTRIBUTION_SUMMARY not in html
-    assert AI_CONTRIBUTION_LABEL not in provenance_html
-    assert FORBIDDEN_AI_DISCLOSURE_TEXT not in html
+    assert_note_provenance_contract(html, None)
 
 
 def test_reading_relations_shown_when_populated(client, monkeypatch):

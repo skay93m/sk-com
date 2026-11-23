@@ -112,8 +112,14 @@ def _verify_reading_note(page: Page, path: str, width: int) -> None:
         _verify_disclosure_toggle(provenance, AI_CONTRIBUTION_LABEL, HELLO_WORLD_AI_DISCLOSURE)
         assert page.locator('.article hr').count() == 0
         assert page.locator('.article em').count() == 0
-        body_paragraphs_text = '\n'.join(page.locator('.article > p').all_inner_texts())
-        assert HELLO_WORLD_AI_DISCLOSURE not in body_paragraphs_text
+        body_children = page.locator(
+            '.article > :not(.eyebrow):not(h1):not(.article-meta)'
+            ':not(.abstract):not(.article-provenance):not(.sk-reading-relations)'
+        )
+        assert body_children.count() > 0
+        body_text = '\n'.join(body_children.all_inner_texts())
+        assert body_text.strip()
+        assert HELLO_WORLD_AI_DISCLOSURE not in body_text
     elif path == '/writings/controlled-drugs-indelible-ink/':
         assert provenance.locator('summary', has_text=AI_CONTRIBUTION_LABEL).count() == 0
         assert AI_CONTRIBUTION_SUMMARY not in page.content()

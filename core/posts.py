@@ -74,9 +74,9 @@ def _parse_post_file(path: Path) -> Optional[dict]:
     body_html = markdown.markdown(raw[match.end():], extensions=['extra', 'nl2br'])
     read_time = str(meta['read_time']) if meta.get('read_time') else _read_time(body_html)
     raw_ai_disclosure = meta.get('ai_disclosure')
-    ai_disclosure = str(raw_ai_disclosure).strip() if raw_ai_disclosure else None
+    ai_disclosure = raw_ai_disclosure.strip() or None if isinstance(raw_ai_disclosure, str) else None
     return {
-        'ai_disclosure': ai_disclosure or None,
+        'ai_disclosure': ai_disclosure,
         'title': str(meta['title']),
         'description': str(meta['description']) if meta.get('description') else None,
         'read_time': read_time,

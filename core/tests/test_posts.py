@@ -97,6 +97,18 @@ def test_blank_ai_disclosure_normalises_to_none(tmp_path, raw_value):
     assert result["ai_disclosure"] is None
 
 
+@pytest.mark.parametrize("raw_value", ["true", "false", "123", "[a, b]", "{k: v}"])
+def test_non_string_ai_disclosure_normalises_to_none(tmp_path, raw_value):
+    content = VALID_POST.replace(
+        "title: Test Post",
+        f"title: Test Post\nai_disclosure: {raw_value}",
+    )
+    result = _parse_post_file(make_post_file(tmp_path, content))
+
+    assert result is not None
+    assert result["ai_disclosure"] is None
+
+
 def test_computed_read_time_boundary_200_words(tmp_path):
     body = "word " * 200
     content = VALID_POST.replace("This is the body.", body)
