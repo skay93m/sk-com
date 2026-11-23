@@ -34,7 +34,7 @@ ALLOWED_HOSTS = [host for host in ALLOWED_HOSTS if host.strip()]
 ALLOWED_HOSTS += [".onrender.com"]
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
+    'folio',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -66,7 +66,6 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'core.context_processors.bio',
             ],
         },
     },
@@ -77,7 +76,7 @@ WSGI_APPLICATION = 'syafiqkay.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': ':memory:',
     }
 }
 
@@ -95,7 +94,6 @@ SHORT_DATE_FORMAT = 'd/m/Y'
 SHORT_DATETIME_FORMAT = 'd/m/Y H:i'
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [BASE_DIR / 'static']
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 os.makedirs(STATIC_ROOT, exist_ok=True)

@@ -12,7 +12,8 @@ from django.utils.html import strip_tags
 
 FRONTMATTER_RE = re.compile(r'^---\s*\n(.*?)\n---\s*\n', re.DOTALL)
 
-VALID_TYPES = {'blog', 'article'}
+TYPE_ALIASES = {'blog': 'note', 'article': 'essay', 'note': 'note', 'essay': 'essay'}
+VALID_TYPES = set(TYPE_ALIASES)
 REQUIRED_AUTHOR = 'Syafiq Kay'
 POST_REQUIRED_FIELDS = ('title', 'date', 'slug', 'type', 'author')
 WORDS_PER_MINUTE = 200
@@ -77,12 +78,14 @@ def _parse_post_file(path: Path) -> Optional[dict]:
     ai_disclosure = raw_ai_disclosure.strip() or None if isinstance(raw_ai_disclosure, str) else None
     return {
         'ai_disclosure': ai_disclosure,
+        'backlinks': meta.get('backlinks') or (),
+        'similar_links': meta.get('similar_links') or (),
         'title': str(meta['title']),
         'description': str(meta['description']) if meta.get('description') else None,
         'read_time': read_time,
         'date': parsed_date,
         'slug': str(meta['slug']),
-        'type': str(meta['type']).lower(),
+        'type': TYPE_ALIASES[str(meta['type']).lower()],
         'author': str(meta['author']),
         'body_html': body_html,
     }
@@ -92,7 +95,7 @@ def _load_posts() -> list[dict]:
     global _cache
     if _cache is not None:
         return _cache
-    posts_dir = settings.CONTENT_DIR / 'posts'
+    posts_dir = settings.CONTENT_DIR / 'notes'
     if not posts_dir.exists():
         _cache = []
         return _cache

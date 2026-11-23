@@ -50,7 +50,7 @@ def test_valid_post_is_parsed(tmp_path):
     assert result is not None
     assert result["title"] == "Test Post"
     assert result["slug"] == "test-post"
-    assert result["type"] == "blog"
+    assert result["type"] == "note"
     assert result["author"] == "Syafiq Kay"
     assert result["date"] == date(2026, 1, 15)
     assert "This is the body" in result["body_html"]
@@ -175,7 +175,8 @@ def test_post_wrong_author_returns_none(tmp_path):
     ("blog", True),
     ("article", True),
     ("draft", False),
-    ("note", False),
+    ("note", True),
+    ("essay", True),
     ("", False),
 ])
 def test_post_type_validation(tmp_path, post_type, should_parse):
@@ -229,7 +230,7 @@ def test_post_with_non_mapping_frontmatter_returns_none(tmp_path, header):
 
 
 # ---------------------------------------------------------------------------
-# get_all_posts — integration (reads from content/posts/ via Django settings)
+# get_all_posts — integration (reads from content/notes/ via Django settings)
 # ---------------------------------------------------------------------------
 
 # Concept: return type contract — the function always returns a list, never raises.
@@ -261,7 +262,7 @@ def test_get_post_by_slug_unknown_returns_none():
 # Concept: lookup correctness — known slug returns the matching post.
 @pytest.mark.django_db
 def test_get_post_by_slug_known_returns_post():
-    # This test depends on hello-world.md existing in content/posts/.
+    # This test depends on hello-world.md existing in content/notes/.
     # If you remove that file, update this test to use a slug that exists.
     result = get_post_by_slug("hello-world")
     assert result is not None
@@ -284,3 +285,13 @@ def test_published_posts_contain_no_ai_disclosure_boilerplate():
     for post in get_all_posts():
         assert FORBIDDEN_AI_DISCLOSURE_TEXT not in (post["ai_disclosure"] or "")
         assert FORBIDDEN_AI_DISCLOSURE_TEXT not in post["body_html"]
+
+
+@pytest.mark.parametrize("raw,canonical", [("note", "note"), ("essay", "essay"), ("blog", "note"), ("article", "essay")])
+def test_note_taxonomy_at_content_loading_seam(tmp_path, settings, raw, canonical):
+    settings.CONTENT_DIR = tmp_path
+    (tmp_path / "notes").mkdir()
+    (tmp_path / "notes/sample.md").write_text(VALID_POST.replace("type: blog", f"type: {raw}"))
+    result = get_post_by_slug("test-post")
+    assert result is not None
+    assert result["type"] == canonical

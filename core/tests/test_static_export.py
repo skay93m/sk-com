@@ -38,24 +38,23 @@ def test_static_export_is_complete_and_repeatable(tmp_path):
     posts = get_all_posts()
     assert posts
     assert (output / 'index.html').is_file()
-    assert (output / 'writings/index.html').is_file()
-    assert (output / 'static/fonts/IBMPlexSerif-Regular.ttf').is_file()
+    assert (output / 'notes/index.html').is_file()
+    assert (output / 'static/folio/fonts/IBMPlexSerif-Regular.ttf').is_file()
     index_html = (output / 'index.html').read_text()
     assert 'Long-form notes' in index_html
     assert len(BIO['paragraphs']) == 3
     for paragraph in BIO['paragraphs']:
         assert escape(paragraph) in index_html
     assert_no_boundary_copy(index_html)
-    assert 'sk-boundary' not in (output / 'static/style.css').read_text()
+    assert (output / 'static/folio/css/sk-design-system.css').is_file()
     assert (output / 'robots.txt').is_file()
 
     slugs = {post['slug'] for post in posts}
     assert {'hello-world', 'controlled-drugs-indelible-ink'} <= slugs
 
     for post in posts:
-        note_html = (output / 'writings' / post['slug'] / 'index.html').read_text()
+        note_html = (output / 'notes' / post['slug'] / 'index.html').read_text()
         assert 'Back to homepage' in note_html
-        assert 'Published by Syafiq Kay.' in note_html
         if post['slug'] == 'hello-world':
             assert post['ai_disclosure'] == HELLO_WORLD_AI_DISCLOSURE
             assert_hello_world_rendering(note_html)
@@ -122,4 +121,6 @@ def test_render_static_configuration():
     }
     for slug in LEGACY_REDIRECT_PATHS:
         assert rewrites[f'/{slug}'] == f'/{slug}/index.html'
-        assert rewrites[f'/{slug}/*'] == f'/{slug}/index.html'
+        if slug != 'notes':
+            assert rewrites[f'/{slug}/*'] == f'/{slug}/index.html'
+    assert '/notes/*' not in rewrites

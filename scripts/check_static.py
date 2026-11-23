@@ -34,13 +34,13 @@ VIEWPORT_WIDTHS = (1440, 390)
 
 
 def discover_note_paths(directory: Path) -> list[str]:
-    """Return exported note URLs discovered under dist/writings/."""
-    writings_dir = directory / 'writings'
-    if not writings_dir.is_dir():
+    """Return exported note URLs discovered under dist/notes/."""
+    notes_dir = directory / 'notes'
+    if not notes_dir.is_dir():
         return []
     return [
-        f'/writings/{entry.name}/'
-        for entry in sorted(writings_dir.iterdir())
+        f'/notes/{entry.name}/'
+        for entry in sorted(notes_dir.iterdir())
         if entry.is_dir() and (entry / 'index.html').is_file()
     ]
 
@@ -98,29 +98,27 @@ def _verify_reading_note(page: Page, path: str, width: int) -> None:
     """Assert Reading layout margin, disclosure controls, and boundary removal."""
     assert page.locator('.site-header').evaluate('(el) => getComputedStyle(el).maxWidth') == '1120px'
     if width == 1440:
-        assert page.locator('.reading-margin').evaluate('(el) => getComputedStyle(el).paddingTop') == '230px'
+        assert page.locator('.reading-margin').evaluate('(el) => getComputedStyle(el).paddingTop') == '224px'
     else:
         assert not page.locator('.reading-margin').is_visible()
     _verify_no_boundary_copy(page)
     assert FORBIDDEN_AI_DISCLOSURE_TEXT not in page.content()
-    assert 'Published by Syafiq Kay.' in page.locator('.reading-margin').text_content()
 
     provenance = page.locator('.article-provenance')
     _verify_disclosure_toggle(provenance, REVISION_HISTORY_LABEL)
 
-    if path == '/writings/hello-world/':
+    if path == '/notes/hello-world/':
         _verify_disclosure_toggle(provenance, AI_CONTRIBUTION_LABEL, HELLO_WORLD_AI_DISCLOSURE)
         assert page.locator('.article hr').count() == 0
         assert page.locator('.article em').count() == 0
         body_children = page.locator(
-            '.article > :not(.eyebrow):not(h1):not(.article-meta)'
-            ':not(.abstract):not(.article-provenance):not(.sk-reading-relations)'
+            '.sk-reading-body'
         )
         assert body_children.count() > 0
         body_text = '\n'.join(body_children.all_inner_texts())
         assert body_text.strip()
         assert HELLO_WORLD_AI_DISCLOSURE not in body_text
-    elif path == '/writings/controlled-drugs-indelible-ink/':
+    elif path == '/notes/controlled-drugs-indelible-ink/':
         assert provenance.locator('summary', has_text=AI_CONTRIBUTION_LABEL).count() == 0
         assert AI_CONTRIBUTION_SUMMARY not in page.content()
     else:
@@ -132,6 +130,8 @@ def _verify_reading_note(page: Page, path: str, width: int) -> None:
 
 def verify_screen_layout(page: Page, path: str, width: int, note_paths: list[str], paper: str) -> None:
     """Assert typography, palette, spacing, and responsive layout on screen media."""
+    assert page.locator('script').count() == 0
+    assert page.locator('html').get_attribute('lang') == 'en-GB'
     assert page.locator('body').evaluate('(el) => getComputedStyle(el).backgroundColor') == paper
     assert page.evaluate('document.documentElement.scrollWidth <= innerWidth')
     assert page.locator('.site-header').evaluate('(el) => getComputedStyle(el).borderBottomWidth') == '0px'
@@ -140,13 +140,7 @@ def verify_screen_layout(page: Page, path: str, width: int, note_paths: list[str
     assert page.locator('.sk-footer-copy').evaluate('(el) => getComputedStyle(el).textAlign') == 'center'
     assert page.locator('.sk-logo span').evaluate('(el) => getComputedStyle(el).backgroundColor') == 'rgb(255, 79, 64)'
 
-    if path == '/writings/':
-        first_link = page.locator('.content-list-body > a').first
-        assert 'IBM Plex Sans' in first_link.evaluate('(el) => getComputedStyle(el).fontFamily')
-        assert page.evaluate('document.fonts.check(\'16px "IBM Plex Sans"\')')
-        return
-
-    prose = page.locator('.article p, .sk-section-block p').first
+    prose = page.locator('.sk-reading-body p, .sk-reading-body li, .article .abstract p, .sk-section-block p').first
     assert 'IBM Plex Serif' in prose.evaluate('(el) => getComputedStyle(el).fontFamily')
     assert prose.evaluate('(el) => getComputedStyle(el).fontSize') == '16px'
     assert page.evaluate('document.fonts.check(\'16px "IBM Plex Serif"\')')
@@ -229,8 +223,8 @@ def main():
     assert (directory / 'index.html').exists(), f'Run manage.py export_static first ({directory}).'
 
     note_paths = discover_note_paths(directory)
-    assert note_paths, f'No exported notes found under {directory / "writings"}'
-    paths = ['/', '/writings/', *note_paths]
+    assert note_paths, f'No exported notes found under {directory / "notes"}'
+    paths = ['/', *note_paths]
 
     with serve_static_directory(directory) as origin:
         count = run_chromium_checks(origin, paths, note_paths)

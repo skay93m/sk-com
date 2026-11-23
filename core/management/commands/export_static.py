@@ -5,15 +5,14 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 
 from django.conf import settings
-from django.core.management import BaseCommand, CommandError
+from django.core.management import BaseCommand, CommandError, call_command
 from django.shortcuts import render
-from django.test import RequestFactory
+from django.test import RequestFactory, override_settings
 from django.urls import resolve, reverse
 
-from core.labs import get_all_labs
 from core.posts import get_all_posts
 from core.urls import LEGACY_REDIRECT_PATHS
-from core.views import HomeView, LabDetailView, PostDetailView, RobotsTxtView, WritingsView
+from core.views import HomeView, NoteDetailView, RobotsTxtView
 
 
 class Command(BaseCommand):
@@ -41,15 +40,14 @@ class Command(BaseCommand):
 
         pages = [
             ('/', HomeView, {}),
-            ('/writings/', WritingsView, {}),
             ('/robots.txt', RobotsTxtView, {}),
         ]
-        for items, name, view in [
-            (get_all_posts(), 'core:post-detail', PostDetailView),
-            (get_all_labs(), 'core:lab-detail', LabDetailView),
-        ]:
-            for item in items:
-                pages.append((reverse(name, args=[item['slug']]), view, {'slug': item['slug']}))
+        for note in get_all_posts():
+            pages.append((
+                reverse('core:note-detail', args=[note['slug']]),
+                NoteDetailView,
+                {'slug': note['slug']},
+            ))
 
         redirect_urls = [reverse(f'core:{slug}') for slug in LEGACY_REDIRECT_PATHS]
 
@@ -76,8 +74,15 @@ class Command(BaseCommand):
                 fallback = render(request, 'redirect.html', {'target_url': response['Location']})
                 target.write_bytes(fallback.content)
 
-            shutil.copytree(settings.BASE_DIR / 'static', staging / 'static')
-            (staging / marker).write_text('Stage 1 static export\n')
+            with override_settings(
+                STATIC_ROOT=str(staging / 'static'),
+                STORAGES={
+                    **settings.STORAGES,
+                    'staticfiles': {'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage'},
+                },
+            ):
+                call_command('collectstatic', interactive=False, verbosity=0)
+            (staging / marker).write_text('Folio static export\n')
             if output.exists():
                 shutil.rmtree(output)
             staging.rename(output)

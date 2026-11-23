@@ -16,10 +16,10 @@ not match the running system, the running system is right and this file is wrong
 
 - Django 6 on Python 3.13, single app `core`, project package `syafiqkay`
 - **No models and no application database.** All content is markdown files under `content/`, parsed and cached in memory
-- SQLite exists at `BASE_DIR / db.sqlite3` for Django auth and admin only. It is inside the container, so it is destroyed on every deploy
+- Django uses in-memory SQLite for compatibility. The admin mount is removed. Static serving needs no database
 - No PostgreSQL, no `psycopg2`, no `DATABASE_URL`
 - Deployed as a Docker web service on Render, Frankfurt, behind Render's TLS termination
-- Static files served by WhiteNoise in Django (and copied directly into `dist/static/` for static export) use local `static/style.css` and self-hosted IBM Plex OFL fonts in `static/fonts/`, with zero external CDN dependencies
+- Django collects static assets from the pinned Folio package into `dist/static/folio/`, including CSS and IBM Plex OFL fonts, with zero external CDN dependencies
 
 ## Secrets
 
@@ -48,9 +48,9 @@ is why both were rotated or revoked rather than merely removed.
 ## Application security
 
 - **No models, no ORM queries, no raw SQL.** The SQL injection surface is Django's own auth and session tables
-- **Templates** use Django's automatic HTML escaping everywhere except post and lab bodies. `core/posts.py` and `core/labs.py` render markdown with the `extra` and `nl2br` extensions and no HTML sanitiser, and `post.html` and `lab.html` output the result through `|safe`. Python-Markdown passes raw HTML through by default, so **anyone who can commit a markdown file can inject arbitrary HTML and script into the page.** This is acceptable only because commit access is limited to the repository owner and every change goes through a reviewed pull request. It stops being acceptable the moment content is accepted from anyone else, at which point a sanitiser such as `bleach` or `nh3` becomes mandatory
+- **Templates** use Django's automatic HTML escaping everywhere except note bodies. `core/posts.py` renders markdown with the `extra` and `nl2br` extensions and no HTML sanitiser, and Folio’s Reading template outputs the result through `|safe`. Python-Markdown passes raw HTML through by default, so **anyone who can commit a markdown file can inject arbitrary HTML and script into the page.** This is acceptable only because commit access is limited to the repository owner and every change goes through a reviewed pull request. It stops being acceptable the moment content is accepted from anyone else, at which point a sanitiser such as `bleach` or `nh3` becomes mandatory
 - **No file uploads, no `eval`, no `exec`, no `pickle`, no XML parsing, no shell execution on user input**
-- **`/admin/` is exposed** and protected by Django auth. Because the database is destroyed on each deploy, no superuser normally survives, so there is usually no account to log in to. It serves no purpose and is scheduled for removal along with SQLite
+- **`/admin/` is removed** and returns HTTP 404
 
 ## Security headers and transport
 
@@ -82,10 +82,10 @@ to the server is a defect regardless of whether it works.
 ## Dependencies
 
 Declared in `pyproject.toml`, pinned in `uv.lock`. Runtime: Django, Gunicorn,
-WhiteNoise, Markdown, python-dotenv, PyYAML. Development only, and excluded from the
+WhiteNoise, Folio, Markdown, python-dotenv, PyYAML. Development only, and excluded from the
 production image: pytest, pytest-django, playwright.
 
-Ten packages reach production. Keeping the runtime surface this small is deliberate.
+Folio is pinned to a Git commit in `uv.lock`.
 
 ```bash
 uv sync --upgrade   # periodically, then run the tests
@@ -93,8 +93,7 @@ uv sync --upgrade   # periodically, then run the tests
 
 ## Known outstanding items
 
-- Stage 1 uses local CSS and OFL fonts, with no third-party runtime assets
-- `/admin/` and SQLite are still present despite serving nothing
+- Folio supplies local CSS and OFL fonts, with no third-party runtime requests
 - The container runs as root. Adding a non-root user would be defence in depth
 
 ## Reporting

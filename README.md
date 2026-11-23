@@ -26,10 +26,9 @@ Restart Django after editing content because Markdown is cached in memory.
 | Route | Behaviour |
 | --- | --- |
 | `/` | Stage 1 homepage |
-| `/writings/<slug>/` | Published note, using the Reading layout |
-| `/writings/` | Preserved published writing index |
-| `/cv/`, `/labs/`, `/about/`, `/writing/` | Django HTTP 302 to `/` (static export includes `<meta http-equiv="refresh">` fallback HTML) |
-| `/labs/<slug>/` | Preserved published lab URLs |
+| `/notes/<slug>/` | Published note, using Folio’s Reading layout |
+| `/cv/`, `/labs/`, `/about/`, `/writing/`, `/writings/`, `/notes/` | Django HTTP 302 to `/` (static export includes `<meta http-equiv="refresh">` fallback HTML) |
+| Legacy subpaths (except `/notes/<slug>/`) | Django HTTP 302 to `/` |
 
 LinkedIn is the canonical career record. The local CV is retired.
 
@@ -60,10 +59,9 @@ uv run python -m http.server 8000 --directory dist
 
 The exporter writes `dist/` by default, or an explicit `--output` directory. It
 replaces only directories marked as previous exports and removes stale pages.
-It exports all published notes, the existing writing index and lab detail pages,
-static `<meta http-equiv="refresh">` redirect fallbacks for `/cv/`, `/labs/`,
-`/about/`, and `/writing/`, `robots.txt`, and local assets. It does not export
-admin or retired CV content.
+It exports the homepage, published notes, six legacy refresh pages, and
+`robots.txt`. Django `collectstatic` collects assets from the pinned Folio package
+into `dist/static/folio/`. Admin and labs content are retired.
 
 The Chromium check blocks external requests and checks desktop and 390px layouts,
 light and D1 dark tokens, F3 typography, disclosure controls, and colour, greyscale,
@@ -86,22 +84,23 @@ public pages.
 Render's documented static redirect rules return **301** (no status-code field is
 exposed in the Blueprint schema), and Render Static Sites always serve existing
 physical files before evaluating route rules. `render.yaml` therefore uses uniform
-`type: rewrite` rules mapping `/cv`, `/labs`, `/about`, `/writing` (and subpath
-wildcards) to `export_static`'s `<meta http-equiv="refresh" content="0; url=/">`
-fallback pages (`dist/{cv,labs,about,writing}/index.html`), avoiding permanent
-`301` browser caching while preserving physical `/labs/<slug>/` files. Django
-implements and tests true HTTP **302** for all four routes; resolve this static
-HTTP `302` hosting constraint before cutover if edge HTTP `302` responses are
-required, and do not describe Render static site responses as `302`.
+`type: rewrite` rules mapping legacy paths and their subpaths to refresh pages.
+Bare `/notes` maps to `/notes/index.html`; there is no `/notes/*` wildcard, so
+published note files serve directly. Django implements true HTTP **302** for the
+six legacy routes. Resolve this static HTTP `302` hosting constraint before
+cutover if edge HTTP `302` responses are required. Render static responses must
+not be described as `302`.
 See [Render redirect rules](https://render.com/docs/redirects-rewrites) and
 [Blueprint configuration](https://render.com/docs/blueprint-spec).
 
 ## Design assets and content
 
-The stylesheet ports the selected Stage 1 SK Design System baseline (F3 IBM Plex,
-D1 dark tokens, coral-dot mark, 760px homepage, Reading pattern). Fonts are
-self-hosted in `static/fonts/` with their SIL Open Font Licence texts.
-Published text and dates remain authoritative in `content/`. Optional
+Folio 0.2.0 supplies the Homepage and Reading templates, CSS and F3 IBM Plex
+fonts through Django app discovery. `pyproject.toml` tracks Folio’s `main` branch,
+and `uv.lock` pins the exact reviewed commit. There are no vendored design assets.
+The approved baseline uses D1 dark tokens, the coral-dot mark and a 760px homepage.
+Published text and dates remain authoritative in `content/notes/`. Types are
+`note` and `essay`; legacy `blog` and `article` map to them respectively. Optional
 `ai_disclosure` frontmatter is shown in Reading provenance when set; when
 omitted or blank, the AI contribution disclosure is omitted with no boilerplate
 fallback.
