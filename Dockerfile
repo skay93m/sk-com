@@ -14,7 +14,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends $BUILD_DEPS \
 WORKDIR /app
 
 COPY pyproject.toml uv.lock ./
-RUN uv sync --frozen --no-dev
+RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates git \
+    && uv sync --frozen --no-dev \
+    && apt-get purge -y --auto-remove git \
+    && rm -rf /var/lib/apt/lists/*
 
 COPY . .
 
