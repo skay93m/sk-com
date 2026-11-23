@@ -23,7 +23,7 @@
 </div>
 {% if post.description %}<div class="abstract"><p>{{ post.description }}</p></div>{% endif %}
 <div class="article-provenance">
-<details><summary>AI contribution</summary><p>{{ post.ai_disclosure }}</p></details>
+{% if post.ai_disclosure %}<details><summary>AI contribution</summary><p>{{ post.ai_disclosure }}</p></details>{% endif %}
 <details><summary>Revision history</summary><p>{{ post.date|date:"d F Y" }}: Published.</p></details>
 </div>
 {{ post.body_html|safe }}

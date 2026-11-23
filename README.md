@@ -102,9 +102,9 @@ The stylesheet ports the selected Stage 1 SK Design System baseline (F3 IBM Plex
 D1 dark tokens, coral-dot mark, 760px homepage, Reading pattern). Fonts are
 self-hosted in `static/fonts/` with their SIL Open Font Licence texts.
 Published text and dates remain authoritative in `content/`. Optional
-`ai_disclosure` frontmatter is shown in Reading provenance; when omitted, the
-provenance notice directs readers to the note text for any author disclosure
-rather than inferring prose.
+`ai_disclosure` frontmatter is shown in Reading provenance when set; when
+omitted or blank, the AI contribution disclosure is omitted with no boilerplate
+fallback.
 
 Publication is governed by [AGENTS.md](AGENTS.md). Do not import private notes or
 planning documents into this repository. All changes go through a pull request.

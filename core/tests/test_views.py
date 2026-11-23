@@ -12,6 +12,17 @@ import pytest
 from django.utils.html import escape
 
 from core.context_processors import BIO
+from core.tests.constants import (
+    AI_CONTRIBUTION_SUMMARY,
+    FORBIDDEN_AI_DISCLOSURE_TEXT,
+    REVISION_HISTORY_SUMMARY,
+)
+from core.tests.helpers import (
+    assert_hello_world_rendering,
+    assert_no_boundary_copy,
+    assert_note_provenance_contract,
+    split_provenance_and_body,
+)
 from core.urls import LEGACY_REDIRECT_PATHS
 
 
@@ -92,7 +103,7 @@ def test_post_detail_without_description_falls_back_to_tagline(client, monkeypat
         "slug": "no-description",
         "type": "article",
         "author": "Syafiq Kay",
-        "ai_disclosure": "No AI contribution is recorded for this note.",
+        "ai_disclosure": None,
         "body_html": "<p>Body</p>",
     }
     monkeypatch.setattr(
@@ -103,6 +114,7 @@ def test_post_detail_without_description_falls_back_to_tagline(client, monkeypat
     assert response.status_code == 200
     expected_meta = f'<meta name="description" content="{escape(BIO["tagline"])}">'.encode()
     assert expected_meta in response.content
+    assert AI_CONTRIBUTION_SUMMARY not in response.content.decode()
 
 
 @pytest.mark.django_db
@@ -165,17 +177,6 @@ STAGE_ONE_STATEMENT_PARAGRAPHS = (
     "My background deliberately crosses disciplines. I extracted clinical insights from electronic health records at South London and Maudsley NHS Trust, coded adverse events across clinical trials at Femtogenix to spot toxicity patterns, and gathered cross-agency evidence for patients at Rethink. Legal training through the GDL, an MSc in Mental Health, Ethics and Law at King's College London, and programming self-taught during my MPharm research run alongside that clinical work.",
     "Right now I investigate psychiatric prescribing, evidence heterogeneity, and healthcare law: specifically whether the Mental Health Act 1983 accounts for the limits of population-level evidence when applied to individual patients. Open to conversations on healthcare policy, research collaboration, and analytical roles across health and the public sector.",
 )
-FORBIDDEN_BOUNDARY_TEXT = (
-    "I am a pharmacist who prefers lasting fixes",
-    "AI use: AI tools assist",
-    "Personal analysis, not clinical advice",
-    "sk-boundary",
-)
-
-
-def _assert_no_boundary_copy(html):
-    for forbidden in FORBIDDEN_BOUNDARY_TEXT:
-        assert forbidden not in html
 
 
 def test_stage_one_homepage_contract(client):
@@ -194,7 +195,7 @@ def test_stage_one_homepage_contract(client):
     assert len(BIO["paragraphs"]) == 3
     for paragraph in STAGE_ONE_STATEMENT_PARAGRAPHS:
         assert escape(paragraph) in html
-    _assert_no_boundary_copy(html)
+    assert_no_boundary_copy(html)
     assert "<script" not in html
     assert "<hr" not in html
     assert "?note=" not in html
@@ -215,13 +216,24 @@ def test_reading_mode_note_contract(client, slug):
     html = response.content.decode()
     assert "sk-view-reading" in html
     assert 'class="abstract"' in html
-    assert 'class="article-provenance"' in html
-    assert "AI contribution" in html
+    provenance_html, _ = split_provenance_and_body(html)
+    assert REVISION_HISTORY_SUMMARY in provenance_html
     assert "Published by Syafiq Kay." in html
     assert "Back to homepage" in html
-    _assert_no_boundary_copy(html)
+    assert_no_boundary_copy(html)
+    assert FORBIDDEN_AI_DISCLOSURE_TEXT not in html
     assert "sk-reading-relations" not in html
     assert "<script" not in html
+
+
+def test_hello_world_renders_ai_disclosure_without_duplicate_footer(client):
+    html = client.get("/writings/hello-world/").content.decode()
+    assert_hello_world_rendering(html)
+
+
+def test_controlled_drugs_omits_ai_contribution_disclosure(client):
+    html = client.get("/writings/controlled-drugs-indelible-ink/").content.decode()
+    assert_note_provenance_contract(html, None)
 
 
 def test_reading_relations_shown_when_populated(client, monkeypatch):
@@ -233,7 +245,7 @@ def test_reading_relations_shown_when_populated(client, monkeypatch):
         "slug": "linked-note",
         "type": "article",
         "author": "Syafiq Kay",
-        "ai_disclosure": "No AI contribution is recorded for this note.",
+        "ai_disclosure": None,
         "body_html": "<p>Body</p>",
         "backlinks": [{"href": "/writings/hello-world/", "title": "Hello World"}],
         "similar_links": [],

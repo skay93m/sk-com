@@ -73,13 +73,10 @@ def _parse_post_file(path: Path) -> Optional[dict]:
 
     body_html = markdown.markdown(raw[match.end():], extensions=['extra', 'nl2br'])
     read_time = str(meta['read_time']) if meta.get('read_time') else _read_time(body_html)
+    raw_ai_disclosure = meta.get('ai_disclosure')
+    ai_disclosure = raw_ai_disclosure.strip() or None if isinstance(raw_ai_disclosure, str) else None
     return {
-        'ai_disclosure': str(
-            meta.get('ai_disclosure')
-            or 'No separate AI contribution metadata is recorded for this note; '
-            'see the note text for any author disclosure. '
-            'AI tools assisted with the site layout and technical verification.'
-        ),
+        'ai_disclosure': ai_disclosure,
         'title': str(meta['title']),
         'description': str(meta['description']) if meta.get('description') else None,
         'read_time': read_time,

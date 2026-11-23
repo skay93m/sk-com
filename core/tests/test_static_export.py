@@ -9,19 +9,13 @@ from django.utils.html import escape
 
 from core.context_processors import BIO
 from core.posts import get_all_posts
-from core.urls import LEGACY_REDIRECT_PATHS
-
-FORBIDDEN_BOUNDARY_TEXT = (
-    "I am a pharmacist who prefers lasting fixes",
-    "AI use: AI tools assist",
-    "Personal analysis, not clinical advice",
-    "sk-boundary",
+from core.tests.constants import HELLO_WORLD_AI_DISCLOSURE
+from core.tests.helpers import (
+    assert_hello_world_rendering,
+    assert_no_boundary_copy,
+    assert_note_provenance_contract,
 )
-
-
-def _assert_no_boundary_copy(html: str) -> None:
-    for forbidden in FORBIDDEN_BOUNDARY_TEXT:
-        assert forbidden not in html
+from core.urls import LEGACY_REDIRECT_PATHS
 
 
 class AssetLinks(HTMLParser):
@@ -51,16 +45,25 @@ def test_static_export_is_complete_and_repeatable(tmp_path):
     assert len(BIO['paragraphs']) == 3
     for paragraph in BIO['paragraphs']:
         assert escape(paragraph) in index_html
-    _assert_no_boundary_copy(index_html)
+    assert_no_boundary_copy(index_html)
     assert 'sk-boundary' not in (output / 'static/style.css').read_text()
     assert (output / 'robots.txt').is_file()
+
+    slugs = {post['slug'] for post in posts}
+    assert {'hello-world', 'controlled-drugs-indelible-ink'} <= slugs
 
     for post in posts:
         note_html = (output / 'writings' / post['slug'] / 'index.html').read_text()
         assert 'Back to homepage' in note_html
-        assert 'article-provenance' in note_html
         assert 'Published by Syafiq Kay.' in note_html
-        _assert_no_boundary_copy(note_html)
+        if post['slug'] == 'hello-world':
+            assert post['ai_disclosure'] == HELLO_WORLD_AI_DISCLOSURE
+            assert_hello_world_rendering(note_html)
+        elif post['slug'] == 'controlled-drugs-indelible-ink':
+            assert post['ai_disclosure'] is None
+            assert_note_provenance_contract(note_html, None)
+        else:
+            assert_note_provenance_contract(note_html, post['ai_disclosure'])
 
     for legacy in LEGACY_REDIRECT_PATHS:
         fallback = (output / legacy / 'index.html').read_text()
