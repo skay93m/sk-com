@@ -1,3 +1,8 @@
+<!-- Stage 1 note: the proposed static export has no application process,
+admin, database or runtime third-party assets. The existing Docker service remains
+dashboard-managed until cutover. The assessment below describes that legacy
+runtime where applicable. -->
+
 # Security and Privacy
 
 **Repository:** sk-com, serving syafiqkay.com
@@ -86,7 +91,7 @@ uv sync --upgrade   # periodically, then run the tests
 
 ## Known outstanding items
 
-- Bootstrap is loaded from a third-party CDN. Removing it eliminates that dependency
+- Stage 1 uses local CSS and OFL fonts, with no third-party runtime assets
 - `/admin/` and SQLite are still present despite serving nothing
 - The container runs as root. Adding a non-root user would be defence in depth
 

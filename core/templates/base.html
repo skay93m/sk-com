@@ -1,48 +1,64 @@
-<!DOCTYPE html>
+<!doctype html>
 {% load static %}
-<html lang="en-GB">
+<html lang="en-GB" data-bs-theme="light">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{% block title %}Syafiq Kay{% endblock %}</title>
-  <meta name="description" content="{% block description %}{{ bio.tagline }}{% endblock %}">
-  {% block meta %}{% endblock %}
-  <link rel="stylesheet" href="{% static 'style.css' %}">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}Syafiq Kay{% endblock %}</title>
+<meta name="description" content="{% block description %}{{ bio.tagline }}{% endblock %}">
+{% block meta %}{% endblock %}
+<link rel="stylesheet" href="{% static 'style.css' %}">
 </head>
-<body>
-  <header class="site-header">
-    <div class="page-frame site-header-inner">
-      <a class="site-mark" href="{% url 'core:home' %}">Syafiq Kay</a>
-      <nav class="site-nav" aria-label="Main navigation">
-        <a href="{% url 'core:home' %}"{% if request.resolver_match.url_name == 'home' %} aria-current="page"{% endif %}>
-          <svg class="icon icon-small" aria-hidden="true" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1V10Z"/></svg>
-          <span>Home</span>
-        </a>
-        <a href="{% url 'core:writings' %}"{% if request.resolver_match.url_name == 'writings' or request.resolver_match.url_name == 'post-detail' %} aria-current="page"{% endif %}>
-          <svg class="icon icon-small" aria-hidden="true" viewBox="0 0 24 24"><path d="m4 17 1.2-4.8L16.8.6a2.1 2.1 0 0 1 3 3L8.2 15.2 4 17Zm9.7-13.4 3.7 3.7M4 21h16"/></svg>
-          <span>Writing</span>
-        </a>
-        <a href="{% url 'core:labs' %}"{% if request.resolver_match.url_name == 'labs' or request.resolver_match.url_name == 'lab-detail' %} aria-current="page"{% endif %}>
-          <svg class="icon icon-small" aria-hidden="true" viewBox="0 0 24 24"><path d="M9 3h6M10 3v6l-5.5 9.5A2 2 0 0 0 6.2 21h11.6a2 2 0 0 0 1.7-2.5L14 9V3M7.3 16h9.4"/></svg>
-          <span>Labs</span>
-        </a>
-        <a href="{% url 'core:cv' %}"{% if request.resolver_match.url_name == 'cv' %} aria-current="page"{% endif %}>
-          <svg class="icon icon-small" aria-hidden="true" viewBox="0 0 24 24"><path d="M7 3h10a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Zm3 0v4h4V3M8 12h8M8 16h6"/></svg>
-          <span>CV</span>
-        </a>
-      </nav>
-    </div>
-  </header>
+<body class="sk-spatial-canvas sk-gwern-folio {% block body_class %}{% endblock %}">
+<a class="skip" href="#main">Skip to content</a>
+    <header class="site-header">
+      <a
+        class="sk-logo"
+        href="/"
 
-  <main class="page-frame page-content">
-    {% block content %}{% endblock %}
-  </main>
+        aria-label="Syafiq Kay home"
+        >sk<span></span></a
+      >
+      <div class="sk-header-actions">
+        <nav class="sk-header-socials" aria-label="Social and academic profiles">
+          <a href="mailto:syafiq@syafiqkay.com" aria-label="Email">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M3 5h18v14H3V5Zm1 1 8 6 8-6M4 18l5.5-5M20 18l-5.5-5" />
+            </svg>
+          </a>
+          <a href="https://github.com/skay93m" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M9 19c-4 .9-4-2-5.5-2.5M14.5 21v-3.2a3 3 0 0 0-.8-2.3c2.7-.3 5.5-1.3 5.5-5.8a4.5 4.5 0 0 0-1.2-3.2A4.2 4.2 0 0 0 18 3.3S17 3 14.5 4.6a10.3 10.3 0 0 0-5 0C7 3 6 3.3 6 3.3a4.2 4.2 0 0 0 0 3.2 4.5 4.5 0 0 0-1.2 3.2c0 4.5 2.8 5.5 5.5 5.8a3 3 0 0 0-.8 2.3V21" />
+            </svg>
+          </a>
+          <a href="https://www.linkedin.com/in/syafiqkay/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M5 8v11M5 5v.1M10 19v-7a3 3 0 0 1 6 0v7m0-4v-3a3 3 0 0 1 6 0v7M10 12V8" />
+            </svg>
+          </a>
+          <a href="https://www.researchgate.net/profile/Syafiq-Kay" target="_blank" rel="noopener noreferrer" aria-label="ResearchGate">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M5 4h9a5 5 0 0 1 0 10H9v6H5V4Zm4 3v4h4a2 2 0 0 0 0-4H9Zm6 7 4 6" />
+            </svg>
+          </a>
+          <a href="https://orcid.org/0000-0001-8799-3188" target="_blank" rel="noopener noreferrer" aria-label="ORCID">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="9" />
+              <path d="M9 8v8M12 8h1.5a4 4 0 0 1 0 8H12V8Z" />
+            </svg>
+          </a>
+        </nav>
+      </div>
+    </header>
 
-  <footer class="site-footer">
-    <div class="page-frame">
-      <p>&copy; {% now "Y" %} Syafiq Kay</p>
-      <p>This site is <a href="https://github.com/skay93m/sk-com" target="_blank" rel="noopener">open source</a>. I build in public, and I am always open to being corrected.</p>
-    </div>
-  </footer>
+
+<main id="main" tabindex="-1">{% block content %}{% endblock %}</main>
+    <footer class="sk-site-footer">
+      <div class="sk-footer-inner">
+        <p class="sk-footer-copy">&copy; 2026 Syafiq Kay</p>
+        <p class="sk-footer-prose">This site is <a href="https://github.com/skay93m/sk-com" target="_blank" rel="noopener noreferrer">open source</a>. I build in public and welcome corrections.</p>
+      </div>
+    </footer>
+
 </body>
 </html>

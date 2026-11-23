@@ -45,7 +45,7 @@ def test_writings_page_heading_and_title(client):
     response = client.get("/writings/")
     assert response.status_code == 200
     assert b"<h1>Writing</h1>" in response.content
-    assert b"<title>Writing \xe2\x80\x94 Syafiq Kay</title>" in response.content
+    assert "<title>Writing · Syafiq Kay</title>" in response.content.decode()
 
 
 @pytest.mark.django_db
@@ -59,15 +59,17 @@ def test_homepage_shows_writing_metadata(client):
 
 
 @pytest.mark.django_db
-def test_labs_page_returns_200(client):
+def test_labs_page_redirects(client):
     response = client.get("/labs/")
-    assert response.status_code == 200
+    assert response.status_code == 302
+    assert response["Location"] == "/"
 
 
 @pytest.mark.django_db
-def test_cv_page_returns_200(client):
+def test_cv_page_redirects(client):
     response = client.get("/cv/")
-    assert response.status_code == 200
+    assert response.status_code == 302
+    assert response["Location"] == "/"
 
 
 # ---------------------------------------------------------------------------
@@ -137,3 +139,28 @@ def test_robots_txt_returns_200(client):
     response = client.get("/robots.txt")
     assert response.status_code == 200
     assert response["Content-Type"] == "text/plain"
+
+@pytest.mark.parametrize("path", ["/about/", "/writing/"])
+def test_stage_one_legacy_redirects(client, path):
+    response = client.get(path)
+    assert response.status_code == 302
+    assert response["Location"] == "/"
+
+
+def test_stage_one_homepage_contract(client):
+    html = client.get("/").content.decode()
+    for text in ["sk-spatial-shell", "Long-form notes", "King's College London", "clinical advice", 'aria-label="LinkedIn"', 'aria-label="GitHub"']:
+        assert text in html
+    assert "<script" not in html
+    assert "<hr" not in html
+
+
+def test_query_note_reading_contract(client):
+    response = client.get("/", {"note": "hello-world"})
+    assert response.status_code == 200
+    html = response.content.decode()
+    assert 'class="abstract"' in html
+    assert 'class="article-provenance"' in html
+    assert "Back to homepage" in html
+    assert "sk-reading-relations" not in html
+    assert client.get("/", {"note": "missing"}).status_code == 404

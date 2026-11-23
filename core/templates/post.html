@@ -1,26 +1,40 @@
 {% extends "base.html" %}
-{% block title %}{{ post.title }} — Syafiq Kay{% endblock %}
+{% block title %}{{ post.title }} · Syafiq Kay{% endblock %}
 {% block description %}{% if post.description %}{{ post.description }}{% else %}{{ block.super }}{% endif %}{% endblock %}
+{% block body_class %}sk-view-reading{% endblock %}
 {% block meta %}
 <meta name="author" content="{{ post.author }}">
 <meta name="citation_author" content="{{ post.author }}">
 <meta name="citation_title" content="{{ post.title }}">
 <meta name="citation_date" content="{{ post.date|date:'Y/m/d' }}">
+<link rel="canonical" href="https://syafiqkay.com{% url 'core:post-detail' post.slug %}">
 {% endblock %}
 {% block content %}
-<article class="article-notebook">
-  <header class="article-notebook-header">
-    <p class="eyebrow">Writing</p>
-    <div class="article-notebook-meta">
-      <time datetime="{{ post.date|date:'Y-m-d' }}">{{ post.date|date:"d F Y" }}</time>
-      {% if post.read_time %}<span>{{ post.read_time }}</span>{% endif %}
-    </div>
-    <h1>{{ post.title }}</h1>
-    {% if post.description %}<p class="article-notebook-dek">{{ post.description }}</p>{% endif %}
-  </header>
-  <div class="article-notebook-body">
-    {{ post.body_html|safe }}
-  </div>
+<div class="reading-layout">
+<nav class="reading-toc" aria-label="Reading navigation">
+<a class="sk-back-link" href="/">← Back to homepage</a>
+</nav>
+<article class="article article-notebook">
+<div class="eyebrow">Note</div>
+<h1>{{ post.title }}</h1>
+<div class="article-meta">
+<time datetime="{{ post.date|date:'Y-m-d' }}">{{ post.date|date:"d F Y" }}</time>
+<span>{{ post.author }}</span><span>{{ post.read_time }}</span>
+</div>
+{% if post.description %}<div class="abstract"><p>{{ post.description }}</p></div>{% endif %}
+<div class="article-provenance">
+<details><summary>AI contribution</summary><p>{{ post.ai_disclosure }}</p></details>
+<details><summary>Revision history</summary><p>{{ post.date|date:"d F Y" }}: Published.</p></details>
+</div>
+{{ post.body_html|safe }}
+{% if post.backlinks or post.similar_links %}
+<div class="sk-reading-relations">
+{% if post.backlinks %}<section><h2>Backlinks</h2><ul>{% for link in post.backlinks %}<li><a href="{{ link.href }}">{{ link.title }}</a></li>{% endfor %}</ul></section>{% endif %}
+{% if post.similar_links %}<section><h2>Similar links</h2><ul>{% for link in post.similar_links %}<li><a href="{{ link.href }}">{{ link.title }}</a></li>{% endfor %}</ul></section>{% endif %}
+</div>
+{% endif %}
+<p class="sk-boundary">Personal analysis, not clinical advice. No patient encounters or confidential clinical material are published here.</p>
 </article>
-<p class="mt-4"><a href="{% url 'core:writings' %}" class="text-muted text-decoration-none">← All writings</a></p>
+<aside class="reading-margin" aria-label="Publication context"><p>Published by Syafiq Kay.</p></aside>
+</div>
 {% endblock %}

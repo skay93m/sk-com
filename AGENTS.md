@@ -2,6 +2,23 @@
 
 Instructions for AI coding agents working on syafiqkay.com. Describes the repo as it is now.
 
+## Current Stage 1 implementation
+
+The Stage 1 ticket supersedes the older site plan below for current delivery.
+The homepage and Reading templates use local SK Design System F3 fonts and D1
+tokens. No runtime JavaScript is used. Export with
+`uv run python manage.py export_static`; verify with
+`uv run python scripts/check_static.py` after installing Chromium.
+
+`/cv/`, `/labs/`, `/about/` and `/writing/` return Django HTTP 302 to `/`.
+LinkedIn owns the career record. Published `/writings/<slug>/` URLs are preserved.
+The proposed `render.yaml` targets a Static Site and disables previews, but the
+dashboard remains authoritative. Render static redirects return 301. See README
+for the unresolved 302 hosting constraint and cutover steps.
+
+The CV roadmap and Bootstrap CDN description below are historical and retired for
+Stage 1. The stylesheet is now populated and no external CSS or fonts are loaded.
+
 ## What this is
 
 Personal site for Syafiq Kay, positioned on the intersection of clinical practice, law and technical work. Content-first and identity-forward. It hosts evidence of ongoing work and is not a brochure. It is a repositioning of a working site, not a rewrite.
@@ -53,7 +70,7 @@ Posts need `title`, `date` (YYYY-MM-DD), `slug`, `type` (`blog` or `article`) an
 - Never change a published `slug`. It is the URL
 - Lab assets go in `static/labs/<slug>/`, created by hand
 - New content: use `/publish <file>`. It creates `publish/<slug>`, commits and pushes
-- CV: edit `core/templates/cv.html`. Bio: edit `core/context_processors.py`
+- Homepage: edit `core/templates/index.html`. Career history: LinkedIn.
 
 ## Publication policy
 

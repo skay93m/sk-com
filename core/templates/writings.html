@@ -1,6 +1,7 @@
 {% extends "base.html" %}
-{% block title %}Writing — Syafiq Kay{% endblock %}
+{% block title %}Writing · Syafiq Kay{% endblock %}
 {% block content %}
+<div class="sk-spatial-shell">
 <h1>Writing</h1>
 {% if posts %}
   <ul class="content-list content-list-expanded">
@@ -20,4 +21,5 @@
 {% else %}
   <p class="text-muted">No posts yet.</p>
 {% endif %}
+</div>
 {% endblock %}
