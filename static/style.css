@@ -320,15 +320,6 @@ body.sk-spatial-canvas.sk-view-reading .site-header {
   margin-top: 0.35rem;
 }
 
-.sk-section-block p.sk-boundary,
-.article p.sk-boundary,
-.sk-boundary {
-  font-family: "IBM Plex Sans", sans-serif;
-  font-size: 0.85rem;
-  line-height: 1.6;
-  color: var(--sk-muted);
-}
-
 /* Reading layout */
 .reading-layout {
   max-width: 1350px;
@@ -452,10 +443,6 @@ body.sk-spatial-canvas.sk-view-reading .site-header {
 .article details p {
   font-size: 0.925rem;
   margin: 0.5rem 0 0.25rem;
-}
-
-.article p.sk-boundary {
-  margin-top: var(--sk-block-gap);
 }
 
 .sk-reading-relations {

@@ -5,9 +5,23 @@ import pytest
 import yaml
 from django.conf import settings
 from django.core.management import CommandError, call_command
+from django.utils.html import escape
 
+from core.context_processors import BIO
 from core.posts import get_all_posts
 from core.urls import LEGACY_REDIRECT_PATHS
+
+FORBIDDEN_BOUNDARY_TEXT = (
+    "I am a pharmacist who prefers lasting fixes",
+    "AI use: AI tools assist",
+    "Personal analysis, not clinical advice",
+    "sk-boundary",
+)
+
+
+def _assert_no_boundary_copy(html: str) -> None:
+    for forbidden in FORBIDDEN_BOUNDARY_TEXT:
+        assert forbidden not in html
 
 
 class AssetLinks(HTMLParser):
@@ -32,13 +46,21 @@ def test_static_export_is_complete_and_repeatable(tmp_path):
     assert (output / 'index.html').is_file()
     assert (output / 'writings/index.html').is_file()
     assert (output / 'static/fonts/IBMPlexSerif-Regular.ttf').is_file()
-    assert b'Long-form notes' in (output / 'index.html').read_bytes()
+    index_html = (output / 'index.html').read_text()
+    assert 'Long-form notes' in index_html
+    assert len(BIO['paragraphs']) == 3
+    for paragraph in BIO['paragraphs']:
+        assert escape(paragraph) in index_html
+    _assert_no_boundary_copy(index_html)
+    assert 'sk-boundary' not in (output / 'static/style.css').read_text()
     assert (output / 'robots.txt').is_file()
 
     for post in posts:
-        note_html = (output / 'writings' / post['slug'] / 'index.html').read_bytes()
-        assert b'Back to homepage' in note_html
-        assert b'article-provenance' in note_html
+        note_html = (output / 'writings' / post['slug'] / 'index.html').read_text()
+        assert 'Back to homepage' in note_html
+        assert 'article-provenance' in note_html
+        assert 'Published by Syafiq Kay.' in note_html
+        _assert_no_boundary_copy(note_html)
 
     for legacy in LEGACY_REDIRECT_PATHS:
         fallback = (output / legacy / 'index.html').read_text()

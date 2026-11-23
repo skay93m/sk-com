@@ -14,6 +14,7 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
+from core.context_processors import BIO  # noqa: E402
 from core.urls import LEGACY_REDIRECT_PATHS  # noqa: E402
 
 THEME_BACKGROUNDS = (
@@ -22,6 +23,11 @@ THEME_BACKGROUNDS = (
 )
 PRINT_MODES = ('colour', 'greyscale', 'black-white')
 VIEWPORT_WIDTHS = (1440, 390)
+FORBIDDEN_BOUNDARY_TEXT = (
+    'I am a pharmacist who prefers lasting fixes',
+    'AI use: AI tools assist',
+    'Personal analysis, not clinical advice',
+)
 
 
 def discover_note_paths(directory: Path) -> list[str]:
@@ -49,6 +55,45 @@ def serve_static_directory(directory: Path):
         server.server_close()
 
 
+def _verify_no_boundary_copy(page: Page) -> None:
+    """Assert legacy bio and removed boundary copy do not appear in rendered DOM."""
+    body_text = page.locator('body').inner_text()
+    for forbidden in FORBIDDEN_BOUNDARY_TEXT:
+        assert forbidden not in body_text
+    assert page.locator('.sk-boundary').count() == 0
+
+
+def _verify_homepage(page: Page) -> None:
+    """Assert homepage layout, typography, and Stage 1 statement paragraphs."""
+    assert page.locator('.site-header').evaluate('(el) => getComputedStyle(el).maxWidth') == '760px'
+    assert page.locator('.sk-spatial-shell').first.bounding_box()['width'] <= 760
+    assert page.locator('.sk-header-socials a').count() == 5
+    assert 'IBM Plex Mono' in page.locator('.sk-meta-line').first.evaluate('(el) => getComputedStyle(el).fontFamily')
+    assert page.evaluate('document.fonts.check(\'14px "IBM Plex Mono"\')')
+    assert page.locator('hr').count() == 0
+    statement_text = page.locator('.sk-statement-zone').inner_text()
+    assert len(BIO['paragraphs']) == 3
+    for paragraph in BIO['paragraphs']:
+        assert paragraph in statement_text
+    _verify_no_boundary_copy(page)
+
+
+def _verify_reading_note(page: Page, width: int) -> None:
+    """Assert Reading layout margin, disclosure controls, and boundary removal."""
+    assert page.locator('.site-header').evaluate('(el) => getComputedStyle(el).maxWidth') == '1120px'
+    if width == 1440:
+        assert page.locator('.reading-margin').evaluate('(el) => getComputedStyle(el).paddingTop') == '230px'
+    else:
+        assert not page.locator('.reading-margin').is_visible()
+    _verify_no_boundary_copy(page)
+    assert 'Published by Syafiq Kay.' in page.locator('.reading-margin').text_content()
+    page.get_by_text('AI contribution', exact=True).click()
+    assert page.locator('details').first.get_attribute('open') is not None
+    page.get_by_text('AI contribution', exact=True).click()
+    if page.locator('.article hr').count() > 0:
+        assert page.locator('.article hr').first.is_visible()
+
+
 def verify_screen_layout(page: Page, path: str, width: int, note_paths: list[str], paper: str) -> None:
     """Assert typography, palette, spacing, and responsive layout on screen media."""
     assert page.locator('body').evaluate('(el) => getComputedStyle(el).backgroundColor') == paper
@@ -71,25 +116,9 @@ def verify_screen_layout(page: Page, path: str, width: int, note_paths: list[str
     assert page.evaluate('document.fonts.check(\'16px "IBM Plex Serif"\')')
 
     if path == '/':
-        assert page.locator('.site-header').evaluate('(el) => getComputedStyle(el).maxWidth') == '760px'
-        assert page.locator('.sk-spatial-shell').first.bounding_box()['width'] <= 760
-        assert page.locator('.sk-header-socials a').count() == 5
-        assert 'IBM Plex Mono' in page.locator('.sk-meta-line').first.evaluate('(el) => getComputedStyle(el).fontFamily')
-        assert page.evaluate('document.fonts.check(\'14px "IBM Plex Mono"\')')
-        assert page.locator('hr').count() == 0
-        return
-
-    if path in note_paths:
-        assert page.locator('.site-header').evaluate('(el) => getComputedStyle(el).maxWidth') == '1120px'
-        if width == 1440:
-            assert page.locator('.reading-margin').evaluate('(el) => getComputedStyle(el).paddingTop') == '230px'
-        else:
-            assert not page.locator('.reading-margin').is_visible()
-        page.get_by_text('AI contribution', exact=True).click()
-        assert page.locator('details').first.get_attribute('open') is not None
-        page.get_by_text('AI contribution', exact=True).click()
-        if page.locator('.article hr').count() > 0:
-            assert page.locator('.article hr').first.is_visible()
+        _verify_homepage(page)
+    elif path in note_paths:
+        _verify_reading_note(page, width)
 
 
 def verify_print_modes(page: Page) -> int:
