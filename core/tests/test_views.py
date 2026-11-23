@@ -1,260 +1,107 @@
-"""
-Tests for core/views.py
-
-These are integration tests — they go through Django's URL routing, views,
-and templates. pytest-django's `client` fixture provides a test HTTP client.
-
-Run with:  uv run pytest core/tests/test_views.py -v
-"""
-from datetime import date
-
+"""Public route tests use isolated Markdown notes."""
 import pytest
 from django.utils.html import escape
 
 from core.context_processors import BIO
-from core.tests.constants import (
-    AI_CONTRIBUTION_SUMMARY,
-    FORBIDDEN_AI_DISCLOSURE_TEXT,
-    REVISION_HISTORY_SUMMARY,
-)
-from core.tests.helpers import (
-    assert_hello_world_rendering,
-    assert_no_boundary_copy,
-    assert_note_provenance_contract,
-    split_provenance_and_body,
-)
+from core.tests.helpers import assert_note_provenance_contract
 from core.urls import LEGACY_REDIRECT_PATHS
 
 
-# ---------------------------------------------------------------------------
-# Public pages — smoke tests
-# ---------------------------------------------------------------------------
+@pytest.fixture
+def note_file(tmp_path, settings):
+    settings.CONTENT_DIR = tmp_path
+    notes = tmp_path / "notes"
+    notes.mkdir()
+    path = notes / "sample.md"
+    path.write_text("---\ntitle: Sample note\ndate: 2026-05-16\nslug: sample\ntype: note\nauthor: Syafiq Kay\ndescription: A sample summary.\nai_disclosure: Grammar assistance.\n---\n\nA body with [a link](https://example.org).\n")
+    return path
 
-@pytest.mark.django_db
-def test_homepage_returns_200(client):
+
+def test_homepage_lists_notes(client, note_file):
     response = client.get("/")
     assert response.status_code == 200
-    expected_meta = f'<meta name="description" content="{escape(BIO["tagline"])}">'.encode()
-    assert expected_meta in response.content
+    html = response.content.decode()
+    assert '<title>Syafiq Kay</title>' in html
+    assert 'href="/notes/sample/"' in html
+    assert "A sample summary." in html
+    assert "16 May 2026, 1 min read" in html
+    for paragraph in BIO["paragraphs"]:
+        assert escape(paragraph) in html
+    for label in ("Email", "GitHub", "LinkedIn", "ResearchGate", "ORCID"):
+        assert f'aria-label="{label}"' in html
+    assert "<script" not in html
+    assert "<hr" not in html
 
 
-@pytest.mark.django_db
-def test_writings_page_returns_200(client):
-    response = client.get("/writings/")
+@pytest.mark.parametrize("kind,eyebrow", [("note", "Note"), ("essay", "Essay"), ("blog", "Note"), ("article", "Essay")])
+def test_reading_renders_markdown_and_metadata(client, note_file, kind, eyebrow):
+    note_file.write_text(note_file.read_text().replace("type: note", f"type: {kind}"))
+    response = client.get("/notes/sample/")
     assert response.status_code == 200
-    assert b"Why this site exists, and why a simple text-file workflow might last." in response.content
-    assert b" min read" in response.content
-    assert response.content.index(b"Hello World") < response.content.index(
-        b"Why this site exists, and why a simple text-file workflow might last."
-    )
+    html = response.content.decode()
+    body = assert_note_provenance_contract(html, "Grammar assistance.")
+    assert '<a href="https://example.org">a link</a>' in body
+    assert "Grammar assistance." not in body
+    assert f'class="eyebrow">{eyebrow}</div>' in html
+    assert '<html lang="en-GB"' in html
+    assert 'name="description" content="A sample summary."' in html
+    assert 'rel="canonical" href="https://syafiqkay.com/notes/sample/"' in html
+    assert 'name="citation_author" content="Syafiq Kay"' in html
+    assert 'name="citation_date" content="2026/05/16"' in html
+    assert '<title>Sample note · Syafiq Kay</title>' in html
+    assert "sk-reading-relations" not in html
+    assert "<script" not in html
 
 
-@pytest.mark.django_db
-def test_writings_page_heading_and_title(client):
-    response = client.get("/writings/")
-    assert response.status_code == 200
-    assert b"<h1>Writing</h1>" in response.content
-    assert "<title>Writing · Syafiq Kay</title>" in response.content.decode()
+@pytest.mark.parametrize("value", ["", "ai_disclosure: ''", "ai_disclosure: '   '"])
+def test_optional_disclosure_and_description(client, note_file, value):
+    note_file.write_text(note_file.read_text().replace("ai_disclosure: Grammar assistance.", value).replace("description: A sample summary.", ""))
+    html = client.get("/notes/sample/").content.decode()
+    assert_note_provenance_contract(html, None)
+    assert f'name="description" content="{escape(BIO["tagline"])}"' in html
+    assert 'class="abstract"' not in html
 
 
-@pytest.mark.django_db
-def test_homepage_shows_writing_metadata(client):
-    response = client.get("/")
-    assert b"Why this site exists, and why a simple text-file workflow might last." in response.content
-    assert b" min read" in response.content
-    assert response.content.index(b"Hello World") < response.content.index(
-        b"Why this site exists, and why a simple text-file workflow might last."
-    )
-
-
-@pytest.mark.django_db
 @pytest.mark.parametrize("slug", LEGACY_REDIRECT_PATHS)
-def test_stage_one_legacy_redirects(client, slug):
+def test_legacy_redirects(client, slug):
     response = client.get(f"/{slug}/")
     assert response.status_code == 302
     assert response["Location"] == "/"
 
 
-# ---------------------------------------------------------------------------
-# Post detail — valid and invalid slug
-# ---------------------------------------------------------------------------
-
-@pytest.mark.django_db
-def test_known_post_slug_returns_200(client):
-    # Depends on hello-world.md existing in content/posts/.
-    response = client.get("/writings/hello-world/")
-    assert response.status_code == 200
-    assert b"article-notebook" in response.content
-    assert (
-        b'<meta name="description" content="Why this site exists, and why a simple text-file workflow might last.">'
-        in response.content
-    )
-    assert b"Why this site exists, and why a simple text-file workflow might last." in response.content
-    assert b" min read" in response.content
+def test_retired_detail_redirects(client):
+    for path in ("/writings/sample/", "/labs/sample/"):
+        response = client.get(path)
+        assert response.status_code == 302
+        assert response["Location"] == "/"
 
 
-@pytest.mark.django_db
-def test_post_detail_without_description_falls_back_to_tagline(client, monkeypatch):
-    dummy_post = {
-        "title": "No Description Post",
-        "description": None,
-        "read_time": "1 min read",
-        "date": date(2026, 1, 1),
-        "slug": "no-description",
-        "type": "article",
-        "author": "Syafiq Kay",
-        "ai_disclosure": None,
-        "body_html": "<p>Body</p>",
-    }
-    monkeypatch.setattr(
-        "core.views.get_post_by_slug",
-        lambda slug: dummy_post if slug == "no-description" else None,
-    )
-    response = client.get("/writings/no-description/")
-    assert response.status_code == 200
-    expected_meta = f'<meta name="description" content="{escape(BIO["tagline"])}">'.encode()
-    assert expected_meta in response.content
-    assert AI_CONTRIBUTION_SUMMARY not in response.content.decode()
+def test_missing_note_and_admin_are_unavailable(client, note_file):
+    assert client.get("/notes/missing/").status_code == 404
+    assert client.get("/admin/").status_code == 404
 
 
-@pytest.mark.django_db
-def test_unknown_post_slug_returns_404(client):
-    response = client.get("/writings/this-post-does-not-exist/")
-    assert response.status_code == 404
-
-
-# ---------------------------------------------------------------------------
-# Lab detail — valid and invalid slug
-# ---------------------------------------------------------------------------
-
-@pytest.mark.django_db
-def test_lab_detail_renders_with_shell_and_home_link(client, tmp_path, settings):
-    settings.CONTENT_DIR = tmp_path
-    labs_dir = tmp_path / "labs"
-    labs_dir.mkdir()
-    (labs_dir / "sample-lab.md").write_text(
-        "---\n"
-        "title: Sample Lab\n"
-        "date: 2026-05-16\n"
-        "slug: sample-lab\n"
-        "type: lab\n"
-        "project: comptia-network-plus\n"
-        "author: Syafiq Kay\n"
-        "skills:\n"
-        "  - VLANs\n"
-        "---\n\n"
-        "Lab notes.\n",
-        encoding="utf-8",
-    )
-    response = client.get("/labs/sample-lab/")
-    assert response.status_code == 200
-    html = response.content.decode()
-    assert "sk-spatial-shell" in html
-    assert "Sample Lab" in html
-    assert "Back to homepage" in html
-    assert 'href="/labs/"' not in html
-
-
-@pytest.mark.django_db
-def test_unknown_lab_slug_returns_404(client):
-    response = client.get("/labs/this-lab-does-not-exist/")
-    assert response.status_code == 404
-
-
-# ---------------------------------------------------------------------------
-# Robots.txt & Stage 1 contracts
-# ---------------------------------------------------------------------------
-
-@pytest.mark.django_db
-def test_robots_txt_returns_200(client):
+def test_robots_txt(client):
     response = client.get("/robots.txt")
     assert response.status_code == 200
     assert response["Content-Type"] == "text/plain"
 
 
-STAGE_ONE_STATEMENT_PARAGRAPHS = (
-    "Eight years of clinical pharmacy across community, acute hospital, and mental health settings taught me one lesson that rarely appears in policy papers: healthcare design often diverges from what clinicians face on the ground. I study that gap across EPMA, Epic, and electronic health records to spot system-related safety risks, improve structured prescribing data, and strengthen medicines optimisation.",
-    "My background deliberately crosses disciplines. I extracted clinical insights from electronic health records at South London and Maudsley NHS Trust, coded adverse events across clinical trials at Femtogenix to spot toxicity patterns, and gathered cross-agency evidence for patients at Rethink. Legal training through the GDL, an MSc in Mental Health, Ethics and Law at King's College London, and programming self-taught during my MPharm research run alongside that clinical work.",
-    "Right now I investigate psychiatric prescribing, evidence heterogeneity, and healthcare law: specifically whether the Mental Health Act 1983 accounts for the limits of population-level evidence when applied to individual patients. Open to conversations on healthcare policy, research collaboration, and analytical roles across health and the public sector.",
-)
-
-
-def test_stage_one_homepage_contract(client):
+def test_essays_appear_in_long_form_section(client, note_file):
+    note_file.write_text(note_file.read_text().replace("type: note", "type: essay"))
     html = client.get("/").content.decode()
-    for text in [
-        "sk-spatial-shell",
-        "Long-form notes",
-        "King's College London",
-        'aria-label="LinkedIn"',
-        'aria-label="GitHub"',
-        'aria-label="Email"',
-        'aria-label="ResearchGate"',
-        'aria-label="ORCID"',
-    ]:
-        assert text in html
-    assert len(BIO["paragraphs"]) == 3
-    for paragraph in STAGE_ONE_STATEMENT_PARAGRAPHS:
-        assert escape(paragraph) in html
-    assert_no_boundary_copy(html)
-    assert "<script" not in html
-    assert "<hr" not in html
-    assert "?note=" not in html
+    before, after = html.split("<h2>Long-form notes</h2>")
+    assert 'href="/notes/sample/"' not in before
+    assert 'href="/notes/sample/"' in after
+    assert "A sample summary." in after
 
 
-def test_query_note_ignored_on_homepage(client):
-    response = client.get("/", {"note": "hello-world"})
-    assert response.status_code == 200
-    html = response.content.decode()
-    assert "Long-form notes" in html
-    assert 'class="article-provenance"' not in html
-
-
-@pytest.mark.parametrize("slug", ["hello-world", "controlled-drugs-indelible-ink"])
-def test_reading_mode_note_contract(client, slug):
-    response = client.get(f"/writings/{slug}/")
-    assert response.status_code == 200
-    html = response.content.decode()
-    assert "sk-view-reading" in html
-    assert 'class="abstract"' in html
-    provenance_html, _ = split_provenance_and_body(html)
-    assert REVISION_HISTORY_SUMMARY in provenance_html
-    assert "Published by Syafiq Kay." in html
-    assert "Back to homepage" in html
-    assert_no_boundary_copy(html)
-    assert FORBIDDEN_AI_DISCLOSURE_TEXT not in html
-    assert "sk-reading-relations" not in html
-    assert "<script" not in html
-
-
-def test_hello_world_renders_ai_disclosure_without_duplicate_footer(client):
-    html = client.get("/writings/hello-world/").content.decode()
-    assert_hello_world_rendering(html)
-
-
-def test_controlled_drugs_omits_ai_contribution_disclosure(client):
-    html = client.get("/writings/controlled-drugs-indelible-ink/").content.decode()
-    assert_note_provenance_contract(html, None)
-
-
-def test_reading_relations_shown_when_populated(client, monkeypatch):
-    dummy_post = {
-        "title": "Linked Note",
-        "description": "Summary.",
-        "read_time": "1 min read",
-        "date": date(2026, 5, 16),
-        "slug": "linked-note",
-        "type": "article",
-        "author": "Syafiq Kay",
-        "ai_disclosure": None,
-        "body_html": "<p>Body</p>",
-        "backlinks": [{"href": "/writings/hello-world/", "title": "Hello World"}],
-        "similar_links": [],
-    }
-    monkeypatch.setattr(
-        "core.views.get_post_by_slug",
-        lambda slug: dummy_post if slug == "linked-note" else None,
-    )
-    html = client.get("/writings/linked-note/").content.decode()
+def test_reading_relations_from_frontmatter(client, note_file):
+    note_file.write_text(note_file.read_text().replace(
+        "description: A sample summary.",
+        "backlinks: [{title: Related note, href: /notes/related/}]\nsimilar_links: [{title: External essay, href: 'https://example.org/essay', external: true}]"
+    ))
+    html = client.get("/notes/sample/").content.decode()
     assert 'class="sk-reading-relations"' in html
-    assert "Backlinks" in html
-    assert "Hello World" in html
+    assert '<a href="/notes/related/">Related note</a>' in html
+    assert '<a href="https://example.org/essay" target="_blank" rel="noopener noreferrer">External essay</a>' in html

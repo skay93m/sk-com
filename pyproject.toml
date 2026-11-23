@@ -5,7 +5,8 @@ description = "This is the source code for my personal website."
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
-    "django>=5.2.4",
+    "django>=6.0",
+    "folio>=0.2.0",
     "gunicorn>=20.1.0",
     "markdown>=3.10.2",
     "python-dotenv>=1.0.0",
@@ -25,3 +26,6 @@ DJANGO_SETTINGS_MODULE = "syafiqkay.settings"
 python_files = ["test_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
+
+[tool.uv.sources]
+folio = { git = "https://github.com/skay93m/folio.git", branch = "main" }

@@ -31,15 +31,14 @@ def _find_matching_div_end(html: str, start: int) -> int:
 
 
 def split_provenance_and_body(html: str) -> tuple[str, str]:
-    """Return the raw HTML of .article-provenance and the article body that follows it."""
+    """Return the raw HTML of .article-provenance and the Markdown body that follows it."""
     start = html.find('<div class="article-provenance">')
     assert start != -1
     provenance_end = _find_matching_div_end(html, start)
-    article_end = html.find("</article>", provenance_end)
-    assert article_end != -1
-    relations_start = html.find('<div class="sk-reading-relations">', provenance_end)
-    body_end = relations_start if -1 < relations_start < article_end else article_end
-    return html[start:provenance_end], html[provenance_end:body_end]
+    body_start = html.find('<div class="sk-reading-body">', provenance_end)
+    assert body_start != -1
+    body_end = _find_matching_div_end(html, body_start)
+    return html[start:provenance_end], html[body_start:body_end]
 
 
 def assert_note_provenance_contract(html: str, ai_disclosure: Optional[str]) -> str:
@@ -52,7 +51,7 @@ def assert_note_provenance_contract(html: str, ai_disclosure: Optional[str]) -> 
         expected_disclosure = (
             f"<details>{AI_CONTRIBUTION_SUMMARY}<p>{escape(ai_disclosure)}</p></details>"
         )
-        assert expected_disclosure in provenance_html
+        assert re.sub(r">\s+<", "><", expected_disclosure) in re.sub(r">\s+<", "><", provenance_html)
     else:
         assert AI_CONTRIBUTION_SUMMARY not in html
         assert AI_CONTRIBUTION_LABEL not in provenance_html

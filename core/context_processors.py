@@ -31,7 +31,3 @@ BIO = {
         ),
     ],
 }
-
-
-def bio(request):
-    return {'bio': BIO}
